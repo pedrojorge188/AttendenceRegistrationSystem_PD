@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.GridPane?>
+
+<?import javafx.scene.layout.BorderPane?>
+
+<?import javafx.scene.control.Label?>
+<VBox xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="pt.isec.pd.attendence_registration_system.Controllers.MainController"
+            spacing="20"
+            >
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+
+     <Label text="Criar uma conta" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+
+    <Label text="Username:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+    <TextField fx:id="usernameRegField" promptText="Digite seu nome de usuário" style="-fx-padding: 15px;" />
+
+    <Label text="nif:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+    <TextField fx:id="nifRegField" promptText="Digite seu nif" style="-fx-padding: 15px;" />
+
+    <Label text="email:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+    <TextField fx:id="emailRegField" promptText="Digite seu email" style="-fx-padding: 15px;" />
+
+    <Label text="Password:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+    <TextField fx:id="passwordRegField" promptText="Digite sua senha para confirmar os dados" style="-fx-padding: 15px;" />
+
+    <Label text="Password:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+    <TextField fx:id="passwordConfirmRegField" promptText="Digite sua senha para confirmar os dados" style="-fx-padding: 15px;" />
+
+    <Button text="Criar conta" onAction="#registerAction" style="-fx-font-size: 16px; -fx-background-color: #10388c; -fx-text-fill: white;" fx:id="regBtn"/>
+    <Button text="Voltar" onAction="#retButton" style="-fx-font-size: 16px; -fx-background-color: #6b0e0e; -fx-text-fill: white;" fx:id="authBtn"/>
+</VBox>
