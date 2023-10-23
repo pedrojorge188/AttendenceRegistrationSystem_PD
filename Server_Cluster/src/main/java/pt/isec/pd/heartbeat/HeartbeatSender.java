@@ -23,9 +23,7 @@ public class HeartbeatSender extends Thread {
 
     @Override
     public void run() {
-        try {
-            DatagramSocket multicastSocket = new DatagramSocket();
-
+        try ( DatagramSocket multicastSocket = new DatagramSocket()){
             while (true) {
                 String heartbeatMessage = "Heartbeat from server - RMI Port: " + rmiRegistryPort
                         + " - RMI Service Name: " + rmiServiceName + " - Database Version: " + databaseVersion;
