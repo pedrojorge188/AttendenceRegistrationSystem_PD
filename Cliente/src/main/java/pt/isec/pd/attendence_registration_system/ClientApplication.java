@@ -4,10 +4,13 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import pt.isec.pd.Data.requestsAPI;
 
 import java.io.IOException;
 
 public class ClientApplication extends Application {
+
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(ClientApplication.class.getResource("main-view.fxml"));
@@ -18,7 +21,17 @@ public class ClientApplication extends Application {
         stage.show();
     }
 
+
     public static void main(String[] args) {
+
+        if (args.length != 2) {
+            System.err.println("Uso: java MainClient <IP do Servidor> <Porta do Servidor>");
+            System.exit(1);
+        }
+
+        // preencher dados de comuncaçao no singleton de comunicacao com o servidor
+        requestsAPI client = requestsAPI.getInstance();
+        client.registerValues(Integer.parseInt(args[1]), args[0]);
         launch();
     }
 }

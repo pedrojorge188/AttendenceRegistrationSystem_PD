@@ -22,7 +22,8 @@ public class Main_Server {
 
             try {
 
-                System.out.printf("[Client "+this.getName()+"- ] Connected!");
+                System.out.println("[Client "+this.getName()+"-] Connected (ip:"+clientSocket.getInetAddress()+" | port: "+clientSocket.getPort()
+                +")");
                 /*Data process*/
 
             } catch (Exception e) {
@@ -55,11 +56,9 @@ public class Main_Server {
 
         try (ServerSocket serverSocket = new ServerSocket(portTCP)) {
 
-            System.out.println("[Main] Server Ready at port ->" + portTCP);
+            System.out.println("[Main] Server Ready at port : " + portTCP);
 
             while (true) {
-
-                System.out.println("[Main] Waiting clients connection ....");
 
                 try (Socket clientSocket = serverSocket.accept()) {
 

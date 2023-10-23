@@ -6,12 +6,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import pt.isec.pd.Data.requestsAPI;
 import pt.isec.pd.attendence_registration_system.ClientApplication;
 
 import java.io.IOException;
 import java.util.Objects;
 
 public class NormalClientController {
+
+    //Singleton que serve para comunicar com o servidor
+    private static requestsAPI client = requestsAPI.getInstance();
 
     @FXML
     public TextField usernameField;
