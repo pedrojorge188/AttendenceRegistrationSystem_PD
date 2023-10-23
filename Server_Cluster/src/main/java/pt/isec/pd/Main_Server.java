@@ -1,6 +1,8 @@
 package pt.isec.pd;
 
 
+import pt.isec.pd.heartbeat.HeartbeatSender;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -57,6 +59,10 @@ public class Main_Server {
         try (ServerSocket serverSocket = new ServerSocket(portTCP)) {
 
             System.out.println("[Main] Server Ready at port : " + portTCP);
+
+            //NOTA ! databaseVersion tem de ser uma variavel
+            Thread heartbeatThread = new HeartbeatSender(rmiRegistryPort, rmiServiceName, 1);
+            heartbeatThread.start();
 
             while (true) {
 

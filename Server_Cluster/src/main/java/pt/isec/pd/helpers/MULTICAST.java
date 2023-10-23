@@ -1,4 +1,4 @@
-package pt.isec.pd;
+package pt.isec.pd.helpers;
 
 public class MULTICAST {
     public static final int PORT = 4444;
