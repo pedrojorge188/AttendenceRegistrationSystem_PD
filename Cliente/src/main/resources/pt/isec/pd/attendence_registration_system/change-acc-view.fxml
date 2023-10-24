@@ -20,12 +20,6 @@
     <Label text="Username:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
     <TextField fx:id="usernameField" promptText="Digite seu nome de usuário" style="-fx-padding: 15px;" />
 
-    <Label text="nif:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-    <TextField fx:id="nifField" promptText="Digite seu nif" style="-fx-padding: 15px;" />
-
-    <Label text="email:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-    <TextField fx:id="emailField" promptText="Digite seu email" style="-fx-padding: 15px;" />
-
     <Label text="Password:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
     <TextField fx:id="passwordField" promptText="Digite sua senha para confirmar os dados" style="-fx-padding: 15px;" />
 

@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import pt.isec.pd.Data.requestsAPI;
+import pt.isec.pd.data.requestsAPI;
 
 import java.io.IOException;
 
@@ -22,16 +22,20 @@ public class ClientApplication extends Application {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         if (args.length != 2) {
             System.err.println("Uso: java MainClient <IP do Servidor> <Porta do Servidor>");
             System.exit(1);
         }
 
-        // preencher dados de comuncaçao no singleton de comunicacao com o servidor
-        requestsAPI client = requestsAPI.getInstance();
-        client.registerValues(Integer.parseInt(args[1]), args[0]);
-        launch();
+        try{
+            requestsAPI client = requestsAPI.getInstance();
+            client.registerValues(Integer.parseInt(args[1]), args[0]);
+            client.connect();
+            launch();
+        }catch (Exception exp){
+            System.out.println("[SERVER] Not running state!");
+        }
     }
 }

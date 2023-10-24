@@ -1,4 +1,4 @@
-package pt.isec.pd.heartbeat;
+package pt.isec.pd.Threads;
 
 import pt.isec.pd.helpers.MULTICAST;
 

@@ -1,46 +1,18 @@
 package pt.isec.pd;
 
 
-import pt.isec.pd.heartbeat.HeartbeatSender;
+import pt.isec.pd.Threads.ClientHandler;
+import pt.isec.pd.data.User;
+import pt.isec.pd.Threads.HeartbeatSender;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main_Server {
-
-    private static class ClientHandler extends Thread {
-
-        private final Socket clientSocket;
-
-        public ClientHandler(Socket clientSocket) {
-            this.clientSocket = clientSocket;
-        }
-
-        @Override
-        public void run() {
-
-            try {
-
-                System.out.println("[Client "+this.getName()+"-] Connected (ip:"+clientSocket.getInetAddress()+" | port: "+clientSocket.getPort()
-                +")");
-                /*Data process*/
-
-            } catch (Exception e) {
-                e.printStackTrace();
-
-
-            } finally {
-                try {
-                    clientSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     public static void main(String[] args) {
 
@@ -66,17 +38,30 @@ public class Main_Server {
 
             while (true) {
 
-                try (Socket clientSocket = serverSocket.accept()) {
+                    Socket clientSocket = serverSocket.accept();
 
                     Thread clientThread = new Thread(new ClientHandler(clientSocket));
                     clientThreads.add(clientThread);
                     clientThread.start();
 
-                }
+                    clientThreads.removeIf(thread -> !thread.isAlive());
+
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+
+        }finally{
+            for (Thread i : clientThreads){
+                try {
+                    if (i.isAlive()) {
+                        ((ClientHandler) i).getClientSocket().close();
+                        ((ClientHandler) i).getInStream().close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

@@ -6,7 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import pt.isec.pd.Data.requestsAPI;
+import pt.isec.pd.data.requestsAPI;
 import pt.isec.pd.attendence_registration_system.ClientApplication;
 
 import java.io.IOException;
@@ -21,13 +21,10 @@ public class MainController {
     @FXML
     public TextField usernameRegField;
     @FXML
-    public TextField nifRegField;
-    @FXML
-    public TextField emailRegField;
-    @FXML
     public TextField passwordRegField;
     @FXML
     public TextField passwordConfirmRegField;
+    public Button backBtn;
     @FXML
     private VBox box;
 
@@ -36,28 +33,36 @@ public class MainController {
     @FXML
     private TextField passwordField;
 
-    @FXML
-    private Button authBtn;
 
     @FXML
     protected void authAction() throws IOException {
+
         String username = usernameField.getText();
         String password = passwordField.getText();
 
+        if(username.isEmpty() || password.isEmpty())
+            return;
 
-        if (client.connect()) {
-
+        if(client.send(username,password)){
             mode_path = "normal-client-view.fxml";
             loadView(mode_path);
-
         }
 
     }
 
-
     @FXML
-    public void registerAction() {
-        System.out.printf("registar");
+    public void registerAction() throws IOException {
+
+        String username = usernameRegField.getText();
+        String password = passwordRegField.getText();
+        String passwordConfirmation = passwordConfirmRegField.getText();
+
+        if(username.isEmpty() || password.isEmpty())
+            return;
+
+        if(client.send(username,password,passwordConfirmation)){
+            /*ChangePage*/
+        }
     }
 
     private void loadView(String fxmlPath) throws IOException {
@@ -68,9 +73,8 @@ public class MainController {
 
     @FXML
     public void retButton() throws IOException {
-        VBox pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource("main-view.fxml")));
-        box.getChildren().clear();
-        box.getChildren().add(pane);
+        mode_path = "main-view.fxml";
+        loadView(mode_path);
     }
     @FXML
     protected void createNewAccount() throws IOException {
