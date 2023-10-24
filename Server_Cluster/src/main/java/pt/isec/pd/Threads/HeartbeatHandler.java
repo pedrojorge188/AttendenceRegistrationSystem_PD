@@ -6,14 +6,14 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-public class HeartbeatSender extends Thread {
+public class HeartbeatHandler extends Thread {
     private final String multicastAddress;
     private final int multicastPort;
     private final int rmiRegistryPort;
     private final String rmiServiceName;
     private final int databaseVersion;
 
-    public HeartbeatSender(int rmiRegistryPort, String rmiServiceName, int databaseVersion) {
+    public HeartbeatHandler(int rmiRegistryPort, String rmiServiceName, int databaseVersion) {
         this.multicastAddress = MULTICAST.ADDR;
         this.multicastPort = MULTICAST.PORT;
         this.rmiRegistryPort = rmiRegistryPort;

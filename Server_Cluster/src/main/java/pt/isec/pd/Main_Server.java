@@ -2,11 +2,9 @@ package pt.isec.pd;
 
 
 import pt.isec.pd.Threads.ClientHandler;
-import pt.isec.pd.data.User;
-import pt.isec.pd.Threads.HeartbeatSender;
+import pt.isec.pd.Threads.HeartbeatHandler;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -33,7 +31,7 @@ public class Main_Server {
             System.out.println("[Main] Server Ready at port : " + portTCP);
 
             //NOTA ! databaseVersion tem de ser uma variavel
-            Thread heartbeatThread = new HeartbeatSender(rmiRegistryPort, rmiServiceName, 1);
+            Thread heartbeatThread = new HeartbeatHandler(rmiRegistryPort, rmiServiceName, 1);
             heartbeatThread.start();
 
             while (true) {
