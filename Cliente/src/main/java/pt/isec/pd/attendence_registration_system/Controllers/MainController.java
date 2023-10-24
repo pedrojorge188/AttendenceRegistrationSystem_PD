@@ -1,7 +1,9 @@
 package pt.isec.pd.attendence_registration_system.Controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -24,7 +26,12 @@ public class MainController {
     public TextField passwordRegField;
     @FXML
     public TextField passwordConfirmRegField;
-    public Button backBtn;
+
+    @FXML
+    public Label errorLabel;
+
+    @FXML
+    public Label errorLabelReg;
     @FXML
     private VBox box;
 
@@ -40,12 +47,16 @@ public class MainController {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        if(username.isEmpty() || password.isEmpty())
+        if(username.isEmpty() || password.isEmpty()){
+            errorLabel.setText("Dados introduzidos inválidos");
             return;
+        }
 
         if(client.send(username,password)){
             mode_path = "normal-client-view.fxml";
             loadView(mode_path);
+        }else{
+            errorLabelReg.setText("Ocorreu um erro!");
         }
 
     }
@@ -57,11 +68,15 @@ public class MainController {
         String password = passwordRegField.getText();
         String passwordConfirmation = passwordConfirmRegField.getText();
 
-        if(username.isEmpty() || password.isEmpty())
+        if(username.isEmpty() || password.isEmpty() || passwordConfirmation.isEmpty()){
+            errorLabelReg.setText("Dados introduzidos inválidos");
             return;
+        }
 
         if(client.send(username,password,passwordConfirmation)){
             /*ChangePage*/
+        }else{
+            errorLabelReg.setText("Dados introduzidos inválidos");
         }
     }
 
@@ -72,16 +87,15 @@ public class MainController {
     }
 
     @FXML
-    public void retButton() throws IOException {
-        mode_path = "main-view.fxml";
-        loadView(mode_path);
-    }
-    @FXML
     protected void createNewAccount() throws IOException {
 
         VBox pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource("register-acc-view.fxml")));
         box.getChildren().clear();
         box.getChildren().add(pane);
 
+    }
+
+    public void retButton(ActionEvent actionEvent) throws IOException {
+        /**Voltar para tras*/
     }
 }

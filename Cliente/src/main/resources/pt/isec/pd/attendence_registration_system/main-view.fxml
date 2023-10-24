@@ -16,12 +16,17 @@
 
   <Label text="Attendance Registration System" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
+  <!-- Error Label -->
+  <Label text="" fx:id="errorLabel" style="-fx-font-size: 16px; -fx-text-fill: red;" />
+
   <Label text="Username:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
   <TextField fx:id="usernameField" promptText="Digite seu nome de usuário" style="-fx-padding: 15px;" />
 
-  <Label text="Cofirmar password:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+  <Label text="Confirm Password:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
   <TextField fx:id="passwordField" promptText="Digite sua senha" style="-fx-padding: 15px;" />
 
-  <Button text="Autenticar" onAction="#authAction" style="-fx-font-size: 16px; -fx-background-color: #10388c; -fx-text-fill: white;" fx:id="authBtn"/>
-  <Button text="Criar Nova Conta" onAction="#createNewAccount" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: #337AB7; -fx-font-size: 16px;" />
+  <Button text="Authenticate" onAction="#authAction" style="-fx-font-size: 16px; -fx-background-color: #10388c; -fx-text-fill: white;" fx:id="authBtn"/>
+  <Button text="Create New Account" onAction="#createNewAccount" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: #337AB7; -fx-font-size: 16px;" />
+
+
 </VBox>
