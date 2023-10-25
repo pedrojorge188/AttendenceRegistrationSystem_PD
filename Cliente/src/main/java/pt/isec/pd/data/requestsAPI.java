@@ -48,44 +48,15 @@ public class requestsAPI {
     }
 
     // <Login Sender>
-    public boolean send(String username, String password) {
-        if (socket == null) {
-            System.err.println("[CLIENT] Not connected!");
-            return false;
-        }
-
-
-        try {
-            User userObject = new User(User.types_msg.LOGIN, username, password);
-
-            objectOutputStream.writeObject(userObject);
-            objectOutputStream.flush();
-            System.out.println("Sent User object to the server.");
-
-        } catch (IOException e) {
-
-            System.err.println("Error sending User object: " + e.getMessage());
-            return false;
-
-        }
-
-        return true;
-    }
-
-    // <Register Sender>
-    public boolean send(String username, String password, String confirmation) {
-        if (!password.equals(confirmation)) {
-            return false;
-        }
-
+    public boolean send(User.types_msg MSG, String username, String password) {
         if (socket == null) {
             System.err.println("[CLIENT] Not connected!");
             return false;
         }
 
         try {
+            User userObject = new User(MSG, username, password);
 
-            User userObject = new User(User.types_msg.REGISTER, username, password);
             objectOutputStream.writeObject(userObject);
             objectOutputStream.flush();
             System.out.println("Sent User object to the server.");

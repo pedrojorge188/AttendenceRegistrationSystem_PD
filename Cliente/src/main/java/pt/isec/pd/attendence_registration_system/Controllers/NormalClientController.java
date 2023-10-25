@@ -3,13 +3,18 @@ package pt.isec.pd.attendence_registration_system.Controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import pt.isec.pd.data.User;
 import pt.isec.pd.data.requestsAPI;
 import pt.isec.pd.attendence_registration_system.ClientApplication;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 public class NormalClientController {
 
@@ -25,7 +30,27 @@ public class NormalClientController {
     @FXML
     public TextField passwordField;
     @FXML
+    private BorderPane border;
+
+    @FXML
     private VBox main_box;
+
+    @FXML
+    private VBox box;
+
+    @FXML
+    private RadioButton changeUsernameRadioButton;
+
+    @FXML
+    private RadioButton changePasswordRadioButton;
+
+    @FXML
+    private TextField newValueField;
+
+    @FXML
+    private Label infoLabel;
+    @FXML
+    private Button logoutButton;
 
     @FXML
     public void showAttendenceAction() {
@@ -70,10 +95,41 @@ public class NormalClientController {
     }
 
     public void accountLogout(ActionEvent actionEvent) {
-        System.out.printf("fazer logout");
+        Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationDialog.setTitle("Logout");
+        confirmationDialog.setHeaderText("Tem certeza que deseja fazer logout?");
+
+        Optional<ButtonType> result = confirmationDialog.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            client.disconnect();
+            loadView("main-view.fxml");
+        }
     }
 
     public void confirmChangeDataAction(ActionEvent actionEvent) {
-        System.out.printf("alterar dados");
+        // verificações
+        if(usernameField.getText().isEmpty() || passwordField.getText().isEmpty()) {
+            infoLabel.setText("Campos obrigatórios em branco!");
+            infoLabel.setTextFill(Color.RED);
+            return;
+        }else if(!usernameField.getText().matches("^[A-Za-z0-9+_.-]+@(.+)$")){
+            infoLabel.setText("Email inválido!");
+            infoLabel.setTextFill(Color.RED);
+            return;
+        }
+
+        if(client.send(User.types_msg.CHANGES, usernameField.getText(), passwordField.getText())){
+            infoLabel.setText("Operação concluída com sucesso.");
+            infoLabel.setTextFill(Color.GREEN);
+        }else{
+            infoLabel.setText("Erro ao realizar a operação. Por favor, verifique os dados.");
+            infoLabel.setTextFill(Color.RED);
+        }
+    }
+    public void retButton(ActionEvent actionEvent) throws IOException {
+        BorderPane pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource("normal-client-view.fxml")));
+        pane.getChildren().clear();
+        box.getChildren().clear();
+        box.getChildren().add(pane);
     }
 }

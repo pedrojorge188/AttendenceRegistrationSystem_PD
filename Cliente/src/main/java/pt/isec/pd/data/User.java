@@ -5,9 +5,10 @@ import java.io.Serializable;
 public class User implements Serializable {
     static final long SerialVersionUID = 1L;
 
-    enum types_msg{
+    public enum types_msg{
         LOGIN,
-        REGISTER
+        REGISTER,
+        CHANGES
     }
 
     private types_msg type;

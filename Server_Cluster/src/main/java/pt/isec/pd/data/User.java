@@ -7,7 +7,8 @@ public class User implements Serializable {
 
     public enum types_msg{
         LOGIN,
-        REGISTER
+        REGISTER,
+        CHANGES
     }
 
     private types_msg type;

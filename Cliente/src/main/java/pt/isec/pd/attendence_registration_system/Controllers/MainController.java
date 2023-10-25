@@ -3,11 +3,15 @@ package pt.isec.pd.attendence_registration_system.Controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import pt.isec.pd.data.User;
 import pt.isec.pd.data.requestsAPI;
 import pt.isec.pd.attendence_registration_system.ClientApplication;
 
@@ -34,7 +38,8 @@ public class MainController {
     public Label errorLabelReg;
     @FXML
     private VBox box;
-
+    @FXML
+    private BorderPane borderPane;
     @FXML
     private TextField usernameField;
     @FXML
@@ -47,12 +52,13 @@ public class MainController {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        if(username.isEmpty() || password.isEmpty()){
+        // verificações
+        if(username.isEmpty() || password.isEmpty() || !username.matches("^[A-Za-z0-9+_.-]+@(.+)$")){
             errorLabel.setText("Dados introduzidos inválidos");
             return;
         }
 
-        if(client.send(username,password)){
+        if(client.send(User.types_msg.LOGIN, username,password)){
             mode_path = "normal-client-view.fxml";
             loadView(mode_path);
         }else{
@@ -63,18 +69,24 @@ public class MainController {
 
     @FXML
     public void registerAction() throws IOException {
-
         String username = usernameRegField.getText();
         String password = passwordRegField.getText();
         String passwordConfirmation = passwordConfirmRegField.getText();
 
+        // verificações
         if(username.isEmpty() || password.isEmpty() || passwordConfirmation.isEmpty()){
-            errorLabelReg.setText("Dados introduzidos inválidos");
+            errorLabelReg.setText("Campos obrigatórios em branco!");
+            return;
+        }else if(!username.matches("^[A-Za-z0-9+_.-]+@(.+)$")){
+            errorLabelReg.setText("Email inválido!");
+            return;
+        }else if( !password.equals(passwordConfirmation)) {
+            errorLabelReg.setText("As passwords devem coincidir!");
             return;
         }
 
-        if(client.send(username,password,passwordConfirmation)){
-            /*ChangePage*/
+        if(client.send(User.types_msg.REGISTER,username,password)){
+            loadView("normal-client-view.fxml");
         }else{
             errorLabelReg.setText("Dados introduzidos inválidos");
         }
@@ -88,14 +100,14 @@ public class MainController {
 
     @FXML
     protected void createNewAccount() throws IOException {
-
         VBox pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource("register-acc-view.fxml")));
         box.getChildren().clear();
         box.getChildren().add(pane);
-
     }
 
     public void retButton(ActionEvent actionEvent) throws IOException {
-        /**Voltar para tras*/
+        VBox pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource("main-view.fxml")));
+        box.getChildren().clear();
+        box.getChildren().add(pane);
     }
 }
