@@ -1,6 +1,9 @@
 package pt.isec.pd.threads;
 import pt.isec.pd.data.*;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 public class ServerHandler extends Thread{
 
     public ServerHandler() {
@@ -10,16 +13,15 @@ public class ServerHandler extends Thread{
     @Override
     public void run() {
         super.run();
-        int i = 0;
-        while(requestsAPI.getInstance().getConnection()){
+        ObjectInputStream receive;
 
-            try {
-                sleep(1000);
-                System.out.println(i++);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            receive = new ObjectInputStream(requestsAPI.getInstance().getSocket().getInputStream());
 
+            requestsAPI.getInstance().receive(receive);
+
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }

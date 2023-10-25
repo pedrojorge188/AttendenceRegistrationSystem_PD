@@ -24,6 +24,8 @@ public class requestsAPI{
         return instance;
     }
 
+
+
     public void registerValues(int port, String addr) throws IOException {
         ServerPort = port;
         ServerAddr = addr;
@@ -35,11 +37,8 @@ public class requestsAPI{
             return false;
 
         try{
-
             socket = new Socket(ServerAddr, ServerPort);
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            objectInputStream = new ObjectInputStream(socket.getInputStream());
-
 
             System.out.println("Conectado ao servidor em " + ServerAddr + ":" + ServerPort);
             return true;
@@ -58,7 +57,8 @@ public class requestsAPI{
     }
 
     // <Login Sender>
-    public boolean send(User.types_msg MSG, String username, String password) {
+    public boolean send(User.types_msg MSG, String username, String password) throws IOException {
+
         if (socket == null) {
             System.err.println("[CLIENT] Not connected!");
             return false;
@@ -81,8 +81,18 @@ public class requestsAPI{
         return true;
     }
 
-    public void receive() throws IOException {
-        /** send commands / objects */
+    public void receive(ObjectInputStream receive) throws IOException, ClassNotFoundException {
+
+        while(requestsAPI.getInstance().getConnection()){
+
+            Object receiveObject = receive.readObject();
+
+            if(receiveObject instanceof User user){
+                System.out.println("[SERVER] response received!");
+            }
+
+        }
+
     }
 
     public void disconnect() {
@@ -102,4 +112,7 @@ public class requestsAPI{
         }
     }
 
+    public Socket getSocket() {
+        return this.socket;
+    }
 }

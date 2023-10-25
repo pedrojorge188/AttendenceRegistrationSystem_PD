@@ -111,7 +111,7 @@ public class NormalClientController {
         }
     }
 
-    public void confirmChangeDataAction(ActionEvent actionEvent) {
+    public void confirmChangeDataAction(ActionEvent actionEvent) throws IOException {
         // verificações
         if(usernameField.getText().isEmpty() || passwordField.getText().isEmpty()) {
             infoLabel.setText("Campos obrigatórios em branco!");

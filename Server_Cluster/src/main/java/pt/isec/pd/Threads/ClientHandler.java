@@ -4,6 +4,8 @@ import pt.isec.pd.data.User;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientHandler extends Thread {
@@ -11,10 +13,12 @@ public class ClientHandler extends Thread {
     private String name;
     private final Socket clientSocket;
     ObjectInputStream objectInputStream;
+    ObjectOutputStream objectOutputStream;
 
     public ClientHandler(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
         objectInputStream = new  ObjectInputStream(clientSocket.getInputStream());
+        objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
     }
 
     public Socket getClientSocket() {
@@ -38,9 +42,31 @@ public class ClientHandler extends Thread {
                     switch (user.getType()) {
                         case LOGIN -> {
                             System.out.println("[Client " + this.getName() + "-] Received User to login: " + user.getUsername_email());
+
+                            try{
+
+                                objectOutputStream.writeObject(user);
+                                objectOutputStream.flush();
+
+                            }catch (Exception exception){
+                                exception.printStackTrace();
+                            }
+
                         }
                         case REGISTER -> System.out.println("[Client " + this.getName() + "-] Received User to register: " + user.getUsername_email());
-                        case CHANGES -> System.out.println("[Client " + this.getName() + "-] Received User to change: " + user.getUsername_email());
+                        case CHANGES -> {
+
+                            System.out.println("[Client " + this.getName() + "-] Received User to change: " + user.getUsername_email());
+                            try{
+
+                                objectOutputStream.writeObject(user);
+                                objectOutputStream.flush();
+
+                            }catch (Exception exception){
+                                exception.printStackTrace();
+                            }
+
+                        }
                     }
 
                 }

@@ -35,9 +35,9 @@ public class ClientApplication extends Application {
         try{
             requestsAPI client = requestsAPI.getInstance();
             client.registerValues(Integer.parseInt(args[1]), args[0]);
-            launch();
-            svHandler.start();
             client.connect();
+            svHandler.start();
+            launch();
 
         }catch (Exception exp){
             System.out.println("[SERVER] Not running state!");
