@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import pt.isec.pd.data.requestsAPI;
+import pt.isec.pd.threads.ServerHandler;
 
 import java.io.IOException;
 
@@ -24,6 +25,8 @@ public class ClientApplication extends Application {
 
     public static void main(String[] args) throws IOException {
 
+        ServerHandler svHandler = new ServerHandler();
+
         if (args.length != 2) {
             System.err.println("Uso: java MainClient <IP do Servidor> <Porta do Servidor>");
             System.exit(1);
@@ -32,8 +35,10 @@ public class ClientApplication extends Application {
         try{
             requestsAPI client = requestsAPI.getInstance();
             client.registerValues(Integer.parseInt(args[1]), args[0]);
-            client.connect();
             launch();
+            svHandler.start();
+            client.connect();
+
         }catch (Exception exp){
             System.out.println("[SERVER] Not running state!");
         }

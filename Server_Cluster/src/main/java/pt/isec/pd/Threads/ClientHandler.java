@@ -36,10 +36,13 @@ public class ClientHandler extends Thread {
                 if (receivedObject instanceof User user) {
                     this.name = user.getUsername_email();
                     switch (user.getType()) {
-                        case LOGIN -> System.out.println("[Client " + this.getName() + "-] Received User to login: " + user.getUsername_email());
+                        case LOGIN -> {
+                            System.out.println("[Client " + this.getName() + "-] Received User to login: " + user.getUsername_email());
+                        }
                         case REGISTER -> System.out.println("[Client " + this.getName() + "-] Received User to register: " + user.getUsername_email());
                         case CHANGES -> System.out.println("[Client " + this.getName() + "-] Received User to change: " + user.getUsername_email());
                     }
+
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

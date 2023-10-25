@@ -1,13 +1,16 @@
 package pt.isec.pd.data;
+import pt.isec.pd.threads.ServerHandler;
+
 import java.io.*;
 import java.net.*;
 
-public class requestsAPI {
+public class requestsAPI{
 
     private static String ServerAddr;
     private static int ServerPort = 0;
     private static requestsAPI instance;
     private static ObjectOutputStream objectOutputStream;
+    private static ObjectInputStream objectInputStream;
     private Socket socket;
 
     private requestsAPI() {
@@ -21,7 +24,7 @@ public class requestsAPI {
         return instance;
     }
 
-    public void registerValues(int port, String addr){
+    public void registerValues(int port, String addr) throws IOException {
         ServerPort = port;
         ServerAddr = addr;
     }
@@ -32,10 +35,13 @@ public class requestsAPI {
             return false;
 
         try{
+
             socket = new Socket(ServerAddr, ServerPort);
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println("Conectado ao servidor em " + ServerAddr + ":" + ServerPort);
+            objectInputStream = new ObjectInputStream(socket.getInputStream());
 
+
+            System.out.println("Conectado ao servidor em " + ServerAddr + ":" + ServerPort);
             return true;
 
         }catch(Exception exp){
@@ -45,6 +51,10 @@ public class requestsAPI {
 
         }
 
+    }
+
+    public boolean getConnection(){
+        return socket.isConnected();
     }
 
     // <Login Sender>
@@ -71,10 +81,6 @@ public class requestsAPI {
         return true;
     }
 
-    public void send() throws IOException {
-        /** send commands / objects */
-    }
-
     public void receive() throws IOException {
         /** send commands / objects */
     }
@@ -82,9 +88,12 @@ public class requestsAPI {
     public void disconnect() {
         if (socket != null) {
             try {
-                if (objectOutputStream != null) {
+
+                if (objectOutputStream != null)
                     objectOutputStream.close();
-                }
+                if (objectInputStream != null)
+                    objectInputStream.close();
+
                 socket.close();
                 System.out.println("Desconectado do servidor");
             } catch (IOException e) {
@@ -92,4 +101,5 @@ public class requestsAPI {
             }
         }
     }
+
 }
