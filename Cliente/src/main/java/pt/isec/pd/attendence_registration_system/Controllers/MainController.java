@@ -30,16 +30,16 @@ public class MainController {
     public TextField passwordRegField;
     @FXML
     public TextField passwordConfirmRegField;
-
+    @FXML
+    public TextField studentNumberRegField;
+    @FXML
+    public TextField nameRegField;
     @FXML
     public Label errorLabel;
-
     @FXML
     public Label errorLabelReg;
     @FXML
     private VBox box;
-    @FXML
-    private BorderPane borderPane;
     @FXML
     private TextField usernameField;
     @FXML
@@ -69,12 +69,15 @@ public class MainController {
 
     @FXML
     public void registerAction() throws IOException {
+        String name = nameRegField.getText();
+        String studentNumber = studentNumberRegField.getText();
         String username = usernameRegField.getText();
         String password = passwordRegField.getText();
         String passwordConfirmation = passwordConfirmRegField.getText();
 
         // verificações
-        if(username.isEmpty() || password.isEmpty() || passwordConfirmation.isEmpty()){
+        if(username.isEmpty() || password.isEmpty() || passwordConfirmation.isEmpty()
+        || studentNumber.isEmpty() || name.isEmpty()){
             errorLabelReg.setText("Campos obrigatórios em branco!");
             return;
         }else if(!username.matches("^[A-Za-z0-9+_.-]+@(.+)$")){

@@ -1,5 +1,6 @@
 package pt.isec.pd.attendence_registration_system.Controllers;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,67 +21,39 @@ public class NormalClientController {
 
     //Singleton que serve para comunicar com o servidor
     private static requestsAPI client = requestsAPI.getInstance();
-
     @FXML
     public TextField usernameField;
     @FXML
-    public TextField nifField;
-    @FXML
-    public TextField emailField;
-    @FXML
     public TextField passwordField;
     @FXML
-    private BorderPane border;
-
-    @FXML
     private VBox main_box;
-
     @FXML
     private VBox box;
-
-    @FXML
-    private RadioButton changeUsernameRadioButton;
-
-    @FXML
-    private RadioButton changePasswordRadioButton;
-
-    @FXML
-    private TextField newValueField;
-
     @FXML
     private Label infoLabel;
     @FXML
-    private Button logoutButton;
-
-    @FXML
     public void showAttendenceAction() {
-
         System.out.println("ver presencas");
     }
 
     @FXML
     public void receiveCSVAction() {
-
         System.out.printf("receber csv");
     }
 
     @FXML
     public void submitCodeAction() throws IOException {
-
         loadView("send-code-view.fxml");
     }
 
     @FXML
     public void accountAction() {
-
         loadView("change-acc-view.fxml");
     }
 
     @FXML
     public void sendCode() throws IOException {
-
         System.out.printf("send code");
-
     }
 
     private void loadView(String fxmlPath) {
@@ -95,7 +68,6 @@ public class NormalClientController {
     }
 
     public void accountLogout(ActionEvent actionEvent) throws IOException {
-
         if(!client.getConnection()){
             client.connect();
         }
@@ -107,7 +79,7 @@ public class NormalClientController {
         Optional<ButtonType> result = confirmationDialog.showAndWait();
         if (result.get() == ButtonType.OK) {
             client.disconnect();
-            loadView("main-view.fxml");
+            Platform.exit();
         }
     }
 
@@ -131,6 +103,7 @@ public class NormalClientController {
             infoLabel.setTextFill(Color.RED);
         }
     }
+
     public void retButton(ActionEvent actionEvent) throws IOException {
         BorderPane pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource("normal-client-view.fxml")));
         pane.getChildren().clear();
