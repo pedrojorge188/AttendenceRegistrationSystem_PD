@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.BorderPane?>
 
 <?import javafx.scene.control.Label?>
+<?import java.net.URL?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="pt.isec.pd.attendence_registration_system.Controllers.NormalClientController"
@@ -22,7 +23,7 @@
     </padding>
 
     <top>
-        <MenuBar style="-fx-background-color: #ffffff; -fx-padding: 15px; -fx-font-size: 15px" >
+        <MenuBar id="menuBar" >
             <Menu text="Opções">
                 <MenuItem text="Mudar Dados" onAction="#accountAction"/>
                 <MenuItem  text="Consulta das Presenças" onAction="#showAttendenceAction" />
@@ -39,9 +40,11 @@
 
     <center>
 
-        <VBox alignment="CENTER" fx:id="main_box" spacing="10"  style="-fx-padding: 20px;">
-            <Label text="Bem vindo!" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+        <VBox  fx:id="main_box">
+            <Label text="Bem vindo!" id="title"/>
         </VBox>
     </center>
-
+    <stylesheets>
+        <URL value="@./css/normal-client-view.css" />
+    </stylesheets>
 </BorderPane>

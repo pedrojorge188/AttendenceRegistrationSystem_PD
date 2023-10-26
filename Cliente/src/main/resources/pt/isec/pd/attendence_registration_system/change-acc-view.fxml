@@ -6,23 +6,27 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import java.net.URL?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="pt.isec.pd.attendence_registration_system.Controllers.NormalClientController"
-      prefHeight="400.0" prefWidth="600.0" spacing="15" fx:id="box">
+      fx:id="box">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
 
-    <Label fx:id="infoLabel" style="-fx-font-size: 18px;" />
-    <Label text="Alterar Dados" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+    <Label fx:id="infoLabel"/>
+    <Label text="Alterar Dados" id="title" />
 
-    <Label text="Novo Email:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-    <TextField fx:id="usernameField" promptText="Digite o novo email" style="-fx-padding: 15px;" />
+    <Label text="Novo Email:" styleClass="inputTitles"/>
+    <TextField fx:id="usernameField" promptText="Digite o novo email" styleClass="textFields" />
 
-    <Label text="Nova Password:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-    <PasswordField fx:id="passwordField" promptText="Digite a nova password" style="-fx-padding: 15px;" />
+    <Label text="Nova Password:" styleClass="inputTitles"/>
+    <PasswordField fx:id="passwordField" promptText="Digite a nova password"  styleClass="textFields" />
 
-    <Button text="Alterar" onAction="#confirmChangeDataAction" style="-fx-font-size: 16px; -fx-background-color: #10388c; -fx-text-fill: white;"/>
-    <Button text="Voltar" onAction="#retButton" style="-fx-font-size: 16px; -fx-background-color: #6b0e0e; -fx-text-fill: white;" fx:id="backBtn"/>
+    <Button text="Alterar" onAction="#confirmChangeDataAction" styleClass="buttons" id="btnAlterar"/>
+    <Button text="Voltar" onAction="#retButton" styleClass="buttons" fx:id="backBtn"/>
+    <stylesheets>
+        <URL value="@./css/change-acc-view.css" />
+    </stylesheets>
 </VBox>

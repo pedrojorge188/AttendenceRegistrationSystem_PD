@@ -7,17 +7,21 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
+<?import java.net.URL?>
 <VBox xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="pt.isec.pd.attendence_registration_system.Controllers.NormalClientController"
-            prefHeight="400.0" prefWidth="600.0" spacing="15" fx:id="box">
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.isec.pd.attendence_registration_system.Controllers.NormalClientController"
+      fx:id="box">
         <padding>
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
         </padding>
 
-        <Label text="Enviar código de presenças" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+        <Label text="Enviar código de presenças" id="title"/>
 
-        <TextField fx:id="codeField" promptText="Digite o código aqui" style="-fx-font-size: 15px; -fx-padding: 10px;" />
-        <Button text="Enviar código" onAction="#sendCode" style="-fx-font-size: 16px; -fx-background-color: #10388c; -fx-text-fill: white;" fx:id="sendBtn"/>
-        <Button text="Voltar" onAction="#retButton" style="-fx-font-size: 16px; -fx-background-color: #6b0e0e; -fx-text-fill: white;" fx:id="backBtn"/>
+        <TextField fx:id="codeField" promptText="Digite o código aqui" />
+        <Button text="Enviar código" onAction="#sendCode" fx:id="sendBtn"/>
+        <Button text="Voltar" onAction="#retButton" fx:id="backBtn"/>
+        <stylesheets>
+                <URL value="@./css/send-code-view.css" />
+        </stylesheets>
 </VBox>

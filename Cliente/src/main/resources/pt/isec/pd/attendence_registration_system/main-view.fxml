@@ -6,25 +6,30 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
+<?import java.net.URL?>
 <VBox alignment="TOP_CENTER" spacing="15.0" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="pt.isec.pd.attendence_registration_system.Controllers.MainController" fx:id="box">
+      fx:controller="pt.isec.pd.attendence_registration_system.Controllers.MainController"
+      fx:id="box">
 
   <padding>
     <Insets bottom="5.0" left="5.0" right="5.0" top="30.0"/>
   </padding>
 
-  <Label text="Attendance Registration System" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+  <Label text="Attendance Registration System" id="titleLable"/>
 
   <!-- Error Label -->
-  <Label text="" fx:id="errorLabel" style="-fx-font-size: 16px; -fx-text-fill: red;" />
+  <Label text="" fx:id="errorLabel" styleClass="labels"/>
 
-  <Label text="Username:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-  <TextField fx:id="usernameField" promptText="Digite seu nome de usuário" style="-fx-padding: 15px;" />
+  <Label text="Username:" styleClass="labels" />
+  <TextField fx:id="usernameField" promptText="Digite seu nome de usuário" styleClass="textField" />
 
-  <Label text="Confirm Password:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-  <TextField fx:id="passwordField" promptText="Digite sua senha" style="-fx-padding: 15px;" />
+  <Label text="Confirm Password:" styleClass="labels" />
+  <TextField fx:id="passwordField" promptText="Digite sua senha" styleClass="textField" />
 
-  <Button text="Authenticate" onAction="#authAction" style="-fx-font-size: 16px; -fx-background-color: #10388c; -fx-text-fill: white;" fx:id="authBtn"/>
-  <Button text="Create New Account" onAction="#createNewAccount" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: #337AB7; -fx-font-size: 16px;" />
+  <Button text="Authenticate" onAction="#authAction" fx:id="authBtn"/>
+  <Button text="Create New Account" onAction="#createNewAccount" id="createAccBtn" />
+  <stylesheets>
+    <URL value="@./css/main-view.css" />
+  </stylesheets>
 </VBox>
