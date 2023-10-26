@@ -56,7 +56,7 @@ public class requestsAPI{
         return socket.isConnected();
     }
 
-    // <Login Sender>
+    // <User Sender>
     public boolean send(User.types_msg MSG, String username, String password) throws IOException {
 
         if (socket == null) {
@@ -81,6 +81,32 @@ public class requestsAPI{
         return true;
     }
 
+    // <Event Sender>
+    public boolean send(Event.type_event EVT, int code) throws IOException {
+
+        if (socket == null) {
+            System.err.println("[CLIENT] Not connected!");
+            return false;
+        }
+
+        try {
+            Event eventObject = new Event(EVT,code);
+
+            objectOutputStream.writeObject(eventObject);
+            objectOutputStream.flush();
+            System.out.println("Sent Event object to the server.");
+
+        } catch (IOException e) {
+
+            System.err.println("Error sending Event object: " + e.getMessage());
+            return false;
+
+        }
+
+        return true;
+
+    }
+
     public void receive(ObjectInputStream receive) throws IOException, ClassNotFoundException {
 
         while(this.getConnection()){
@@ -103,7 +129,7 @@ public class requestsAPI{
                         System.out.println("[SERVER] Register Made!");
                     }
                     case REGISTER_FAIL -> {
-                        System.out.println("[SERVER] Register Faile!");
+                        System.out.println("[SERVER] Register Fail!");
                     }
                     case CHANGES_MADE -> {
                         System.out.println("[SERVER] Changes Made!");

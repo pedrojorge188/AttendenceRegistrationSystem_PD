@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import pt.isec.pd.data.Event;
 import pt.isec.pd.data.User;
 import pt.isec.pd.data.requestsAPI;
 import pt.isec.pd.attendence_registration_system.ClientApplication;
@@ -25,6 +26,12 @@ public class NormalClientController {
     public TextField usernameField;
     @FXML
     public TextField passwordField;
+
+    @FXML
+    public TextField codeField;
+
+    @FXML
+    public Label infoLabelCode;
     @FXML
     private VBox main_box;
     @FXML
@@ -53,7 +60,11 @@ public class NormalClientController {
 
     @FXML
     public void sendCode() throws IOException {
-        System.out.printf("send code");
+        String code = codeField.getText();
+        if(client.send(Event.type_event.CODE_EVENT, Integer.parseInt(code))){
+            infoLabelCode.setText("Código submetido");
+            infoLabelCode.setTextFill(Color.GREEN);
+        }
     }
 
     private void loadView(String fxmlPath) {
