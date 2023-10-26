@@ -1,6 +1,9 @@
 package pt.isec.pd.data;
 import pt.isec.pd.threads.ServerHandler;
 
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.net.*;
 
@@ -12,7 +15,7 @@ public class requestsAPI{
     private static ObjectOutputStream objectOutputStream;
     private static ObjectInputStream objectInputStream;
     private Socket socket;
-
+    private PropertyChangeSupport pcs;
     private requestsAPI() {
 
     }
@@ -39,7 +42,7 @@ public class requestsAPI{
         try{
             socket = new Socket(ServerAddr, ServerPort);
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-
+            pcs = new PropertyChangeSupport(this);
             System.out.println("Conectado ao servidor em " + ServerAddr + ":" + ServerPort);
             return true;
 
@@ -117,6 +120,7 @@ public class requestsAPI{
 
                 switch (infoStatus.getStatus()){
                     case LOGIN_MADE_USER -> {
+                        pcs.firePropertyChange("LOGIN_MADE_USER",null,null);
                         System.out.println("[SERVER] Login Made (normal client)!");
                     }
                     case LOGIN_MADE_ADMIN -> {
@@ -138,6 +142,7 @@ public class requestsAPI{
                         System.out.println("[SERVER] Changes Fail!");
                     }
                     case CODE_SEND_MADE -> {
+                        pcs.firePropertyChange("CODE_SEND_MADE",null,null);
                         System.out.println("[SERVER] Code SEND!");
                     }
                 }
@@ -167,5 +172,8 @@ public class requestsAPI{
 
     public Socket getSocket() {
         return this.socket;
+    }
+    public void addPropertyChangeListener(String property,PropertyChangeListener listener){
+        pcs.addPropertyChangeListener(property,listener);
     }
 }

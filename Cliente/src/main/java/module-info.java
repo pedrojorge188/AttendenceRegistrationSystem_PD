@@ -1,6 +1,7 @@
 module pt.isec.pd.attendence_registration_system {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.desktop;
 
 
     opens pt.isec.pd.attendence_registration_system to javafx.fxml;

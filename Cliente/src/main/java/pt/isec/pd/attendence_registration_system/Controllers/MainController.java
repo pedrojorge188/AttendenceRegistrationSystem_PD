@@ -1,5 +1,6 @@
 package pt.isec.pd.attendence_registration_system.Controllers;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -59,8 +60,15 @@ public class MainController {
         }
 
         if(client.send(User.types_msg.LOGIN, username,password)){
-            mode_path = "normal-client-view.fxml";
-            loadView(mode_path);
+            requestsAPI.getInstance().addPropertyChangeListener("LOGIN_MADE_USER",evt->{
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadView("normal-client-view.fxml");
+                    }
+                });
+
+            });
         }else{
             errorLabelReg.setText("Ocorreu um erro!");
         }
@@ -95,10 +103,14 @@ public class MainController {
         }
     }
 
-    private void loadView(String fxmlPath) throws IOException {
-        BorderPane pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource(fxmlPath)));
-        box.getChildren().clear();
-        box.getChildren().add(pane);
+    private void loadView(String fxmlPath)  {
+        try {
+            BorderPane pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource(fxmlPath)));
+            box.getChildren().clear();
+            box.getChildren().add(pane);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     @FXML

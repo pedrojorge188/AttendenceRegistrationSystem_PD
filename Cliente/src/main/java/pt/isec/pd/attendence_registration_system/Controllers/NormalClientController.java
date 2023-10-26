@@ -62,8 +62,17 @@ public class NormalClientController {
     public void sendCode() throws IOException {
         String code = codeField.getText();
         if(client.send(Event.type_event.CODE_EVENT, Integer.parseInt(code))){
-            infoLabelCode.setText("Código submetido");
-            infoLabelCode.setTextFill(Color.GREEN);
+            requestsAPI.getInstance().addPropertyChangeListener("CODE_SEND_MADE",evt->{
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        infoLabelCode.setText("Código submetido");
+                        infoLabelCode.setTextFill(Color.GREEN);
+                    }
+                });
+
+            });
+
         }
     }
 
@@ -79,10 +88,6 @@ public class NormalClientController {
     }
 
     public void accountLogout(ActionEvent actionEvent) throws IOException {
-        if(!client.getConnection()){
-            client.connect();
-        }
-
         Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmationDialog.setTitle("Logout");
         confirmationDialog.setHeaderText("Tem certeza que deseja fazer logout?");
