@@ -16,6 +16,23 @@ public class InfoStatus implements Serializable {
         REGISTER_FAIL,
         CHANGES_MADE,
         CHAGES_FAIL,
+        CODE_SEND_MADE,
+        CODE_SEND_FAIL,
+        EDIT_EVENT_MADE,
+        EDIT_EVENT_FAIL,
+        CREATE_EVENT_MADE,
+        CREATE_EVENT_FAIL,
+        DELETE_EVENT_MADE,
+        DELETE_EVENT_FAIL,
+        GENERATE_CODE_MADE,
+        GENERATE_CODE_FAIL,
+        REQUEST_CSV_EVENT,
+        LIST_CREATED_EVENTS,
+        LIST_CREATED_EVENTS_FAIL,
+        GET_HISTORY,
+        GET_HISTORY_FAIL,
+        LIST_REGISTERED_ATTENDANCE,
+        LIST_REGISTERED_ATTENDANCE_FAIL,
         MSG_STACK
     }
 

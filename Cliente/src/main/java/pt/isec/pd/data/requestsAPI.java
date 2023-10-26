@@ -137,8 +137,8 @@ public class requestsAPI{
                     case CHAGES_FAIL -> {
                         System.out.println("[SERVER] Changes Fail!");
                     }
-                    case MSG_STACK -> {
-                        System.out.println("[SERVER] Msg : "+ infoStatus.getMsg_log());
+                    case CODE_SEND_MADE -> {
+                        System.out.println("[SERVER] Code SEND!");
                     }
                 }
 

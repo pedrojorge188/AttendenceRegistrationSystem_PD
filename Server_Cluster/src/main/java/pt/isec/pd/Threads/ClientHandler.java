@@ -55,9 +55,8 @@ public class ClientHandler extends Thread {
         } catch (IOException | ClassNotFoundException e) {
 
             try {
-                this.isLogged = false;
                 clientSocket.close();
-                System.out.println("[CLIENT " + this.user.getUsername_email()  + "] Disconnected! ");
+                System.out.println("[CLIENT] Disconnected! ");
 
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
