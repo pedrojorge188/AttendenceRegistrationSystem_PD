@@ -83,12 +83,39 @@ public class requestsAPI{
 
     public void receive(ObjectInputStream receive) throws IOException, ClassNotFoundException {
 
-        while(requestsAPI.getInstance().getConnection()){
+        while(this.getConnection()){
 
             Object receiveObject = receive.readObject();
 
-            if(receiveObject instanceof User user){
-                System.out.println("[SERVER] response received!");
+            if(receiveObject instanceof InfoStatus infoStatus){
+
+                switch (infoStatus.getStatus()){
+                    case LOGIN_MADE_USER -> {
+                        System.out.println("[SERVER] Login Made (normal client)!");
+                    }
+                    case LOGIN_MADE_ADMIN -> {
+                        System.out.println("[SERVER] Login Made (admin client)!");
+                    }
+                    case LOGIN_FAIL -> {
+                        System.out.println("[SERVER] Login Fail!");
+                    }
+                    case REGISTER_MADE -> {
+                        System.out.println("[SERVER] Register Made!");
+                    }
+                    case REGISTER_FAIL -> {
+                        System.out.println("[SERVER] Register Faile!");
+                    }
+                    case CHANGES_MADE -> {
+                        System.out.println("[SERVER] Changes Made!");
+                    }
+                    case CHAGES_FAIL -> {
+                        System.out.println("[SERVER] Changes Fail!");
+                    }
+                    case MSG_STACK -> {
+                        System.out.println("[SERVER] Msg : "+ infoStatus.getMsg_log());
+                    }
+                }
+
             }
 
         }

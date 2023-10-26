@@ -1,5 +1,6 @@
 package pt.isec.pd.Threads;
 
+import pt.isec.pd.data.InfoStatus;
 import pt.isec.pd.data.User;
 
 import java.io.IOException;
@@ -38,14 +39,17 @@ public class ClientHandler extends Thread {
                 Object receivedObject = objectInputStream.readObject();
 
                 if (receivedObject instanceof User user) {
+
+                    System.out.println("[Client " + this.getName() + "-] SEND A USER NOTIFICATION! (" + user.getUsername_email() +")");
+
                     this.name = user.getUsername_email();
                     switch (user.getType()) {
                         case LOGIN -> {
-                            System.out.println("[Client " + this.getName() + "-] Received User to login: " + user.getUsername_email());
 
                             try{
 
-                                objectOutputStream.writeObject(user);
+                                InfoStatus response = new InfoStatus(InfoStatus.types_status.LOGIN_MADE_USER);
+                                objectOutputStream.writeObject(response);
                                 objectOutputStream.flush();
 
                             }catch (Exception exception){
@@ -53,13 +57,25 @@ public class ClientHandler extends Thread {
                             }
 
                         }
-                        case REGISTER -> System.out.println("[Client " + this.getName() + "-] Received User to register: " + user.getUsername_email());
-                        case CHANGES -> {
+                        case REGISTER -> {
 
-                            System.out.println("[Client " + this.getName() + "-] Received User to change: " + user.getUsername_email());
                             try{
 
-                                objectOutputStream.writeObject(user);
+                                InfoStatus response = new InfoStatus(InfoStatus.types_status.REGISTER_MADE);
+                                objectOutputStream.writeObject(response);
+                                objectOutputStream.flush();
+
+                            }catch (Exception exception){
+                                exception.printStackTrace();
+                            }
+
+                        }
+                        case CHANGES -> {
+
+                            try{
+
+                                InfoStatus response = new InfoStatus(InfoStatus.types_status.CHANGES_MADE);
+                                objectOutputStream.writeObject(response);
                                 objectOutputStream.flush();
 
                             }catch (Exception exception){

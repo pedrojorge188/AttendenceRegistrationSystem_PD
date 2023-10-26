@@ -32,7 +32,7 @@ public class HeartbeatHandler extends Thread {
                 InetAddress group = InetAddress.getByName(multicastAddress);
                 DatagramPacket packet = new DatagramPacket(messageBytes, messageBytes.length, group, multicastPort);
                 multicastSocket.send(packet);
-                //System.out.println("Heartbeat enviado para " + multicastAddress + ":" + multicastPort);
+                System.out.println("Heartbeat enviado para " + multicastAddress + ":" + multicastPort);
 
                 Thread.sleep(10000);
             }
