@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class ServerHandler extends Thread{
-
     public ServerHandler() {
 
     }
@@ -17,11 +16,11 @@ public class ServerHandler extends Thread{
 
         try {
             receive = new ObjectInputStream(requestsAPI.getInstance().getSocket().getInputStream());
-
             requestsAPI.getInstance().receive(receive);
 
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            System.err.println("[SERVER] Client Disconnected!");
         }
+
     }
 }

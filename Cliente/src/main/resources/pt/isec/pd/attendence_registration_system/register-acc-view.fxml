@@ -16,7 +16,7 @@
 <VBox xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="pt.isec.pd.attendence_registration_system.Controllers.MainController"
-            spacing="20"
+            spacing="10"
             fx:id="box">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
@@ -24,11 +24,16 @@
 
     <Label text="" fx:id="errorLabelReg" style="-fx-font-size: 16px; -fx-text-fill: red;" />
 
-     <Label text="Criar uma conta" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+    <Label text="Criar uma conta" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
 
+    <Label text="Nome:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+    <TextField fx:id="nameRegField" promptText="Insira o seu nome" style="-fx-padding: 15px;" />
+
+    <Label text="Número de aluno:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+    <TextField fx:id="studentNumberRegField" promptText="Insira o seu número de aluno" style="-fx-padding: 15px;" />
 
     <Label text="Username/email:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-    <TextField fx:id="usernameRegField" promptText="Digite seu nome de usuário" style="-fx-padding: 15px;" />
+    <TextField fx:id="usernameRegField" promptText="Insira o seu email" style="-fx-padding: 15px;" />
 
     <Label text="Password:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
     <TextField fx:id="passwordRegField" promptText="Digite sua senha para confirmar os dados" style="-fx-padding: 15px;" />
