@@ -15,7 +15,10 @@ public class Main_Server {
     public static void main(String[] args) {
 
         if (args.length != 4) {
-            System.err.println("[REQUIRE] Java Main_Server <Port TCP> <SQLite Directory> <Name of RMI service> <Port of Registry RMI>");
+            System.err.println("[REQUIRE] Java Main_Server <Port TCP> " +
+                    "<SQLite Directory> " +
+                    "<Name of RMI service> <" +
+                    "Port of Registry RMI>");
             System.exit(1);
         }
 
