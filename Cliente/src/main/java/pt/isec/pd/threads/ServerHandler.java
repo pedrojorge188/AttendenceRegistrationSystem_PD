@@ -16,11 +16,10 @@ public class ServerHandler extends Thread{
 
         try {
             receive = new ObjectInputStream(requestsAPI.getInstance().getSocket().getInputStream());
-            requestsAPI.getInstance().receive(receive);
-
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("[SERVER] Client Disconnected!");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+        requestsAPI.getInstance().receive(receive);
 
     }
 }

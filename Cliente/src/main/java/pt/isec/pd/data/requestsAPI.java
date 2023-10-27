@@ -72,11 +72,11 @@ public class requestsAPI{
 
             objectOutputStream.writeObject(userObject);
             objectOutputStream.flush();
-            System.out.println("Sent User object to the server.");
 
         } catch (IOException e) {
 
             System.err.println("Error sending User object: " + e.getMessage());
+            pcs.firePropertyChange("SERVER_CLOSE",null,null);
             return false;
 
         }
@@ -101,6 +101,7 @@ public class requestsAPI{
 
         } catch (IOException e) {
 
+            pcs.firePropertyChange("SERVER_CLOSE",null,null);
             System.err.println("Error sending Event object: " + e.getMessage());
             return false;
 
@@ -110,43 +111,48 @@ public class requestsAPI{
 
     }
 
-    public void receive(ObjectInputStream receive) throws IOException, ClassNotFoundException {
+    public void receive(ObjectInputStream receive) {
 
         while(this.getConnection()){
 
-            Object receiveObject = receive.readObject();
+            try{
 
-            if(receiveObject instanceof InfoStatus infoStatus){
+                Object receiveObject = receive.readObject();
 
-                switch (infoStatus.getStatus()){
-                    case LOGIN_MADE_USER -> {
-                        pcs.firePropertyChange("LOGIN_MADE_USER",null,null);
-                        System.out.println("[SERVER] Login Made (normal client)!");
-                    }
-                    case LOGIN_MADE_ADMIN -> {
-                        System.out.println("[SERVER] Login Made (admin client)!");
-                    }
-                    case LOGIN_FAIL -> {
-                        System.out.println("[SERVER] Login Fail!");
-                    }
-                    case REGISTER_MADE -> {
-                        System.out.println("[SERVER] Register Made!");
-                    }
-                    case REGISTER_FAIL -> {
-                        System.out.println("[SERVER] Register Fail!");
-                    }
-                    case CHANGES_MADE -> {
-                        System.out.println("[SERVER] Changes Made!");
-                    }
-                    case CHAGES_FAIL -> {
-                        System.out.println("[SERVER] Changes Fail!");
-                    }
-                    case CODE_SEND_MADE -> {
-                        pcs.firePropertyChange("CODE_SEND_MADE",null,null);
-                        System.out.println("[SERVER] Code SEND!");
+                if(receiveObject instanceof InfoStatus infoStatus){
+
+                    switch (infoStatus.getStatus()){
+                        case LOGIN_MADE_USER -> {
+                            pcs.firePropertyChange("LOGIN_MADE_USER",null,null);
+                            System.out.println("[SERVER] Login Made (normal client)!");
+                        }
+                        case LOGIN_MADE_ADMIN -> {
+                            System.out.println("[SERVER] Login Made (admin client)!");
+                        }
+                        case LOGIN_FAIL -> {
+                            System.out.println("[SERVER] Login Fail!");
+                        }
+                        case REGISTER_MADE -> {
+                            System.out.println("[SERVER] Register Made!");
+                        }
+                        case REGISTER_FAIL -> {
+                            System.out.println("[SERVER] Register Fail!");
+                        }
+                        case CHANGES_MADE -> {
+                            System.out.println("[SERVER] Changes Made!");
+                        }
+                        case CHAGES_FAIL -> {
+                            System.out.println("[SERVER] Changes Fail!");
+                        }
+                        case CODE_SEND_MADE -> {
+                            pcs.firePropertyChange("CODE_SEND_MADE",null,null);
+                            System.out.println("[SERVER] Code SEND!");
+                        }
                     }
                 }
 
+            }catch (Exception e){
+                pcs.firePropertyChange("SERVER_CLOSE",null,null);
             }
 
         }
@@ -164,6 +170,7 @@ public class requestsAPI{
 
                 socket.close();
                 System.out.println("Desconectado do servidor");
+                System.exit(1);
             } catch (IOException e) {
                 System.err.println("Erro ao desconectar: " + e.getMessage());
             }

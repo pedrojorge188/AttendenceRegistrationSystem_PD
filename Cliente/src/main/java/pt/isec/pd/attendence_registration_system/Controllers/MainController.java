@@ -6,9 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -16,8 +14,10 @@ import pt.isec.pd.data.User;
 import pt.isec.pd.data.requestsAPI;
 import pt.isec.pd.attendence_registration_system.ClientApplication;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 public class MainController {
 
@@ -46,6 +46,18 @@ public class MainController {
     @FXML
     private TextField passwordField;
 
+    public MainController(){
+        requestsAPI.getInstance().addPropertyChangeListener("SERVER_CLOSE",evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    System.err.println("[SERVER] SERVER ERROR");
+                    client.disconnect();
+                    System.exit(1);
+                }
+            });
+        });
+    }
 
     @FXML
     protected void authAction() throws IOException {

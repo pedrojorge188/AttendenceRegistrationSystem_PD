@@ -38,6 +38,21 @@ public class NormalClientController {
     private VBox box;
     @FXML
     private Label infoLabel;
+
+    public NormalClientController(){
+        requestsAPI.getInstance().addPropertyChangeListener("SERVER_CLOSE",evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    System.err.println("[SERVER] SERVER ERROR");
+                    client.disconnect();
+                    System.exit(1);
+                }
+            });
+
+        });
+    }
+
     @FXML
     public void showAttendenceAction() {
         System.out.println("ver presencas");
