@@ -4,20 +4,18 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+
 import pt.isec.pd.data.User;
 import pt.isec.pd.data.requestsAPI;
 import pt.isec.pd.attendence_registration_system.ClientApplication;
 
-import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
+
+import static pt.isec.pd.data.InfoStatus.types_status.*;
 
 public class MainController {
 
@@ -46,7 +44,7 @@ public class MainController {
     @FXML
     private TextField passwordField;
 
-    public MainController(){
+    public void initialize(){
         requestsAPI.getInstance().addPropertyChangeListener("SERVER_CLOSE",evt->{
             Platform.runLater(new Runnable() {
                 @Override
@@ -56,6 +54,26 @@ public class MainController {
                     System.exit(1);
                 }
             });
+        });
+        requestsAPI.getInstance().addPropertyChangeListener(LOGIN_MADE_USER.name(), evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    loadView("ClientViews/normal-client-view.fxml");
+                }
+            });
+
+        });
+
+
+        requestsAPI.getInstance().addPropertyChangeListener(LOGIN_MADE_ADMIN.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    loadView("AdminViews/admin-view.fxml");
+                }
+            });
+
         });
     }
 
@@ -72,26 +90,7 @@ public class MainController {
         }
 
         if(client.send(User.types_msg.LOGIN, username,password)){
-            requestsAPI.getInstance().addPropertyChangeListener("LOGIN_MADE_USER",evt->{
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadView("ClientViews/normal-client-view.fxml");
-                    }
-                });
 
-            });
-
-
-            requestsAPI.getInstance().addPropertyChangeListener("LOGIN_MADE_ADMIN",evt->{
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadView("AdminViews/admin-view.fxml");
-                    }
-                });
-
-            });
 
         }else{
             errorLabelReg.setText("Ocorreu um erro!");

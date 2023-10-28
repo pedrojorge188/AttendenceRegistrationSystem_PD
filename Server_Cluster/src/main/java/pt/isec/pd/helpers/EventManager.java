@@ -29,18 +29,21 @@ public class EventManager {
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] EVENT: "+event.getEvent_name()+" EDITED");
             }
             case CREATE_EVENT -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.CREATE_EVENT_MADE);
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] EVENT: "+event.getEvent_name()+" CREATED");
             }
             case DELETE_EVENT -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_EVENT_MADE);
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] EVENT: "+event.getEvent_name()+" DELETED");
 
             }
             case GENERATE_CODE -> {
@@ -48,30 +51,35 @@ public class EventManager {
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] CODE FOR: "+event.getEvent_name()+" EVENT GENERATED");
             }
             case REQUEST_CSV_EVENT -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.REQUEST_CSV_EVENT);
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] CSV FOR: "+event.getEvent_name()+" EVENT SENT");
             }
             case LIST_CREATED_EVENTS -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_CREATED_EVENTS);
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] LIST OF EVENTS SENT");
             }
             case GET_ATTENDANCE_HISTORY -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.GET_HISTORY);
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] LIST ATTENDANCE HISTORY REQUESTED");
             }
             case LIST_REGISTERED_ATTENDANCE -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_REGISTERED_ATTENDANCE);
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] LIST OF REGISTERD ATTENDENCE SENT");
             }
         }
 

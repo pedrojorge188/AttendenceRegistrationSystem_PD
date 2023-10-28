@@ -40,7 +40,7 @@ public class HeartbeatHandler extends Thread {
                 DatagramPacket packet = new DatagramPacket(serializedObject, serializedObject.length, group, multicastPort);
                 multicastSocket.send(packet);
 
-                System.out.println("[SERVER] Heartbeat send to " + multicastAddress + ":" + multicastPort);
+              //  System.out.println("[SERVER] Heartbeat send to " + multicastAddress + ":" + multicastPort);
 
                 Thread.sleep(10000);
             }

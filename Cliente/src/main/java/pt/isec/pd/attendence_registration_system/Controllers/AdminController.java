@@ -8,18 +8,22 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import org.w3c.dom.Text;
 import pt.isec.pd.attendence_registration_system.ClientApplication;
 import pt.isec.pd.data.Event;
 import pt.isec.pd.data.requestsAPI;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
+
+import static pt.isec.pd.data.Event.type_event.*;
+import static pt.isec.pd.data.Event.type_event.LIST_CREATED_EVENTS;
+import static pt.isec.pd.data.Event.type_event.LIST_REGISTERED_ATTENDANCE;
+import static pt.isec.pd.data.InfoStatus.types_status.*;
 
 public class AdminController {
     //Singleton que serve para comunicar com o servidor
     private static requestsAPI client = requestsAPI.getInstance();
+    private Event eventToSend;
     @FXML
     private VBox box;
     @FXML
@@ -38,6 +42,51 @@ public class AdminController {
     private TextField codeTime;
     @FXML
     private Label infoLabel;
+    public void initialize(){
+        //register handlers
+        requestsAPI.getInstance().addPropertyChangeListener(EDIT_EVENT_MADE.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Evento editado com sucesso");
+                }
+            });
+        });
+        requestsAPI.getInstance().addPropertyChangeListener(CREATE_EVENT_MADE.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Evento criado com sucesso");
+                }
+            });
+        });
+        requestsAPI.getInstance().addPropertyChangeListener(DELETE_EVENT_MADE.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Evento eleminado com sucesso");
+                }
+            });
+        });
+        requestsAPI.getInstance().addPropertyChangeListener(LIST_REGISTERED_ATTENDANCE.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Listagem de presencas com sucesso");
+                }
+            });
+        });
+
+        requestsAPI.getInstance().addPropertyChangeListener(LIST_CREATED_EVENTS.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Listagem de eventos com filtros feita com sucesso");
+                }
+            });
+        });
+        eventToSend = new Event(null,-1);
+    }
 
     public void retButton(ActionEvent actionEvent) {
         try {
@@ -51,7 +100,7 @@ public class AdminController {
 
     public void createEvent(ActionEvent actionEvent) {
         String eventName = this.eventName.getText();
-        String eventDate;
+        String eventDate = null;
         if(this.eventDate.getValue()!=null)
             eventDate = this.eventDate.getValue().toString();
         String eventLocal = this.eventLocal.getText();
@@ -62,24 +111,43 @@ public class AdminController {
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         }else{
-            // create event
+            eventToSend.setType(CREATE_EVENT);
+            eventToSend.setEvent_name(eventName);
+            eventToSend.setEvent_date(eventDate);
+            eventToSend.setEvent_start_time(eventStartHour);
+            eventToSend.setEvent_end_time(eventEndHour);
+            eventToSend.setEvent_location(eventLocal);
+            eventToSend.setAttend_code(-1);
+            if(!client.send(eventToSend)){
+                infoLabel.setText("Aconteceu algo de errado");
+                infoLabel.setTextFill(Color.RED);
+            }
         }
     }
 
     public void editEvent(ActionEvent actionEvent) {
         String eventName = this.eventName.getText();
-        String eventDate;
+        String eventDate = null;
         if(this.eventDate.getValue()!=null)
             eventDate = this.eventDate.getValue().toString();
         String eventLocal = this.eventLocal.getText();
         String eventStartHour = this.eventStartHour.getText();
         String eventEndHour = this.eventEndHour.getText();
-
         if(eventName.isEmpty() || eventLocal.isEmpty() || eventStartHour.isEmpty() || eventEndHour.isEmpty()){
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         }else{
-            // edit event
+            eventToSend.setAttend_code(-1);
+            eventToSend.setType(EDIT_EVENT);
+            eventToSend.setEvent_date(eventDate);
+            eventToSend.setEvent_location(eventLocal);
+            eventToSend.setEvent_name(eventName);
+            eventToSend.setEvent_start_time(eventStartHour);
+            eventToSend.setEvent_end_time(eventEndHour);
+            if(!client.send(eventToSend)){
+                infoLabel.setText("Aconteceu algo de errado");
+                infoLabel.setTextFill(Color.RED);
+            }
         }
     }
 
@@ -90,7 +158,17 @@ public class AdminController {
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         }else{
-            // delete event
+            eventToSend.setAttend_code(-1);
+            eventToSend.setType(DELETE_EVENT);
+            eventToSend.setEvent_date(null);
+            eventToSend.setEvent_location(null);
+            eventToSend.setEvent_name(eventName);
+            eventToSend.setEvent_start_time(null);
+            eventToSend.setEvent_end_time(null);
+            if(!client.send(eventToSend)){
+                infoLabel.setText("Aconteceu algo de errado");
+                infoLabel.setTextFill(Color.RED);
+            }
         }
     }
 
@@ -102,6 +180,7 @@ public class AdminController {
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         } else {
+
             // show all events of a specific user
         }
     }
@@ -155,6 +234,17 @@ public class AdminController {
             infoLabel.setText("Por favor preencha um dos campos");
             infoLabel.setTextFill(Color.RED);
         }else{
+            eventToSend.setEvent_name(eventName);
+            eventToSend.setEvent_start_time(eventStartHour);
+            eventToSend.setEvent_end_time(eventEndHour);
+            eventToSend.setEvent_date(null);
+            eventToSend.setType(LIST_CREATED_EVENTS);
+            eventToSend.setAttend_code(-1);
+            eventToSend.setEvent_location(null);
+            if(!client.send(eventToSend)){
+                infoLabel.setText("Aconteceu algo de errado");
+                infoLabel.setTextFill(Color.RED);
+            }
             // search event
         }
     }
@@ -169,6 +259,16 @@ public class AdminController {
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         }else{
+            eventToSend.setEvent_name(eventName);
+            eventToSend.setEvent_start_time(eventStartHour);
+            eventToSend.setEvent_end_time(eventEndHour);
+            eventToSend.setType(LIST_REGISTERED_ATTENDANCE);
+            eventToSend.setEvent_location(null);
+            eventToSend.setAttend_code(-1);
+            if(!client.send(eventToSend)){
+                infoLabel.setText("Aconteceu algo de errado");
+                infoLabel.setTextFill(Color.RED);
+            }
             // search attendence
         }
     }

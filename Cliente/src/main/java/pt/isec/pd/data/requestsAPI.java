@@ -7,6 +7,8 @@ import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.net.*;
 
+import static pt.isec.pd.data.InfoStatus.types_status.*;
+
 public class requestsAPI{
 
     private static String ServerAddr;
@@ -85,7 +87,7 @@ public class requestsAPI{
     }
 
     // <Event Sender>
-    public boolean send(Event.type_event EVT, int code) throws IOException {
+    public boolean send(Event.type_event EVT, int code) {
 
         if (socket == null) {
             System.err.println("[CLIENT] Not connected!");
@@ -110,6 +112,22 @@ public class requestsAPI{
         return true;
 
     }
+    public boolean send(Event event){
+        if (socket == null) {
+            System.err.println("[CLIENT] Not connected!");
+            return false;
+        }
+        try {
+            objectOutputStream.writeObject(event);
+            objectOutputStream.flush();
+            System.out.println("Sent Event object to the server.");
+        } catch (IOException e) {
+            pcs.firePropertyChange("SERVER_CLOSE",null,null);
+            System.err.println("Error sending Event object: " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
 
     public void receive(ObjectInputStream receive) {
 
@@ -123,32 +141,50 @@ public class requestsAPI{
 
                     switch (infoStatus.getStatus()){
                         case LOGIN_MADE_USER -> {
-                            pcs.firePropertyChange("LOGIN_MADE_USER",null,null);
+                            pcs.firePropertyChange(LOGIN_MADE_USER.toString(),null,null);
                             System.out.println("[SERVER] Login Made (normal client)!");
                         }
                         case LOGIN_MADE_ADMIN -> {
-                            pcs.firePropertyChange("LOGIN_MADE_ADMIN",null,null);
+                            pcs.firePropertyChange(LOGIN_MADE_ADMIN.toString(),null,null);
                             System.out.println("[SERVER] Login Made (admin client)!");
                         }
                         case LOGIN_FAIL -> {
+                            pcs.firePropertyChange(LOGIN_FAIL.toString(),null,null);
                             System.out.println("[SERVER] Login Fail!");
                         }
                         case REGISTER_MADE -> {
+                            pcs.firePropertyChange(REGISTER_MADE.toString(),null,null);
                             System.out.println("[SERVER] Register Made!");
                         }
                         case REGISTER_FAIL -> {
+                            pcs.firePropertyChange(REGISTER_FAIL.toString(),null,null);
                             System.out.println("[SERVER] Register Fail!");
                         }
                         case CHANGES_MADE -> {
+                            pcs.firePropertyChange(CHANGES_MADE.toString(),null,null);
                             System.out.println("[SERVER] Changes Made!");
                         }
                         case CHAGES_FAIL -> {
+                            pcs.firePropertyChange(CHAGES_FAIL.toString(),null,null);
                             System.out.println("[SERVER] Changes Fail!");
                         }
                         case CODE_SEND_MADE -> {
-                            pcs.firePropertyChange("CODE_SEND_MADE",null,null);
+                            pcs.firePropertyChange(CODE_SEND_MADE.toString(),null,null);
                             System.out.println("[SERVER] Code SEND!");
                         }
+                        case EDIT_EVENT_MADE ->{
+                            pcs.firePropertyChange(EDIT_EVENT_MADE.toString(),null,null);
+                            System.out.println("[SERVER] Event edited");
+                        }
+                        case CREATE_EVENT_MADE -> {
+                            pcs.firePropertyChange(CREATE_EVENT_MADE.toString(),null,null);
+                            System.out.println("[SERVER] Event Created");
+                        }
+                        case DELETE_EVENT_MADE -> {
+                            pcs.firePropertyChange(DELETE_EVENT_MADE.toString(),null,null);
+                            System.out.println("[SERVER] Event Deleted");
+                        }
+                        default -> System.out.println("Implementa no requestApi comunicacao assincrona");
                     }
                 }
 
@@ -183,5 +219,8 @@ public class requestsAPI{
     }
     public void addPropertyChangeListener(String property,PropertyChangeListener listener){
         pcs.addPropertyChangeListener(property,listener);
+    }
+    public void addPropertyChangeListener(PropertyChangeListener listener){
+        pcs.addPropertyChangeListener(listener);
     }
 }

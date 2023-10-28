@@ -33,7 +33,8 @@ public class InfoStatus implements Serializable {
         GET_HISTORY_FAIL,
         LIST_REGISTERED_ATTENDANCE,
         LIST_REGISTERED_ATTENDANCE_FAIL,
-        MSG_STACK
+        MSG_STACK;
+
     }
 
     public InfoStatus(types_status status) {

@@ -17,6 +17,7 @@ import pt.isec.pd.attendence_registration_system.ClientApplication;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
+import static pt.isec.pd.data.InfoStatus.types_status.*;
 
 public class NormalClientController {
 
@@ -39,7 +40,7 @@ public class NormalClientController {
     @FXML
     private Label infoLabel;
 
-    public NormalClientController(){
+    public void initialize(){
         requestsAPI.getInstance().addPropertyChangeListener("SERVER_CLOSE",evt->{
             Platform.runLater(new Runnable() {
                 @Override
@@ -51,6 +52,31 @@ public class NormalClientController {
             });
 
         });
+        requestsAPI.getInstance().addPropertyChangeListener(CODE_SEND_MADE.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (infoLabelCode != null) {
+                        infoLabelCode.setText("Código submetido");
+                        infoLabelCode.setTextFill(Color.GREEN);
+                    }
+                }
+            });
+
+        });
+        requestsAPI.getInstance().addPropertyChangeListener(CHANGES_MADE.toString(),evt -> {
+            Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(infoLabel!=null) {
+                                infoLabel.setText("Operação concluída com sucesso.");
+                                infoLabel.setTextFill(Color.GREEN);
+                            }
+                        }
+                    }
+            );
+        });
+
     }
 
     @FXML
@@ -60,7 +86,7 @@ public class NormalClientController {
 
     @FXML
     public void receiveCSVAction() {
-        System.out.printf("receber csv");
+        System.out.println("receber csv");
     }
 
     @FXML
@@ -76,17 +102,9 @@ public class NormalClientController {
     @FXML
     public void sendCode() throws IOException {
         String code = codeField.getText();
-        if(client.send(Event.type_event.CODE_EVENT, Integer.parseInt(code))){
-            requestsAPI.getInstance().addPropertyChangeListener("CODE_SEND_MADE",evt->{
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        infoLabelCode.setText("Código submetido");
-                        infoLabelCode.setTextFill(Color.GREEN);
-                    }
-                });
-
-            });
+        if(!client.send(Event.type_event.CODE_EVENT, Integer.parseInt(code))){
+            infoLabel.setText("Campos obrigatórios em branco!");
+            infoLabel.setTextFill(Color.RED);
         }
     }
 
@@ -125,10 +143,7 @@ public class NormalClientController {
             return;
         }
 
-        if(client.send(User.types_msg.CHANGES, usernameField.getText(), passwordField.getText())){
-            infoLabel.setText("Operação concluída com sucesso.");
-            infoLabel.setTextFill(Color.GREEN);
-        }else{
+        if(!client.send(User.types_msg.CHANGES, usernameField.getText(), passwordField.getText())){
             infoLabel.setText("Erro ao realizar a operação. Por favor, verifique os dados.");
             infoLabel.setTextFill(Color.RED);
         }
