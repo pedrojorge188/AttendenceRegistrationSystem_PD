@@ -22,6 +22,6 @@
         <Button text="Enviar código" onAction="#sendCode" fx:id="sendBtn"/>
         <Button text="Voltar" onAction="#retButton" fx:id="backBtn"/>
         <stylesheets>
-                <URL value="@./css/send-code-view.css" />
+                <URL value="@css/send-code-view.css" />
         </stylesheets>
 </VBox>
