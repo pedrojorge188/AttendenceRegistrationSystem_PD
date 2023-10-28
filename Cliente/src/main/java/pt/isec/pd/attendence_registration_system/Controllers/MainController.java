@@ -82,6 +82,7 @@ public class MainController {
 
             });
 
+
             requestsAPI.getInstance().addPropertyChangeListener("LOGIN_MADE_ADMIN",evt->{
                 Platform.runLater(new Runnable() {
                     @Override
@@ -91,6 +92,7 @@ public class MainController {
                 });
 
             });
+
         }else{
             errorLabelReg.setText("Ocorreu um erro!");
         }

@@ -21,7 +21,15 @@ public class UserManager {
             case LOGIN -> {
 
                 try{
-                    InfoStatus response = new InfoStatus(InfoStatus.types_status.LOGIN_MADE_ADMIN);
+                    InfoStatus response;
+
+                    //para debug (máis tarde é necessario fazer com a base de dados)
+                    if(user.getUsername_email().equals("admin@admin")){
+                        response = new InfoStatus(InfoStatus.types_status.LOGIN_MADE_ADMIN);
+                    }else{
+                        response = new InfoStatus(InfoStatus.types_status.LOGIN_MADE_USER);
+                    }
+
                     objectOutputStream.writeObject(response);
                     objectOutputStream.flush();
                     user1 = user;

@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import pt.isec.pd.data.requestsAPI;
 import pt.isec.pd.threads.ServerHandler;
 
@@ -17,6 +18,7 @@ public class ClientApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 750, 750);
         stage.setTitle("Attendance Registration System");
         stage.setScene(scene);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.setResizable(false);
         stage.show();
     }
