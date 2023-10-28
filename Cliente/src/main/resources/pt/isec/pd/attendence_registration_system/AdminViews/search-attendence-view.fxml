@@ -23,8 +23,8 @@
     <Label text="Hora de Fim"/>
     <TextField fx:id="eventEndHour" promptText="HH:mm"  styleClass="textFields"/>
 
-
     <Button text="Procurar" styleClass="buttons" id="btnConfirm" onAction="#searchAttendence"/>
+    <Button text="Obter Ficheiro CSV" styleClass="buttons" id="btnConfirm" onAction="#receiveCSVEvent"/>
     <Button text="Voltar" onAction="#retButton" styleClass="buttons" fx:id="backBtn"/>
     <stylesheets>
         <URL value="@css/admin-views.css" />

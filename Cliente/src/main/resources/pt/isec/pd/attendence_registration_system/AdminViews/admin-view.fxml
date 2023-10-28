@@ -37,8 +37,7 @@
                 <MenuItem text="Eliminar presenças" onAction="#deleteAttendenceAction"/>
                 <MenuItem text="Inserir presenças" onAction="#insertAttendenceAction"/>
             </Menu>
-            <Menu text="Outras Opções">
-                <MenuItem text="Receber Ficheiro CSV" onAction="#receiveCsvAdminAction" />
+            <Menu text="Opções">
                 <MenuItem text="Sair" onAction="#accountLogout"/>
             </Menu>
         </MenuBar>

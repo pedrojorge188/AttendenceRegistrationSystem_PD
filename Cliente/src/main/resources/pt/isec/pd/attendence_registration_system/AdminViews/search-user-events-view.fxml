@@ -18,6 +18,7 @@
     <TextField fx:id="userEmail" promptText="Email do utilizador" styleClass="textFields"/>
 
     <Button text="Procurar" onAction="#showUserEvents" id="btnConfirm" styleClass="buttons"/>
+    <Button text="Obter Ficheiro CSV" styleClass="buttons" id="btnConfirm" onAction="#receiveCsvUserEvent"/>
     <Button text="Voltar" onAction="#retButton" styleClass="buttons" fx:id="backBtn"/>
 
     <stylesheets>

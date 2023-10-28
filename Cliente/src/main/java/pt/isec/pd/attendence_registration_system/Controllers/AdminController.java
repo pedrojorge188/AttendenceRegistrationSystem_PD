@@ -38,10 +38,6 @@ public class AdminController {
     private TextField codeTime;
     @FXML
     private Label infoLabel;
-    @FXML
-    private CheckBox checkboxCSV1;
-    @FXML
-    private CheckBox checkboxCSV2;
 
     public void retButton(ActionEvent actionEvent) {
         try {
@@ -102,25 +98,11 @@ public class AdminController {
     public void showUserEvents(ActionEvent actionEvent) {
         String userEmail = this.userEmail.getText();
 
-        if(userEmail.isEmpty()){
+        if (userEmail.isEmpty()) {
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
-        }else{
+        } else {
             // show all events of a specific user
-        }
-    }
-
-    // receive csv file with 2 options
-    public void receiveCSV(ActionEvent actionEvent) {
-        if(checkboxCSV1.isSelected()){
-            // receive csv file with all events
-        }else if(checkboxCSV2.isSelected()) {
-            // receive csv file with all attendence
-        }else if(checkboxCSV1.isSelected() && checkboxCSV2.isSelected()) {
-            // receive csv file with all events and attendence
-        }else{
-            infoLabel.setText("Por favor selecione pelo menos uma opção");
-            infoLabel.setTextFill(Color.RED);
         }
     }
 
@@ -189,5 +171,13 @@ public class AdminController {
         }else{
             // search attendence
         }
+    }
+
+    // csv file with all attendees of the specific event
+    public void receiveCSVEvent(ActionEvent actionEvent) {
+    }
+
+    // csv file with all attendance at events for a specific user
+    public void receiveCsvUserEvent(ActionEvent actionEvent) {
     }
 }
