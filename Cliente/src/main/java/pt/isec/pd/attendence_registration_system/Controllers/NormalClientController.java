@@ -65,12 +65,12 @@ public class NormalClientController {
 
     @FXML
     public void submitCodeAction() throws IOException {
-        loadView("send-code-view.fxml");
+        loadView("ClientViews/send-code-view.fxml");
     }
 
     @FXML
     public void accountAction() {
-        loadView("change-acc-view.fxml");
+        loadView("ClientViews/change-acc-view.fxml");
     }
 
     @FXML
@@ -87,7 +87,6 @@ public class NormalClientController {
                 });
 
             });
-
         }
     }
 
@@ -136,7 +135,7 @@ public class NormalClientController {
     }
 
     public void retButton(ActionEvent actionEvent) throws IOException {
-        BorderPane pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource("normal-client-view.fxml")));
+        BorderPane pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource("ClientViews/normal-client-view.fxml")));
         pane.getChildren().clear();
         box.getChildren().clear();
         box.getChildren().add(pane);

@@ -127,6 +127,7 @@ public class requestsAPI{
                             System.out.println("[SERVER] Login Made (normal client)!");
                         }
                         case LOGIN_MADE_ADMIN -> {
+                            pcs.firePropertyChange("LOGIN_MADE_ADMIN",null,null);
                             System.out.println("[SERVER] Login Made (admin client)!");
                         }
                         case LOGIN_FAIL -> {

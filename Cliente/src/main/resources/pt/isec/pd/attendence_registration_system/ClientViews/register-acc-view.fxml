@@ -44,6 +44,6 @@
     <Button text="Criar conta" onAction="#registerAction" fx:id="regBtn"/>
     <Button text="Voltar" onAction="#retButton" fx:id="backBtn"/>
     <stylesheets>
-        <URL value="@./css/register-acc-view.css" />
+        <URL value="@css/register-acc-view.css" />
     </stylesheets>
 </VBox>

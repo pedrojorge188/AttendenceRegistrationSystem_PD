@@ -25,7 +25,6 @@
     <top>
         <MenuBar id="menuBar" >
             <Menu text="Opções">
-                <MenuItem text="Mudar Dados" onAction="#accountAction"/>
                 <MenuItem  text="Consulta das Presenças" onAction="#showAttendenceAction" />
                 <MenuItem  text="Receber Ficheiro CSV" onAction="#receiveCSVAction" />
                 <MenuItem  text="Submeter Código" onAction="#submitCodeAction" />
@@ -45,6 +44,6 @@
         </VBox>
     </center>
     <stylesheets>
-        <URL value="@./css/normal-client-view.css" />
+        <URL value="@css/normal-client-view.css" />
     </stylesheets>
 </BorderPane>

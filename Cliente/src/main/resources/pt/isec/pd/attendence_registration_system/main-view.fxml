@@ -30,6 +30,6 @@
   <Button text="Authenticate" onAction="#authAction" fx:id="authBtn"/>
   <Button text="Create New Account" onAction="#createNewAccount" id="createAccBtn" />
   <stylesheets>
-    <URL value="@./css/main-view.css" />
+    <URL value="@ClientViews/css/main-view.css" />
   </stylesheets>
 </VBox>

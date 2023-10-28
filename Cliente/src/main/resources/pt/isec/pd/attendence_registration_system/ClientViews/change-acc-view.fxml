@@ -27,6 +27,6 @@
     <Button text="Alterar" onAction="#confirmChangeDataAction" styleClass="buttons" id="btnAlterar"/>
     <Button text="Voltar" onAction="#retButton" styleClass="buttons" fx:id="backBtn"/>
     <stylesheets>
-        <URL value="@./css/change-acc-view.css" />
+        <URL value="@css/change-acc-view.css" />
     </stylesheets>
 </VBox>

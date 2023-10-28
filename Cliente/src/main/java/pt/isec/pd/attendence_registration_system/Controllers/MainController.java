@@ -76,7 +76,17 @@ public class MainController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        loadView("normal-client-view.fxml");
+                        loadView("ClientViews/normal-client-view.fxml");
+                    }
+                });
+
+            });
+
+            requestsAPI.getInstance().addPropertyChangeListener("LOGIN_MADE_ADMIN",evt->{
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadView("AdminViews/admin-view.fxml");
                     }
                 });
 
@@ -109,7 +119,7 @@ public class MainController {
         }
 
         if(client.send(User.types_msg.REGISTER,username,password)){
-            loadView("normal-client-view.fxml");
+            loadView("ClientViews/normal-client-view.fxml");
         }else{
             errorLabelReg.setText("Dados introduzidos inválidos");
         }
@@ -127,7 +137,7 @@ public class MainController {
 
     @FXML
     protected void createNewAccount() throws IOException {
-        VBox pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource("register-acc-view.fxml")));
+        VBox pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource("ClientViews/register-acc-view.fxml")));
         box.getChildren().clear();
         box.getChildren().add(pane);
     }

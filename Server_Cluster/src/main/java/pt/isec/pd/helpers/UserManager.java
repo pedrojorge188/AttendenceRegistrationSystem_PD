@@ -21,7 +21,7 @@ public class UserManager {
             case LOGIN -> {
 
                 try{
-                    InfoStatus response = new InfoStatus(InfoStatus.types_status.LOGIN_MADE_USER);
+                    InfoStatus response = new InfoStatus(InfoStatus.types_status.LOGIN_MADE_ADMIN);
                     objectOutputStream.writeObject(response);
                     objectOutputStream.flush();
                     user1 = user;
