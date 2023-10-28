@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.net.URL?>
+<?import javafx.collections.FXCollections?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.isec.pd.attendence_registration_system.Controllers.AdminController" fx:id="box">
+
+    <Label fx:id="infoLabel"/>
+    <Label text="Escolha o tipo de ficheiro:" id="title"/>
+
+    <CheckBox fx:id="checkboxCSV1" text="Consultar por Utilizador" styleClass="label" />
+    <CheckBox fx:id="checkboxCSV2" text="Consultar por Evento" styleClass="label"/>
+
+    <Button text="Confirmar" onAction="#receiveCSV" styleClass="buttons" id="btnConfirm"/>
+    <Button text="Voltar" onAction="#retButton" styleClass="buttons" fx:id="backBtn"/>
+
+    <stylesheets>
+        <URL value="@css/admin-views.css" />
+    </stylesheets>
+</VBox>
