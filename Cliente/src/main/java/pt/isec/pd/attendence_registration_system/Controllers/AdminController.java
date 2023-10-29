@@ -133,6 +133,7 @@ public class AdminController {
         String eventLocal = this.eventLocal.getText();
         String eventStartHour = this.eventStartHour.getText();
         String eventEndHour = this.eventEndHour.getText();
+
         if(eventName.isEmpty() || eventLocal.isEmpty() || eventStartHour.isEmpty() || eventEndHour.isEmpty()){
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
@@ -165,6 +166,7 @@ public class AdminController {
             eventToSend.setEvent_name(eventName);
             eventToSend.setEvent_start_time(null);
             eventToSend.setEvent_end_time(null);
+
             if(!client.send(eventToSend)){
                 infoLabel.setText("Aconteceu algo de errado");
                 infoLabel.setTextFill(Color.RED);

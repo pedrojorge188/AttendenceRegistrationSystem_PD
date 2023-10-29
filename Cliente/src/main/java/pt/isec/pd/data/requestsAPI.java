@@ -112,6 +112,7 @@ public class requestsAPI{
         return true;
 
     }
+
     public boolean send(Event event){
         if (socket == null) {
             System.err.println("[CLIENT] Not connected!");
@@ -183,6 +184,10 @@ public class requestsAPI{
                         case DELETE_EVENT_MADE -> {
                             pcs.firePropertyChange(DELETE_EVENT_MADE.toString(),null,null);
                             System.out.println("[SERVER] Event Deleted");
+                        }
+                        case LIST_REGISTERED_ATTENDANCE -> {
+                            pcs.firePropertyChange(LIST_REGISTERED_ATTENDANCE.toString(),null,null);
+                            System.out.println("[SERVER] Attendances listed");
                         }
                         default -> System.out.println("Implementa no requestApi comunicacao assincrona");
                     }
