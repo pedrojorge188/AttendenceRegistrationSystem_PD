@@ -14,6 +14,7 @@
 
 <?import javafx.scene.control.Label?>
 <?import java.net.URL?>
+<?import javafx.scene.control.PasswordField?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="pt.isec.pd.attendence_registration_system.Controllers.MainController"
@@ -36,10 +37,10 @@
     <TextField fx:id="usernameRegField" promptText="Insira o seu email" styleClass="textFields" />
 
     <Label text="Password:" styleClass="labels" />
-    <TextField fx:id="passwordRegField" promptText="Digite sua senha para confirmar os dados" styleClass="textFields" />
+    <PasswordField fx:id="passwordRegField" promptText="Digite sua senha para confirmar os dados" styleClass="textFields" />
 
     <Label text="Confirm Password:" styleClass="labels"  />
-    <TextField fx:id="passwordConfirmRegField" promptText="Digite sua senha para confirmar os dados" styleClass="textFields" />
+    <PasswordField fx:id="passwordConfirmRegField" promptText="Digite sua senha para confirmar os dados" styleClass="textFields" />
 
     <Button text="Criar conta" onAction="#registerAction" fx:id="regBtn"/>
     <Button text="Voltar" onAction="#retButton" fx:id="backBtn"/>

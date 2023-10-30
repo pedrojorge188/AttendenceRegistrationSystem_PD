@@ -26,7 +26,6 @@
         <MenuBar id="menuBar" >
             <Menu text="Opções">
                 <MenuItem  text="Consulta das Presenças" onAction="#showAttendenceAction" />
-                <MenuItem  text="Receber Ficheiro CSV" onAction="#receiveCSVAction" />
                 <MenuItem  text="Submeter Código" onAction="#submitCodeAction" />
             </Menu>
             <Menu text="Conta">

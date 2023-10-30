@@ -12,6 +12,15 @@ public class Event implements Serializable {
     private String event_date;
     private String event_start_time;
     private String event_end_time;
+    private String user_email;
+
+    public String getUser_email() {
+        return user_email;
+    }
+
+    public void setUser_email(String user_email) {
+        this.user_email = user_email;
+    }
 
     public String getEvent_name() {
         return event_name;
@@ -60,7 +69,10 @@ public class Event implements Serializable {
         CREATE_EVENT,
         EDIT_EVENT,
         DELETE_EVENT,
+        DELETE_ATTENDANCE,
+        INSERT_ATTENDANCE,
         LIST_CREATED_EVENTS,
+        LIST_CREATED_EVENTS_BY_USER,
         GENERATE_CODE,
         LIST_REGISTERED_ATTENDANCE
     }

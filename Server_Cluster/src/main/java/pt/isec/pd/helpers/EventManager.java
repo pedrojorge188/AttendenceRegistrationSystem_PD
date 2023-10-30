@@ -67,6 +67,13 @@ public class EventManager {
                 objectOutputStream.flush();
                 System.out.println("[CLIENT] LIST OF EVENTS SENT");
             }
+            case LIST_CREATED_EVENTS_BY_USER -> {
+                InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_CREATED_EVENTS);
+                response.setMsg_log(event.getType().toString() + "by user:" + event.getUser_email());
+                objectOutputStream.writeObject(response);
+                objectOutputStream.flush();
+                System.out.println("[CLIENT] LIST OF EVENTS OF USER "+ event.getUser_email()+"sent");
+            }
             case GET_ATTENDANCE_HISTORY -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.GET_HISTORY);
                 response.setMsg_log(event.getType().toString());
@@ -80,6 +87,20 @@ public class EventManager {
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
                 System.out.println("[CLIENT] LIST OF REGISTERD ATTENDENCE SENT");
+            }
+            case INSERT_ATTENDANCE -> {
+                InfoStatus response = new InfoStatus(InfoStatus.types_status.INSERT_ATTENDANCE_MADE);
+                response.setMsg_log(event.getType().toString());
+                objectOutputStream.writeObject(response);
+                objectOutputStream.flush();
+                System.out.println("[CLIENT] CLIENT INSERTED TO ATTENDANCE");
+            }
+            case DELETE_ATTENDANCE -> {
+                InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_ATTENDANCE_MADE);
+                response.setMsg_log(event.getType().toString());
+                objectOutputStream.writeObject(response);
+                objectOutputStream.flush();
+                System.out.println("[CLIENT] CLIENT DELETED FROM ATTENDANCE");
             }
         }
 

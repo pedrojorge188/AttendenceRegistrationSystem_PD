@@ -48,6 +48,8 @@ public class AdminController {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
+                    infoLabel.setText("Evento editado com sucesso");
+                    infoLabel.setTextFill(Color.GREEN);
                     System.out.println("Evento editado com sucesso");
                 }
             });
@@ -56,7 +58,8 @@ public class AdminController {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println("Evento criado com sucesso");
+                    infoLabel.setText("Evento criado com sucesso");
+                    infoLabel.setTextFill(Color.GREEN);
                 }
             });
         });
@@ -64,7 +67,8 @@ public class AdminController {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println("Evento eleminado com sucesso");
+                    infoLabel.setText("Evento eliminado com sucesso");
+                    infoLabel.setTextFill(Color.GREEN);
                 }
             });
         });
@@ -72,7 +76,8 @@ public class AdminController {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println("Listagem de presencas com sucesso");
+                    infoLabel.setText("Listagem de presencas com sucesso");
+                    infoLabel.setTextFill(Color.GREEN);
                 }
             });
         });
@@ -81,10 +86,52 @@ public class AdminController {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println("Listagem de eventos com filtros feita com sucesso");
+                    infoLabel.setText("Listagem de presencas com sucesso");
+                    infoLabel.setTextFill(Color.GREEN);
                 }
             });
         });
+
+        requestsAPI.getInstance().addPropertyChangeListener(GENERATE_CODE_MADE.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Código gerado com sucesso");
+                    infoLabel.setTextFill(Color.GREEN);
+                }
+            });
+        });
+
+        requestsAPI.getInstance().addPropertyChangeListener(LIST_REGISTERED_ATTENDANCE.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Presenças Listadas com sucesso");
+                    infoLabel.setTextFill(Color.GREEN);
+                }
+            });
+        });
+
+        requestsAPI.getInstance().addPropertyChangeListener(INSERT_ATTENDANCE_MADE.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Presença inserida com sucesso");
+                    infoLabel.setTextFill(Color.GREEN);
+                }
+            });
+        });
+
+        requestsAPI.getInstance().addPropertyChangeListener(DELETE_ATTENDANCE_MADE.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Presença eliminada com sucesso");
+                    infoLabel.setTextFill(Color.GREEN);
+                }
+            });
+        });
+
         eventToSend = new Event(null,-1);
     }
 
@@ -118,6 +165,7 @@ public class AdminController {
             eventToSend.setEvent_end_time(eventEndHour);
             eventToSend.setEvent_location(eventLocal);
             eventToSend.setAttend_code(-1);
+            eventToSend.setUser_email(null);
             if(!client.send(eventToSend)){
                 infoLabel.setText("Aconteceu algo de errado");
                 infoLabel.setTextFill(Color.RED);
@@ -145,6 +193,7 @@ public class AdminController {
             eventToSend.setEvent_name(eventName);
             eventToSend.setEvent_start_time(eventStartHour);
             eventToSend.setEvent_end_time(eventEndHour);
+            eventToSend.setUser_email(null);
             if(!client.send(eventToSend)){
                 infoLabel.setText("Aconteceu algo de errado");
                 infoLabel.setTextFill(Color.RED);
@@ -166,7 +215,7 @@ public class AdminController {
             eventToSend.setEvent_name(eventName);
             eventToSend.setEvent_start_time(null);
             eventToSend.setEvent_end_time(null);
-
+            eventToSend.setUser_email(null);
             if(!client.send(eventToSend)){
                 infoLabel.setText("Aconteceu algo de errado");
                 infoLabel.setTextFill(Color.RED);
@@ -182,8 +231,18 @@ public class AdminController {
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         } else {
-
-            // show all events of a specific user
+            eventToSend.setAttend_code(-1);
+            eventToSend.setType(LIST_CREATED_EVENTS_BY_USER);
+            eventToSend.setEvent_date(null);
+            eventToSend.setEvent_location(null);
+            eventToSend.setEvent_name(null);
+            eventToSend.setEvent_start_time(null);
+            eventToSend.setEvent_end_time(null);
+            eventToSend.setUser_email(userEmail);
+            if(!client.send(eventToSend)){
+                infoLabel.setText("Aconteceu algo de errado");
+                infoLabel.setTextFill(Color.RED);
+            }
         }
     }
 
@@ -196,7 +255,18 @@ public class AdminController {
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         }else{
-            // generate event code
+            eventToSend.setAttend_code(-1);
+            eventToSend.setType(GENERATE_CODE);
+            eventToSend.setEvent_date(null);
+            eventToSend.setEvent_location(null);
+            eventToSend.setEvent_name(eventName);
+            eventToSend.setEvent_start_time(null);
+            eventToSend.setEvent_end_time(codeTime);
+            eventToSend.setUser_email(null);
+            if(!client.send(eventToSend)){
+                infoLabel.setText("Aconteceu algo de errado");
+                infoLabel.setTextFill(Color.RED);
+            }
         }
     }
 
@@ -209,7 +279,18 @@ public class AdminController {
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         }else{
-            // insert attendence in a event
+            eventToSend.setAttend_code(-1);
+            eventToSend.setType(INSERT_ATTENDANCE);
+            eventToSend.setEvent_date(null);
+            eventToSend.setUser_email(userEmail);
+            eventToSend.setEvent_location(null);
+            eventToSend.setEvent_name(eventName);
+            eventToSend.setEvent_start_time(null);
+            eventToSend.setEvent_end_time(null);
+            if(!client.send(eventToSend)){
+                infoLabel.setText("Aconteceu algo de errado");
+                infoLabel.setTextFill(Color.RED);
+            }
         }
     }
 
@@ -222,7 +303,18 @@ public class AdminController {
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         }else{
-            // delete attendence in a event
+            eventToSend.setAttend_code(-1);
+            eventToSend.setType(DELETE_ATTENDANCE);
+            eventToSend.setEvent_date(null);
+            eventToSend.setUser_email(userEmail);
+            eventToSend.setEvent_location(null);
+            eventToSend.setEvent_name(eventName);
+            eventToSend.setEvent_start_time(null);
+            eventToSend.setEvent_end_time(null);
+            if(!client.send(eventToSend)){
+                infoLabel.setText("Aconteceu algo de errado");
+                infoLabel.setTextFill(Color.RED);
+            }
         }
     }
 
@@ -247,7 +339,7 @@ public class AdminController {
                 infoLabel.setText("Aconteceu algo de errado");
                 infoLabel.setTextFill(Color.RED);
             }
-            // search event
+
         }
     }
 
@@ -267,11 +359,10 @@ public class AdminController {
             eventToSend.setType(LIST_REGISTERED_ATTENDANCE);
             eventToSend.setEvent_location(null);
             eventToSend.setAttend_code(-1);
-            if(!client.send(eventToSend)){
+            if(!client.send(eventToSend)) {
                 infoLabel.setText("Aconteceu algo de errado");
                 infoLabel.setTextFill(Color.RED);
             }
-            // search attendence
         }
     }
 
