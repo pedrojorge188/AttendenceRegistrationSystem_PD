@@ -3,6 +3,7 @@ package pt.isec.pd.Threads;
 import pt.isec.pd.data.Event;
 import pt.isec.pd.data.InfoStatus;
 import pt.isec.pd.data.User;
+import pt.isec.pd.helpers.DatabaseManager;
 import pt.isec.pd.helpers.EventManager;
 import pt.isec.pd.helpers.UserManager;
 
@@ -11,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.TimeoutException;
 
 public class ClientHandler extends Thread {
 
@@ -22,6 +24,7 @@ public class ClientHandler extends Thread {
 
     public ClientHandler(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
+        this.clientSocket.setSoTimeout(10000);
         isLogged = false;
         objectInputStream = new  ObjectInputStream(clientSocket.getInputStream());
         objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -41,18 +44,19 @@ public class ClientHandler extends Thread {
             System.out.println("[Client " + this.getName() + "-] Connected (ip: " + clientSocket.getInetAddress() + " | port: " + clientSocket.getPort() + ")");
 
             while (clientSocket.isConnected()) {
-                Object receivedObject = objectInputStream.readObject();
 
+                Object receivedObject = objectInputStream.readObject();
                 if (receivedObject instanceof User receivedUser) {
 
+                    this.user = receivedUser;
                     UserManager.manage(receivedUser,clientSocket,objectInputStream,objectOutputStream,this.user);
-
+                    this.clientSocket.setSoTimeout(0);
                 }else if(receivedObject instanceof Event event){
 
                     EventManager.manage(event,clientSocket,objectInputStream,objectOutputStream,this.user);
                 }
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e ) {
 
             try {
                 clientSocket.close();
