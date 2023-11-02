@@ -41,8 +41,28 @@ public class DatabaseManager {
                 System.err.println("[ERROR - DATABASE]" );e.printStackTrace();
             }
         }
-        
 
+
+    }
+
+    public String userExists(String username, String password) {
+        try {
+
+            String sql = "SELECT role FROM users WHERE username_email = ? and password = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, username);
+            statement.setString(2, password);
+
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                return result.getString("role");
+            }
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database Manager -> "+ e.getMessage());
+        }
+
+        return "ANY";
     }
 
     public String getDbAddr() {

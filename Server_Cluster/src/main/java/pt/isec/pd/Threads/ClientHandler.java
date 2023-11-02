@@ -24,7 +24,7 @@ public class ClientHandler extends Thread {
 
     public ClientHandler(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
-        this.clientSocket.setSoTimeout(10000);
+        this.clientSocket.setSoTimeout(0); // depois tem de ser 10000
         isLogged = false;
         objectInputStream = new  ObjectInputStream(clientSocket.getInputStream());
         objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
