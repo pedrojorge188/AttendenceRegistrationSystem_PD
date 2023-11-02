@@ -13,8 +13,6 @@ public class EventManager {
 
     public static void manage(Event event, Socket clientSocket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, User user) throws IOException {
 
-        System.out.println("[Client] SEND A EVENT NOTIFICATION! (" +event.getType()+ ")");
-
         switch (event.getType()) {
 
             case CODE_EVENT -> {
@@ -22,7 +20,7 @@ public class EventManager {
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
-                System.out.println("[CLIENT] CODE RECEIVED -> " + event.getAttend_code());
+                System.out.println("[CLIENT - "+event.getUser_email()+"] CODE RECEIVED -> code:"+event.getAttend_code());
             }
             case EDIT_EVENT -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.EDIT_EVENT_MADE);

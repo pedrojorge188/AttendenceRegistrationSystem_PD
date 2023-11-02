@@ -60,6 +60,7 @@ public class MainController {
                 @Override
                 public void run() {
                     loadView("ClientViews/normal-client-view.fxml");
+                    System.out.println("[SERVER] Welcome - "+client.getInstance().getMyUser());
                 }
             });
 
@@ -71,6 +72,16 @@ public class MainController {
                 @Override
                 public void run() {
                     loadView("AdminViews/admin-view.fxml");
+                }
+            });
+
+        });
+
+        requestsAPI.getInstance().addPropertyChangeListener(REGISTER_MADE.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    loadView("ClientViews/normal-client-view.fxml");
                 }
             });
 
@@ -89,8 +100,7 @@ public class MainController {
             return;
         }
 
-        if(client.send(User.types_msg.LOGIN, username,password)){
-
+        if(client.send(User.types_msg.LOGIN,"",username,password)){
 
         }else{
             errorLabelReg.setText("Ocorreu um erro!");
@@ -119,8 +129,8 @@ public class MainController {
             return;
         }
 
-        if(client.send(User.types_msg.REGISTER,username,password)){
-            loadView("ClientViews/normal-client-view.fxml");
+        if(client.send(User.types_msg.REGISTER,name,username,password)){
+
         }else{
             errorLabelReg.setText("Dados introduzidos inválidos");
         }

@@ -65,6 +65,39 @@ public class DatabaseManager {
         return "ANY";
     }
 
+    public boolean userCreate(String name, int student_id, String username_email ,String password){
+
+        if(!userExists(username_email,password).equals("ANY"))
+            return false;
+
+        try {
+            String sql = "INSERT INTO users (username_email, password, role, name, student_id) VALUES (?, ?, 'normal', ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, username_email);
+            statement.setString(2, password);
+            statement.setString(3, name);
+            statement.setInt(4, student_id);
+            int rowsInserted = statement.executeUpdate();
+            if (rowsInserted > 0)
+                return true;
+            else
+               return false;
+
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database Manager -> "+ e.getMessage());
+            return false;
+        }
+
+    }
+
+    public void disconnect(){
+        try {
+            this.connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public String getDbAddr() {
         return dbAddr;
     }

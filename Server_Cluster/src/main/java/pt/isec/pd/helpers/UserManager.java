@@ -26,11 +26,12 @@ public class UserManager {
 
                     if(DatabaseManager.getInstance().userExists(user.getUsername_email(), user.getPassword()).contains("admin"))
                         response = new InfoStatus(InfoStatus.types_status.LOGIN_MADE_ADMIN);
-                    else if(DatabaseManager.getInstance().userExists(user.getUsername_email(), user.getPassword()).contains("teste"))
+                    else if(DatabaseManager.getInstance().userExists(user.getUsername_email(), user.getPassword()).contains("normal"))
                         response = new InfoStatus(InfoStatus.types_status.LOGIN_MADE_USER);
                     else
                         response = new InfoStatus(InfoStatus.types_status.LOGIN_FAIL);
 
+                    response.setMsg_log(user.getUsername_email());
                     objectOutputStream.writeObject(response);
                     objectOutputStream.flush();
                     user1 = user;
@@ -44,9 +45,17 @@ public class UserManager {
 
                 try{
 
-                    InfoStatus response = new InfoStatus(InfoStatus.types_status.REGISTER_MADE);
-                    objectOutputStream.writeObject(response);
-                    objectOutputStream.flush();
+                    if(DatabaseManager.getInstance().userCreate(user.getName(),user.getStudent_uid(),user.getUsername_email(),user.getPassword())){
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.REGISTER_MADE);
+                        response.setMsg_log(user.getUsername_email());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }else{
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.REGISTER_FAIL);
+                        response.setMsg_log(user.getUsername_email());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
                     user1 = user;
 
                 }catch (Exception exception){
@@ -59,6 +68,7 @@ public class UserManager {
                 try{
 
                     InfoStatus response = new InfoStatus(InfoStatus.types_status.CHANGES_MADE);
+                    response.setMsg_log(user.getUsername_email());
                     objectOutputStream.writeObject(response);
                     objectOutputStream.flush();
                     user1 = user;

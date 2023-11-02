@@ -71,6 +71,7 @@ public class Main_Server {
                     e.printStackTrace();
                 }
             }
+            DatabaseManager.getInstance().disconnect();
         }
     }
 

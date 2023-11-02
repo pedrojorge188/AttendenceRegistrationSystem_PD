@@ -32,6 +32,9 @@ public class NormalClientController {
     public TextField codeField;
 
     @FXML
+    public Label title;
+
+    @FXML
     public Label infoLabelCode;
     @FXML
     private VBox main_box;
@@ -40,7 +43,9 @@ public class NormalClientController {
     @FXML
     private Label infoLabel;
 
+
     public void initialize(){
+
         requestsAPI.getInstance().addPropertyChangeListener("SERVER_CLOSE",evt->{
             Platform.runLater(new Runnable() {
                 @Override
@@ -143,7 +148,7 @@ public class NormalClientController {
             return;
         }
 
-        if(!client.send(User.types_msg.CHANGES, usernameField.getText(), passwordField.getText())){
+        if(!client.send(User.types_msg.CHANGES, "", usernameField.getText(), passwordField.getText())){
             infoLabel.setText("Erro ao realizar a operação. Por favor, verifique os dados.");
             infoLabel.setTextFill(Color.RED);
         }

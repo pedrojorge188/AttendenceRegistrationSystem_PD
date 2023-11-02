@@ -17,6 +17,7 @@ public class requestsAPI{
     private static ObjectOutputStream objectOutputStream;
     private static ObjectInputStream objectInputStream;
     private Socket socket;
+    private String myUser;
     private PropertyChangeSupport pcs;
     private requestsAPI() {
 
@@ -62,7 +63,7 @@ public class requestsAPI{
     }
 
     // <User Sender>
-    public boolean send(User.types_msg MSG, String username, String password) throws IOException {
+    public boolean send(User.types_msg MSG, String name, String username, String password) throws IOException {
 
         if (socket == null) {
             System.err.println("[CLIENT] Not connected!");
@@ -70,7 +71,7 @@ public class requestsAPI{
         }
 
         try {
-            User userObject = new User(MSG, username, password);
+            User userObject = new User(MSG, name, username, password);
 
             objectOutputStream.writeObject(userObject);
             objectOutputStream.flush();
@@ -96,7 +97,7 @@ public class requestsAPI{
 
         try {
             Event eventObject = new Event(EVT,code);
-
+            eventObject.setUser_email(this.getMyUser());
             objectOutputStream.writeObject(eventObject);
             objectOutputStream.flush();
             System.out.println("Sent Event object to the server.");
@@ -143,18 +144,23 @@ public class requestsAPI{
                     switch (infoStatus.getStatus()){
                         case LOGIN_MADE_USER -> {
                             pcs.firePropertyChange(LOGIN_MADE_USER.toString(),null,null);
+                            this.myUser = infoStatus.getMsg_log();
                             System.out.println("[SERVER] Login Made (normal client)!");
                         }
                         case LOGIN_MADE_ADMIN -> {
                             pcs.firePropertyChange(LOGIN_MADE_ADMIN.toString(),null,null);
+                            this.myUser = infoStatus.getMsg_log();
                             System.out.println("[SERVER] Login Made (admin client)!");
                         }
                         case LOGIN_FAIL -> {
                             pcs.firePropertyChange(LOGIN_FAIL.toString(),null,null);
+                            this.disconnect();
                             System.out.println("[SERVER] Login Fail!");
+                            System.exit(1);
                         }
                         case REGISTER_MADE -> {
                             pcs.firePropertyChange(REGISTER_MADE.toString(),null,null);
+                            this.myUser = infoStatus.getMsg_log();
                             System.out.println("[SERVER] Register Made!");
                         }
                         case REGISTER_FAIL -> {
@@ -163,6 +169,7 @@ public class requestsAPI{
                         }
                         case CHANGES_MADE -> {
                             pcs.firePropertyChange(CHANGES_MADE.toString(),null,null);
+                            this.myUser = infoStatus.getMsg_log();
                             System.out.println("[SERVER] Changes Made!");
                         }
                         case CHANGES_FAIL -> {
@@ -174,7 +181,7 @@ public class requestsAPI{
                             System.out.println("[SERVER] Code SEND!");
                         }
                         case CODE_SEND_FAIL -> {
-                            pcs.firePropertyChange(CODE_SEND_MADE.toString(),null,null);
+                            pcs.firePropertyChange(CODE_SEND_FAIL.toString(),null,null);
                             System.out.println("[SERVER] Code SEND Fail!");
                         }
                         case EDIT_EVENT_MADE ->{
@@ -281,6 +288,10 @@ public class requestsAPI{
                 System.err.println("Erro ao desconectar: " + e.getMessage());
             }
         }
+    }
+
+    public String getMyUser() {
+        return myUser;
     }
 
     public Socket getSocket() {
