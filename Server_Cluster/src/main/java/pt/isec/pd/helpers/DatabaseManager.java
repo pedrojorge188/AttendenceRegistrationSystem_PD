@@ -1,5 +1,7 @@
 package pt.isec.pd.helpers;
 
+import pt.isec.pd.Threads.HeartbeatHandler;
+
 import java.io.File;
 import java.sql.*;
 import java.net.*;
@@ -78,6 +80,7 @@ public class DatabaseManager {
             statement.setString(3, name);
             statement.setInt(4, student_id);
             int rowsInserted = statement.executeUpdate();
+            updateVersion();
             if (rowsInserted > 0)
                 return true;
             else
@@ -88,6 +91,32 @@ public class DatabaseManager {
             return false;
         }
 
+    }
+
+    public int getVersion(){
+        try{
+
+            String sql = "SELECT version_serial FROM version WHERE id = 1";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            return  statement.executeQuery().getInt(1);
+
+        }catch (SQLException e){
+            System.err.println("[ERROR] Database Manager ->" + e.getMessage());
+            return -1;
+        }
+    }
+
+    private void updateVersion(){
+        try{
+
+            String sql = "UPDATE version SET version_serial = "+(getVersion()+1)+" WHERE id = 1";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.executeUpdate();
+            HeartbeatHandler.sendHb();
+
+        }catch (SQLException e){
+            System.err.println("[ERROR] Database Manager ->" + e.getMessage());
+        }
     }
 
     public void disconnect(){
