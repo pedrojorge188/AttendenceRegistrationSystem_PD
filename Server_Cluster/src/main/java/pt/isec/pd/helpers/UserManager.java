@@ -66,12 +66,17 @@ public class UserManager {
             case CHANGES -> {
 
                 try{
-
-                    InfoStatus response = new InfoStatus(InfoStatus.types_status.CHANGES_MADE);
-                    response.setMsg_log(user.getUsername_email());
-                    objectOutputStream.writeObject(response);
-                    objectOutputStream.flush();
-                    user1 = user;
+                    if(DatabaseManager.getInstance().changeUserAccount(user.getUsername_email(),user.getPassword(),user.getName())){
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.CHANGES_MADE);
+                        response.setMsg_log(user.getUsername_email());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }else{
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.CHANGES_FAIL);
+                        response.setMsg_log(user.getUsername_email());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
 
                 }catch (Exception exception){
                     exception.printStackTrace();

@@ -24,6 +24,9 @@
     <Label text="Nova Password:" styleClass="inputTitles"/>
     <PasswordField fx:id="passwordField" promptText="Digite a nova password"  styleClass="textFields" />
 
+    <Label text="Nova Password:" styleClass="inputTitles"/>
+    <PasswordField fx:id="passwordFieldConfirm" promptText="Confirme a nova password"  styleClass="textFields" />
+
     <Button text="Alterar" onAction="#confirmChangeDataAction" styleClass="buttons" id="btnAlterar"/>
     <Button text="Voltar" onAction="#retButton" styleClass="buttons" fx:id="backBtn"/>
     <stylesheets>

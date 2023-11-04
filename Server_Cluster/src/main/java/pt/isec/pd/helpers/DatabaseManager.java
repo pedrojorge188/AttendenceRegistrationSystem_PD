@@ -93,6 +93,39 @@ public class DatabaseManager {
 
     }
 
+    public boolean changeUserAccount(String usernameOrEmail, String password, String newName) {
+        try {
+
+            String checkUserExistsSQL = "SELECT id FROM users WHERE username_email = ?";
+
+            PreparedStatement checkStatement = connection.prepareStatement(checkUserExistsSQL);
+            checkStatement.setString(1, newName);
+            ResultSet resultSet = checkStatement.executeQuery();
+
+            if (!resultSet.next())
+                return false;
+
+            String updateSQL = "UPDATE users SET username_email = ?, password = ? WHERE id = ?";
+
+            PreparedStatement updateStatement = connection.prepareStatement(updateSQL);
+            updateStatement.setString(1, usernameOrEmail);
+            updateStatement.setString(2, password);
+            updateStatement.setInt(3, resultSet.getInt("id"));
+
+            int rowsAffected = updateStatement.executeUpdate();
+
+            if (rowsAffected > 0)
+                return true;
+             else
+                return false;
+
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database Manager -> " + e.getMessage());
+            return false;
+        }
+    }
+
+
     public int getVersion(){
         try{
 

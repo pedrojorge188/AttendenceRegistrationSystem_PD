@@ -6,6 +6,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.net.*;
+import java.util.Objects;
 
 import static pt.isec.pd.data.InfoStatus.types_status.*;
 
@@ -64,6 +65,13 @@ public class requestsAPI{
 
     // <User Sender>
     public boolean send(User.types_msg MSG, String name, String username, String password) throws IOException {
+
+        if(Objects.equals(name, ""))
+            name = this.myUser;
+
+        if(Objects.equals(username, ""))
+            username = this.myUser;
+
 
         if (socket == null) {
             System.err.println("[CLIENT] Not connected!");

@@ -36,6 +36,9 @@ public class NormalClientController {
 
     @FXML
     public Label infoLabelCode;
+
+    @FXML
+    public PasswordField passwordFieldConfirm;
     @FXML
     private VBox main_box;
     @FXML
@@ -79,6 +82,18 @@ public class NormalClientController {
                             }
                         }
                     }
+            );
+        });
+        requestsAPI.getInstance().addPropertyChangeListener(CHANGES_FAIL.toString(),evt -> {
+            Platform.runLater(new Runnable() {
+                                  @Override
+                                  public void run() {
+                                      if(infoLabel!=null) {
+                                          infoLabel.setText("Operação concluída com erro.");
+                                          infoLabel.setTextFill(Color.GREEN);
+                                      }
+                                  }
+                              }
             );
         });
 
@@ -138,11 +153,12 @@ public class NormalClientController {
 
     public void confirmChangeDataAction(ActionEvent actionEvent) throws IOException {
         // verificações
-        if(usernameField.getText().isEmpty() || passwordField.getText().isEmpty()) {
-            infoLabel.setText("Campos obrigatórios em branco!");
+        if(!Objects.equals(passwordField.getText(), passwordFieldConfirm.getText())
+            || passwordField.getText().isEmpty() || passwordFieldConfirm.getText().isEmpty()) {
+            infoLabel.setText("Passwords não correspondem");
             infoLabel.setTextFill(Color.RED);
             return;
-        }else if(!usernameField.getText().matches("^[A-Za-z0-9+_.-]+@(.+)$")){
+        }else if(!usernameField.getText().isEmpty() && !usernameField.getText().matches("^[A-Za-z0-9+_.-]+@(.+)$")){
             infoLabel.setText("Email inválido!");
             infoLabel.setTextFill(Color.RED);
             return;

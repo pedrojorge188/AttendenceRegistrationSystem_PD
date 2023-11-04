@@ -37,8 +37,6 @@ public class HeartbeatHandler extends Thread {
             InetAddress group = InetAddress.getByName(multicastAddress);
             DatagramPacket packet = new DatagramPacket(serializedObject, serializedObject.length, group, multicastPort);
             multicastSocket.send(packet);
-
-            Thread.sleep(10000);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -47,7 +45,12 @@ public class HeartbeatHandler extends Thread {
     public void run() {
             while (true) {
               sendHb();
-              System.out.println("[SERVER] Heartbeat send to " + multicastAddress + ":" + multicastPort);
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                //System.out.println("[SERVER] Heartbeat send to " + multicastAddress + ":" + multicastPort);
             }
     }
 }
