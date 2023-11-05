@@ -20,36 +20,74 @@ public class EventManager {
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
-                System.out.println("[CLIENT - "+event.getUser_email()+"] CODE RECEIVED -> code:"+event.getAttend_code());
             }
             case EDIT_EVENT -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.EDIT_EVENT_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
-                System.out.println("[CLIENT] EVENT: "+event.getEvent_name()+" EDITED");
+                try {
+                    if (DatabaseManager.getInstance().changeEvent(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.EDIT_EVENT_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.EDIT_EVENT_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
             case CREATE_EVENT -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.CREATE_EVENT_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
-                System.out.println("[CLIENT] EVENT: "+event.getEvent_name()+" CREATED");
+                try {
+                    if (DatabaseManager.getInstance().creatEvent(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.CREATE_EVENT_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.CREATE_EVENT_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
             case DELETE_EVENT -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_EVENT_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
-                System.out.println("[CLIENT] EVENT: "+event.getEvent_name()+" DELETED");
-
+                try {
+                    if (DatabaseManager.getInstance().deleteEvent(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_EVENT_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_EVENT_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
             case GENERATE_CODE -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.GENERATE_CODE_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
-                System.out.println("[CLIENT] CODE FOR: "+event.getEvent_name()+" EVENT GENERATED");
+                try {
+                    if (DatabaseManager.getInstance().generateCode(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.GENERATE_CODE_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.GENERATE_CODE_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
             case REQUEST_CSV_EVENT -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.REQUEST_CSV_EVENT);

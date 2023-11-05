@@ -165,7 +165,7 @@ public class AdminController {
             eventToSend.setEvent_end_time(eventEndHour);
             eventToSend.setEvent_location(eventLocal);
             eventToSend.setAttend_code(-1);
-            eventToSend.setUser_email(null);
+            eventToSend.setUser_email(client.getMyUser());
             if(!client.send(eventToSend)){
                 infoLabel.setText("Aconteceu algo de errado");
                 infoLabel.setTextFill(Color.RED);
@@ -193,7 +193,7 @@ public class AdminController {
             eventToSend.setEvent_name(eventName);
             eventToSend.setEvent_start_time(eventStartHour);
             eventToSend.setEvent_end_time(eventEndHour);
-            eventToSend.setUser_email(null);
+            eventToSend.setUser_email(client.getMyUser());
             if(!client.send(eventToSend)){
                 infoLabel.setText("Aconteceu algo de errado");
                 infoLabel.setTextFill(Color.RED);
@@ -263,6 +263,7 @@ public class AdminController {
             eventToSend.setEvent_start_time(null);
             eventToSend.setEvent_end_time(codeTime);
             eventToSend.setUser_email(null);
+
             if(!client.send(eventToSend)){
                 infoLabel.setText("Aconteceu algo de errado");
                 infoLabel.setTextFill(Color.RED);

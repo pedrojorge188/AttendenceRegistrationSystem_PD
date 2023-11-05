@@ -1,16 +1,17 @@
 package pt.isec.pd.helpers;
 
 import pt.isec.pd.Threads.HeartbeatHandler;
+import pt.isec.pd.data.Event;
 
 import java.io.File;
 import java.sql.*;
-import java.net.*;
-public class DatabaseManager {
 
+public class DatabaseManager{
     private String dbAddr;
     private String dbName;
     private Connection connection;
-    private DatabaseManager(){}
+    private DatabaseManager(){
+    }
 
     public void setValues(String dbAddr, String dbName){
         this.dbAddr = dbAddr; this.dbName = dbName;
@@ -158,6 +159,98 @@ public class DatabaseManager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean creatEvent(Event event){
+        try {
+            String sql = "INSERT INTO events (name, location, Start_time, end_time, date,user_email) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, event.getEvent_name());
+            statement.setString(2, event.getEvent_location());
+            statement.setString(3, event.getEvent_start_time());
+            statement.setString(4, event.getEvent_end_time());
+            statement.setString(5, event.getEvent_date());
+            statement.setString(6, event.getUser_email());
+
+            int rowsInserted = statement.executeUpdate();
+            updateVersion();
+            if (rowsInserted > 0)
+                return true;
+            else
+                return false;
+
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database Manager -> "+ e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean changeEvent(Event event) {
+        try {
+
+            String checkEventExist = "SELECT id FROM events WHERE name = ?";
+
+            PreparedStatement checkStatement = connection.prepareStatement(checkEventExist);
+            checkStatement.setString(1, event.getEvent_name());
+            ResultSet resultSet = checkStatement.executeQuery();
+
+            if (!resultSet.next())
+                return false;
+
+            String updateSQL = "UPDATE events SET name = ?, location = ? , Start_time = ?, end_time = ?, date = ? WHERE id = ?";
+
+            PreparedStatement updateStatement = connection.prepareStatement(updateSQL);
+            updateStatement.setString(1, event.getEvent_name());
+            updateStatement.setString(2, event.getEvent_location());
+            updateStatement.setString(3, event.getEvent_start_time());
+            updateStatement.setString(4, event.getEvent_end_time());
+            updateStatement.setString(5, event.getEvent_date());
+            updateStatement.setInt(6, resultSet.getInt("id"));
+
+            int rowsAffected = updateStatement.executeUpdate();
+
+            if (rowsAffected > 0)
+                return true;
+            else
+                return false;
+
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database Manager -> " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteEvent(Event event) {
+        try {
+            String checkEventExist = "SELECT id FROM events WHERE name = ?";
+            PreparedStatement checkStatement = connection.prepareStatement(checkEventExist);
+            checkStatement.setString(1, event.getEvent_name());
+
+            ResultSet resultSet = checkStatement.executeQuery();
+
+            if (resultSet.next()) {
+                int eventId = resultSet.getInt("id");
+
+                String deleteSQL = "DELETE FROM events WHERE id = ?";
+                PreparedStatement deleteStatement = connection.prepareStatement(deleteSQL);
+                deleteStatement.setInt(1, eventId);
+
+                int rowsAffected = deleteStatement.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database Manager -> " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean generateCode(Event event) {
+        return false;
     }
 
     public String getDbAddr() {

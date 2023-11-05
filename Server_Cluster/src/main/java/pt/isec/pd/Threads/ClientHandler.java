@@ -52,7 +52,6 @@ public class ClientHandler extends Thread {
                     UserManager.manage(receivedUser,clientSocket,objectInputStream,objectOutputStream,this.user);
                     this.clientSocket.setSoTimeout(0);
                 }else if(receivedObject instanceof Event event){
-
                     EventManager.manage(event,clientSocket,objectInputStream,objectOutputStream,this.user);
                 }
             }

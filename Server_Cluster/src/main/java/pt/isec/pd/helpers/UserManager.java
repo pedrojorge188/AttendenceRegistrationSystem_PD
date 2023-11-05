@@ -42,9 +42,7 @@ public class UserManager {
 
             }
             case REGISTER -> {
-
                 try{
-
                     if(DatabaseManager.getInstance().userCreate(user.getName(),user.getStudent_uid(),user.getUsername_email(),user.getPassword())){
                         InfoStatus response = new InfoStatus(InfoStatus.types_status.REGISTER_MADE);
                         response.setMsg_log(user.getUsername_email());
