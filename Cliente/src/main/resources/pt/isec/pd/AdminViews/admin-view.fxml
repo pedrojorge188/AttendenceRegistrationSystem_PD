@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.GridPane?>
+
+<?import javafx.scene.layout.BorderPane?>
+
+<?import javafx.scene.control.Label?>
+<?import java.net.URL?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="pt.isec.pd.Controllers.MainAdminController"
+            fx:id="border">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+    <top>
+        <MenuBar id="menuBar" >
+            <Menu text="Eventos">
+                <MenuItem text="Criar" onAction="#createEventAction"/>
+                <MenuItem text="Editar" onAction="#editEventsAction"/>
+                <MenuItem text="Eliminar" onAction="#deleteEventsAction"/>
+                <MenuItem text="Adicionar utilizador a evento" onAction="#deleteEventsAction"/>
+                <MenuItem text="Consultar Eventos por Utilizador" onAction="#showUserEventsAction"/>
+                <MenuItem text="Consultar Eventos Criados" onAction="#showEventsAction"/>
+            </Menu>
+            <Menu text="Presenças">
+                <MenuItem text="Consultar Presenças" onAction="#showAttendenceAdminAction" />
+                <MenuItem text="Gerar código de presenças" onAction="#generateCodeAction"/>
+                <MenuItem text="Eliminar presenças" onAction="#deleteAttendenceAction"/>
+                <MenuItem text="Inserir presenças" onAction="#insertAttendenceAction"/>
+            </Menu>
+            <Menu text="Opções">
+                <MenuItem text="Sair" onAction="#accountLogout"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <VBox  fx:id="main_box">
+            <Label text="Bem vindo!" id="title"/>
+        </VBox>
+    </center>
+    <stylesheets>
+        <URL value="@../ClientViews/css/normal-client-view.css" />
+    </stylesheets>
+</BorderPane>

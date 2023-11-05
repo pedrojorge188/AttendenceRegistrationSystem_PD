@@ -3,6 +3,7 @@ package pt.isec.pd.helpers;
 import pt.isec.pd.data.InfoStatus;
 import pt.isec.pd.data.User;
 
+import javax.xml.crypto.Data;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -23,16 +24,16 @@ public class UserManager {
                 try{
                     InfoStatus response;
 
-                    //para debug (máis tarde é necessario fazer com a base de dados)
-                    if(user.getUsername_email().equals("admin@admin")){
+                    if(DatabaseManager.getInstance().userExists(user.getUsername_email(), user.getPassword()).contains("admin"))
                         response = new InfoStatus(InfoStatus.types_status.LOGIN_MADE_ADMIN);
-                    }else{
+                    else if(DatabaseManager.getInstance().userExists(user.getUsername_email(), user.getPassword()).contains("normal"))
                         response = new InfoStatus(InfoStatus.types_status.LOGIN_MADE_USER);
-                    }
+                    else
+                        response = new InfoStatus(InfoStatus.types_status.LOGIN_FAIL);
 
+                    response.setMsg_log(user.getUsername_email());
                     objectOutputStream.writeObject(response);
                     objectOutputStream.flush();
-                    user1 = user;
 
                 }catch (Exception exception){
                     exception.printStackTrace();
@@ -40,14 +41,18 @@ public class UserManager {
 
             }
             case REGISTER -> {
-
                 try{
-
-                    InfoStatus response = new InfoStatus(InfoStatus.types_status.REGISTER_MADE);
-                    objectOutputStream.writeObject(response);
-                    objectOutputStream.flush();
-                    user1 = user;
-
+                    if(DatabaseManager.getInstance().userCreate(user.getName(),user.getStudent_uid(),user.getUsername_email(),user.getPassword())){
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.REGISTER_MADE);
+                        response.setMsg_log(user.getUsername_email());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }else{
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.REGISTER_FAIL);
+                        response.setMsg_log(user.getUsername_email());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
                 }catch (Exception exception){
                     exception.printStackTrace();
                 }
@@ -56,11 +61,17 @@ public class UserManager {
             case CHANGES -> {
 
                 try{
-
-                    InfoStatus response = new InfoStatus(InfoStatus.types_status.CHANGES_MADE);
-                    objectOutputStream.writeObject(response);
-                    objectOutputStream.flush();
-                    user1 = user;
+                    if(DatabaseManager.getInstance().changeUserAccount(user.getUsername_email(),user.getPassword(),user.getName())){
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.CHANGES_MADE);
+                        response.setMsg_log(user.getUsername_email());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }else{
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.CHANGES_FAIL);
+                        response.setMsg_log(user.getUsername_email());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
 
                 }catch (Exception exception){
                     exception.printStackTrace();

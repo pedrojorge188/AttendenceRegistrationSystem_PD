@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.PasswordField?>
+<VBox alignment="TOP_CENTER" spacing="15.0" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.isec.pd.Controllers.MainController"
+      fx:id="box">
+
+  <padding>
+    <Insets bottom="5.0" left="5.0" right="5.0" top="30.0"/>
+  </padding>
+
+  <Label text="Attendance Registration System" id="titleLable"/>
+
+  <!-- Error Label -->
+  <Label text="" fx:id="errorLabel" styleClass="labels"/>
+
+  <Label text="Username:" styleClass="labels" />
+  <TextField fx:id="usernameField" promptText="Digite seu nome de usuário" styleClass="textField" />
+
+  <Label text="Confirm Password:" styleClass="labels" />
+  <PasswordField fx:id="passwordField" promptText="Digite sua senha" styleClass="textField" />
+
+  <Button text="Authenticate" onAction="#authAction" fx:id="authBtn"/>
+  <Button text="Create New Account" onAction="#createNewAccount" id="createAccBtn" />
+  <stylesheets>
+    <URL value="@ClientViews/css/main-view.css" />
+  </stylesheets>
+</VBox>

@@ -13,8 +13,6 @@ public class EventManager {
 
     public static void manage(Event event, Socket clientSocket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, User user) throws IOException {
 
-        System.out.println("[Client] SEND A EVENT NOTIFICATION! (" +event.getType()+ ")");
-
         switch (event.getType()) {
 
             case CODE_EVENT -> {
@@ -22,56 +20,123 @@ public class EventManager {
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
-                System.out.println("[CLIENT] CODE RECEIVED -> " + event.getAttend_code());
             }
             case EDIT_EVENT -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.EDIT_EVENT_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
+                try {
+                    if (DatabaseManager.getInstance().changeEvent(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.EDIT_EVENT_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.EDIT_EVENT_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
             case CREATE_EVENT -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.CREATE_EVENT_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
+                try {
+                    if (DatabaseManager.getInstance().creatEvent(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.CREATE_EVENT_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.CREATE_EVENT_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
             case DELETE_EVENT -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_EVENT_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
-
+                try {
+                    if (DatabaseManager.getInstance().deleteEvent(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_EVENT_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_EVENT_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
             case GENERATE_CODE -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.GENERATE_CODE_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
+                try {
+                    if (DatabaseManager.getInstance().generateCode(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.GENERATE_CODE_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.GENERATE_CODE_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
             case REQUEST_CSV_EVENT -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.REQUEST_CSV_EVENT);
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] CSV FOR: "+event.getEvent_name()+" EVENT SENT");
             }
             case LIST_CREATED_EVENTS -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_CREATED_EVENTS);
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] LIST OF EVENTS SENT");
+            }
+            case LIST_CREATED_EVENTS_BY_USER -> {
+                InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_CREATED_EVENTS);
+                response.setMsg_log(event.getType().toString() + "by user:" + event.getUser_email());
+                objectOutputStream.writeObject(response);
+                objectOutputStream.flush();
+                System.out.println("[CLIENT] LIST OF EVENTS OF USER "+ event.getUser_email()+"sent");
             }
             case GET_ATTENDANCE_HISTORY -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.GET_HISTORY);
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] LIST ATTENDANCE HISTORY REQUESTED");
             }
             case LIST_REGISTERED_ATTENDANCE -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_REGISTERED_ATTENDANCE);
                 response.setMsg_log(event.getType().toString());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
+                System.out.println("[CLIENT] LIST OF REGISTERD ATTENDENCE SENT");
+            }
+            case INSERT_ATTENDANCE -> {
+                InfoStatus response = new InfoStatus(InfoStatus.types_status.INSERT_ATTENDANCE_MADE);
+                response.setMsg_log(event.getType().toString());
+                objectOutputStream.writeObject(response);
+                objectOutputStream.flush();
+                System.out.println("[CLIENT] CLIENT INSERTED TO ATTENDANCE");
+            }
+            case DELETE_ATTENDANCE -> {
+                InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_ATTENDANCE_MADE);
+                response.setMsg_log(event.getType().toString());
+                objectOutputStream.writeObject(response);
+                objectOutputStream.flush();
+                System.out.println("[CLIENT] CLIENT DELETED FROM ATTENDANCE");
             }
         }
 

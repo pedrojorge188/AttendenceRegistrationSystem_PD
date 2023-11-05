@@ -7,11 +7,24 @@ public class Event implements Serializable {
 
     static final long SerialVersionUID = 1L;
 
+    private String csv_msg;
+    private String event_identify;
     private String event_name;
     private String event_location;
     private String event_date;
     private String event_start_time;
     private String event_end_time;
+    private String user_email;
+    private int attend_code;
+    private type_event type;
+
+    public String getUser_email() {
+        return user_email;
+    }
+
+    public void setUser_email(String user_email) {
+        this.user_email = user_email;
+    }
 
     public String getEvent_name() {
         return event_name;
@@ -60,21 +73,39 @@ public class Event implements Serializable {
         CREATE_EVENT,
         EDIT_EVENT,
         DELETE_EVENT,
+        DELETE_ATTENDANCE,
+        INSERT_ATTENDANCE,
         LIST_CREATED_EVENTS,
+        LIST_CREATED_EVENTS_BY_USER,
         GENERATE_CODE,
         LIST_REGISTERED_ATTENDANCE
     }
 
-    private int attend_code;
-    private type_event type;
 
     public Event(type_event type, int attend_code) {
         this.attend_code = attend_code;
         this.type = type;
+        csv_msg = "";
     }
 
     public int getAttend_code() {
         return attend_code;
+    }
+
+    public String getEvent_identify() {
+        return event_identify;
+    }
+
+    public String getCsv_msg() {
+        return csv_msg;
+    }
+
+    public void setCsv_msg(String csv_msg) {
+        this.csv_msg = csv_msg;
+    }
+
+    public void setEvent_identify(String event_identify) {
+        this.event_identify = event_identify;
     }
 
     public type_event getType() {

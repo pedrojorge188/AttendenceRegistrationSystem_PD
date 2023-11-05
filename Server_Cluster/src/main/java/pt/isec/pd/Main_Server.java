@@ -1,14 +1,15 @@
 package pt.isec.pd;
 
-
 import pt.isec.pd.Threads.ClientHandler;
 import pt.isec.pd.Threads.HeartbeatHandler;
+import pt.isec.pd.helpers.DatabaseManager;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.*;
 
 public class Main_Server {
 
@@ -29,6 +30,13 @@ public class Main_Server {
         String rmiServiceName = args[2];
         int rmiRegistryPort = Integer.parseInt(args[3]);
 
+        try {
+            DatabaseManager.getInstance();
+            DatabaseManager.getInstance().setValues(dbDirectory, "ARSdatabase.sqlite");
+            DatabaseManager.getInstance().connect();
+        }catch (Exception e){
+            System.err.println("DATABASE FAIL!");
+        }
         try (ServerSocket serverSocket = new ServerSocket(portTCP)) {
 
             System.out.println("[Main] Server Ready at port : " + portTCP);
@@ -63,6 +71,7 @@ public class Main_Server {
                     e.printStackTrace();
                 }
             }
+            DatabaseManager.getInstance().disconnect();
         }
     }
 

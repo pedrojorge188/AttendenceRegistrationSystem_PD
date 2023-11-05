@@ -1,0 +1,38 @@
+#box{
+    -fx-pref-width: 600.0;
+    -fx-pref-height: 400.0;
+    -fx-spacing: 10;
+}
+#infoLabel{
+    -fx-font-size: 18px;
+}
+#title{
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+.label{
+    -fx-font-size: 16px;
+}
+.inputTitles{
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+.textFields{
+    -fx-padding: 15px;
+}
+
+.buttons{
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+}
+.date-picker {
+    -fx-font-size: 14px;
+    -fx-pref-width: 200px;
+}
+
+#btnConfirm{
+    -fx-background-color: #10388c;
+}
+#backBtn{
+    -fx-background-color: #6b0e0e;
+}

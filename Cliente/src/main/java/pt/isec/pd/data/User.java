@@ -12,12 +12,14 @@ public class User implements Serializable {
     }
 
     private types_msg type;
+    private String name;
     private int Student_uid;
     private String username_email;
     private String password;
 
-    public User(types_msg type, String username_email, String password) {
+    public User(types_msg type, String name, String username_email, String password) {
         this.type = type;
+        this.name = name;
         Student_uid = 0;
         this.username_email = username_email;
         this.password = password;
@@ -45,6 +47,10 @@ public class User implements Serializable {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setPassword(String password) {

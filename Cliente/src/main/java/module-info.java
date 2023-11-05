@@ -4,8 +4,8 @@ module pt.isec.pd.attendence_registration_system {
     requires java.desktop;
 
 
-    opens pt.isec.pd.attendence_registration_system to javafx.fxml;
-    exports pt.isec.pd.attendence_registration_system;
-    exports pt.isec.pd.attendence_registration_system.Controllers;
-    opens pt.isec.pd.attendence_registration_system.Controllers to javafx.fxml;
+    exports pt.isec.pd.Controllers;
+    opens pt.isec.pd.Controllers to javafx.fxml;
+    exports pt.isec.pd;
+    opens pt.isec.pd to javafx.fxml;
 }
