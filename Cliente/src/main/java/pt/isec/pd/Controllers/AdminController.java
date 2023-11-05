@@ -1,4 +1,4 @@
-package pt.isec.pd.attendence_registration_system.Controllers;
+package pt.isec.pd.Controllers;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -8,7 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import pt.isec.pd.attendence_registration_system.ClientApplication;
+import pt.isec.pd.ClientApplication;
 import pt.isec.pd.data.Event;
 import pt.isec.pd.data.requestsAPI;
 

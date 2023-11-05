@@ -30,36 +30,22 @@ public class requestsAPI{
         }
         return instance;
     }
-
-
-
-    public void registerValues(int port, String addr) throws IOException {
+    public boolean connect(String addr,int port){
+        if(addr == null || port <= 0)
+            return false;
         ServerPort = port;
         ServerAddr = addr;
-    }
-
-    public boolean connect() throws IOException {
-
-        if(ServerAddr == null || ServerPort == 0)
-            return false;
-
         try{
             socket = new Socket(ServerAddr, ServerPort);
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             pcs = new PropertyChangeSupport(this);
-            System.out.println("Conectado ao servidor em " + ServerAddr + ":" + ServerPort);
-            return true;
-
         }catch(Exception exp){
-
-            System.err.println("[SERVER] Not running state!");
             return false;
-
         }
-
+        return true;
     }
 
-    public boolean getConnection(){
+    public boolean isConnected(){
         return socket.isConnected();
     }
 
@@ -141,7 +127,7 @@ public class requestsAPI{
 
     public void receive(ObjectInputStream receive) {
 
-        while(this.getConnection()){
+        while(isConnected()){
 
             try{
 

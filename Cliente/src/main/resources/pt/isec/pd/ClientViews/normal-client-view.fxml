@@ -16,7 +16,7 @@
 <?import java.net.URL?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="pt.isec.pd.attendence_registration_system.Controllers.MainAdminController"
+            fx:controller="pt.isec.pd.Controllers.NormalClientController"
             fx:id="border">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
@@ -24,30 +24,25 @@
 
     <top>
         <MenuBar id="menuBar" >
-            <Menu text="Eventos">
-                <MenuItem text="Criar" onAction="#createEventAction"/>
-                <MenuItem text="Editar" onAction="#editEventsAction"/>
-                <MenuItem text="Eliminar" onAction="#deleteEventsAction"/>
-                <MenuItem text="Consultar Eventos por Utilizador" onAction="#showUserEventsAction"/>
-                <MenuItem text="Consultar Eventos Criados" onAction="#showEventsAction"/>
-            </Menu>
-            <Menu text="Presenças">
-                <MenuItem text="Consultar Presenças" onAction="#showAttendenceAdminAction" />
-                <MenuItem text="Gerar código de presenças" onAction="#generateCodeAction"/>
-                <MenuItem text="Eliminar presenças" onAction="#deleteAttendenceAction"/>
-                <MenuItem text="Inserir presenças" onAction="#insertAttendenceAction"/>
-            </Menu>
             <Menu text="Opções">
+                <MenuItem  text="Consulta das Presenças" onAction="#showAttendenceAction" />
+                <MenuItem  text="Submeter Código" onAction="#submitCodeAction" />
+            </Menu>
+            <Menu text="Conta">
+                <MenuItem text="Mudar Dados de registo" onAction="#accountAction"/>
                 <MenuItem text="Sair" onAction="#accountLogout"/>
             </Menu>
         </MenuBar>
+
     </top>
+
     <center>
+
         <VBox  fx:id="main_box">
             <Label text="Bem vindo!" id="title"/>
         </VBox>
     </center>
     <stylesheets>
-        <URL value="@../ClientViews/css/normal-client-view.css" />
+        <URL value="@css/normal-client-view.css" />
     </stylesheets>
 </BorderPane>

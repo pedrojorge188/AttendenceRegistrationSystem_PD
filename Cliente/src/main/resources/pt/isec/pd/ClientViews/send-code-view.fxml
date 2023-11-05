@@ -10,7 +10,7 @@
 <?import java.net.URL?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="pt.isec.pd.attendence_registration_system.Controllers.NormalClientController"
+      fx:controller="pt.isec.pd.Controllers.NormalClientController"
       fx:id="box">
         <padding>
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>

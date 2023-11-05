@@ -9,16 +9,18 @@
 <?import java.net.URL?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="pt.isec.pd.attendence_registration_system.Controllers.AdminController" fx:id="box">
+      fx:controller="pt.isec.pd.Controllers.AdminController" fx:id="box">
 
     <Label fx:id="infoLabel"/>
-    <Label text="Consultar Eventos por Utilizador" id="title"/>
+    <Label text="Eliminar presenças num evento" id="title"/>
+
+    <Label text="Nome do Evento"/>
+    <TextField fx:id="eventName" promptText="Nome do Evento" styleClass="textFields"/>
 
     <Label text="Email do Utilizador"/>
-    <TextField fx:id="userEmail" promptText="Email do utilizador" styleClass="textFields"/>
+    <TextField fx:id="userEmail" promptText="Email do Utilizador" styleClass="textFields"/>
 
-    <Button text="Procurar" onAction="#showUserEvents" id="btnConfirm" styleClass="buttons"/>
-    <Button text="Obter Ficheiro CSV" styleClass="buttons" id="btnConfirm" onAction="#receiveCsvUserEvent"/>
+    <Button text="Eliminar Presença" onAction="#deleteAttendence" styleClass="buttons" id="btnConfirm"/>
     <Button text="Voltar" onAction="#retButton" styleClass="buttons" fx:id="backBtn"/>
 
     <stylesheets>

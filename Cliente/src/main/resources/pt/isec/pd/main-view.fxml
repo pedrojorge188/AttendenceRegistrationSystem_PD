@@ -10,7 +10,7 @@
 <?import javafx.scene.control.PasswordField?>
 <VBox alignment="TOP_CENTER" spacing="15.0" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="pt.isec.pd.attendence_registration_system.Controllers.MainController"
+      fx:controller="pt.isec.pd.Controllers.MainController"
       fx:id="box">
 
   <padding>

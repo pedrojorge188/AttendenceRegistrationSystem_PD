@@ -1,4 +1,4 @@
-package pt.isec.pd.attendence_registration_system.Controllers;
+package pt.isec.pd.Controllers;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -6,9 +6,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import pt.isec.pd.attendence_registration_system.ClientApplication;
+import pt.isec.pd.ClientApplication;
 import pt.isec.pd.data.requestsAPI;
 
 import java.io.IOException;
