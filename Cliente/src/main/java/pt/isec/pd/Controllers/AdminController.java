@@ -23,6 +23,8 @@ import static pt.isec.pd.data.InfoStatus.types_status.*;
 public class AdminController {
     //Singleton que serve para comunicar com o servidor
     private static requestsAPI client = requestsAPI.getInstance();
+    @FXML
+    public TextField eventNameId;
     private Event eventToSend;
     @FXML
     private VBox box;
@@ -50,7 +52,16 @@ public class AdminController {
                 public void run() {
                     infoLabel.setText("Evento editado com sucesso");
                     infoLabel.setTextFill(Color.GREEN);
-                    System.out.println("Evento editado com sucesso");
+                }
+            });
+        });
+        //register handlers
+        requestsAPI.getInstance().addPropertyChangeListener(EDIT_EVENT_FAIL.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Evento solicitado não existe");
+                    infoLabel.setTextFill(Color.RED);
                 }
             });
         });
@@ -63,12 +74,30 @@ public class AdminController {
                 }
             });
         });
+        requestsAPI.getInstance().addPropertyChangeListener(CREATE_EVENT_FAIL.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Ocorreu um erro ao criar o evento");
+                    infoLabel.setTextFill(Color.RED);
+                }
+            });
+        });
         requestsAPI.getInstance().addPropertyChangeListener(DELETE_EVENT_MADE.toString(),evt->{
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
                     infoLabel.setText("Evento eliminado com sucesso");
                     infoLabel.setTextFill(Color.GREEN);
+                }
+            });
+        });
+        requestsAPI.getInstance().addPropertyChangeListener(DELETE_EVENT_FAIL.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Ocorreu um erro a eliminar o evento");
+                    infoLabel.setTextFill(Color.RED);
                 }
             });
         });
@@ -178,11 +207,12 @@ public class AdminController {
         String eventDate = null;
         if(this.eventDate.getValue()!=null)
             eventDate = this.eventDate.getValue().toString();
+        String event_identify = this.eventNameId.getText();
         String eventLocal = this.eventLocal.getText();
         String eventStartHour = this.eventStartHour.getText();
         String eventEndHour = this.eventEndHour.getText();
 
-        if(eventName.isEmpty() || eventLocal.isEmpty() || eventStartHour.isEmpty() || eventEndHour.isEmpty()){
+        if(event_identify.isEmpty() || eventName.isEmpty() || eventLocal.isEmpty() || eventStartHour.isEmpty() || eventEndHour.isEmpty()){
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         }else{
@@ -191,6 +221,7 @@ public class AdminController {
             eventToSend.setEvent_date(eventDate);
             eventToSend.setEvent_location(eventLocal);
             eventToSend.setEvent_name(eventName);
+            eventToSend.setEvent_identify(event_identify);
             eventToSend.setEvent_start_time(eventStartHour);
             eventToSend.setEvent_end_time(eventEndHour);
             eventToSend.setUser_email(client.getMyUser());

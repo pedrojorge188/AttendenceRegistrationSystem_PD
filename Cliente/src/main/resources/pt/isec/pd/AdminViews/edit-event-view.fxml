@@ -14,8 +14,11 @@
     <Label fx:id="infoLabel"/>
     <Label text="Editar Evento" id="title"/>
 
+    <Label text="Nome do Evento a modificar"/>
+    <TextField fx:id="eventNameId" promptText="Nome do Evento a modificar"  styleClass="textFields"/>
+
     <Label text="Nome do Evento"/>
-    <TextField fx:id="eventName" promptText="Nome do Evento"  styleClass="textFields"/>
+    <TextField fx:id="eventName" promptText="Novo nome do Evento"  styleClass="textFields"/>
 
     <Label text="Local do Evento"/>
     <TextField fx:id="eventLocal" promptText="Local do Evento"  styleClass="textFields"/>

@@ -114,7 +114,7 @@ public class DatabaseManager{
             updateStatement.setInt(3, resultSet.getInt("id"));
 
             int rowsAffected = updateStatement.executeUpdate();
-
+            updateVersion();
             if (rowsAffected > 0)
                 return true;
              else
@@ -191,7 +191,7 @@ public class DatabaseManager{
             String checkEventExist = "SELECT id FROM events WHERE name = ?";
 
             PreparedStatement checkStatement = connection.prepareStatement(checkEventExist);
-            checkStatement.setString(1, event.getEvent_name());
+            checkStatement.setString(1, event.getEvent_identify());
             ResultSet resultSet = checkStatement.executeQuery();
 
             if (!resultSet.next())
@@ -208,7 +208,7 @@ public class DatabaseManager{
             updateStatement.setInt(6, resultSet.getInt("id"));
 
             int rowsAffected = updateStatement.executeUpdate();
-
+            updateVersion();
             if (rowsAffected > 0)
                 return true;
             else
@@ -236,7 +236,7 @@ public class DatabaseManager{
                 deleteStatement.setInt(1, eventId);
 
                 int rowsAffected = deleteStatement.executeUpdate();
-
+                updateVersion();
                 if (rowsAffected > 0) {
                     return true;
                 }

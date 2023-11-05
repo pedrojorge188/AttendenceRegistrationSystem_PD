@@ -34,7 +34,6 @@ public class UserManager {
                     response.setMsg_log(user.getUsername_email());
                     objectOutputStream.writeObject(response);
                     objectOutputStream.flush();
-                    user1 = user;
 
                 }catch (Exception exception){
                     exception.printStackTrace();
@@ -54,8 +53,6 @@ public class UserManager {
                         objectOutputStream.writeObject(response);
                         objectOutputStream.flush();
                     }
-                    user1 = user;
-
                 }catch (Exception exception){
                     exception.printStackTrace();
                 }

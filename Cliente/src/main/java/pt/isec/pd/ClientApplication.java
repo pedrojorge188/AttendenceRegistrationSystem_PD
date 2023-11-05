@@ -15,7 +15,7 @@ public class ClientApplication extends Application {
     public void start(Stage stage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(ClientApplication.class.getResource("main-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 750, 750);
+            Scene scene = new Scene(fxmlLoader.load(), 800, 800);
             stage.setTitle("Attendance Registration System");
             stage.setScene(scene);
             stage.setResizable(false);
