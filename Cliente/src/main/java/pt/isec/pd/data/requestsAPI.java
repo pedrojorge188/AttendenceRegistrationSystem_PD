@@ -134,122 +134,96 @@ public class requestsAPI{
                 Object receiveObject = receive.readObject();
 
                 if(receiveObject instanceof InfoStatus infoStatus){
-
+                    pcs.firePropertyChange(infoStatus.getStatus().toString(),null,null);
                     switch (infoStatus.getStatus()){
                         case LOGIN_MADE_USER -> {
-                            pcs.firePropertyChange(LOGIN_MADE_USER.toString(),null,null);
                             this.myUser = infoStatus.getMsg_log();
                             System.out.println("[SERVER] Login Made (normal client)!");
                         }
                         case LOGIN_MADE_ADMIN -> {
-                            pcs.firePropertyChange(LOGIN_MADE_ADMIN.toString(),null,null);
                             this.myUser = infoStatus.getMsg_log();
                             System.out.println("[SERVER] Login Made (admin client)!");
                         }
                         case LOGIN_FAIL -> {
-                            pcs.firePropertyChange(LOGIN_FAIL.toString(),null,null);
                             this.disconnect();
                             System.out.println("[SERVER] Login Fail!");
                             System.exit(1);
                         }
                         case REGISTER_MADE -> {
-                            pcs.firePropertyChange(REGISTER_MADE.toString(),null,null);
                             this.myUser = infoStatus.getMsg_log();
                             System.out.println("[SERVER] Register Made!");
                         }
                         case REGISTER_FAIL -> {
-                            pcs.firePropertyChange(REGISTER_FAIL.toString(),null,null);
                             System.out.println("[SERVER] Register Fail!");
                         }
                         case CHANGES_MADE -> {
-                            pcs.firePropertyChange(CHANGES_MADE.toString(),null,null);
                             this.myUser = infoStatus.getMsg_log();
                             System.out.println("[SERVER] Changes Made!");
                         }
                         case CHANGES_FAIL -> {
-                            pcs.firePropertyChange(CHANGES_FAIL.toString(),null,null);
                             System.out.println("[SERVER] Changes Fail!");
                         }
                         case CODE_SEND_MADE -> {
-                            pcs.firePropertyChange(CODE_SEND_MADE.toString(),null,null);
                             System.out.println("[SERVER] Code SEND!");
                         }
                         case CODE_SEND_FAIL -> {
-                            pcs.firePropertyChange(CODE_SEND_FAIL.toString(),null,null);
                             System.out.println("[SERVER] Code SEND Fail!");
                         }
                         case EDIT_EVENT_MADE ->{
-                            pcs.firePropertyChange(EDIT_EVENT_MADE.toString(),null,null);
                             System.out.println("[SERVER] Event edited");
                         }
                         case EDIT_EVENT_FAIL -> {
-                            pcs.firePropertyChange(EDIT_EVENT_FAIL.toString(),null,null);
                             System.out.println("[SERVER] Event edit failed");
                         }
                         case CREATE_EVENT_MADE -> {
-                            pcs.firePropertyChange(CREATE_EVENT_MADE.toString(),null,null);
                             System.out.println("[SERVER] Event Created");
                         }
                         case CREATE_EVENT_FAIL -> {
-                            pcs.firePropertyChange(CREATE_EVENT_FAIL.toString(),null,null);
                             System.out.println("[SERVER] Event Creation Failed");
                         }
                         case DELETE_EVENT_MADE -> {
-                            pcs.firePropertyChange(DELETE_EVENT_MADE.toString(),null,null);
                             System.out.println("[SERVER] Event Deleted");
                         }
                         case DELETE_EVENT_FAIL -> {
-                            pcs.firePropertyChange(DELETE_EVENT_FAIL.toString(),null,null);
                             System.out.println("[SERVER] Event Deleted fail");
                         }
                         case LIST_REGISTERED_ATTENDANCE -> {
-                            pcs.firePropertyChange(LIST_REGISTERED_ATTENDANCE.toString(),null,null);
                             System.out.println("[SERVER] Attendances listed");
                         }
                         case LIST_REGISTERED_ATTENDANCE_FAIL -> {
-                            pcs.firePropertyChange(LIST_REGISTERED_ATTENDANCE_FAIL.toString(),null,null);
                             System.out.println("[SERVER] Attendances list fail");
                         }
                         case GENERATE_CODE_MADE -> {
-                            pcs.firePropertyChange(GENERATE_CODE_MADE.toString(),null,null);
-                            System.out.println("[SERVER] Attendances listed");
+                            System.out.println("[SERVER] Code generated");
                         }
                         case GENERATE_CODE_FAIL -> {
-                            pcs.firePropertyChange(GENERATE_CODE_FAIL.toString(),null,null);
-                            System.out.println("[SERVER] Attendances Fails");
+                            System.out.println("[SERVER] Code generate fail");
                         }
                         case REQUEST_CSV_EVENT -> {
-                            pcs.firePropertyChange(REQUEST_CSV_EVENT.toString(),null,null);
                             System.out.println("[SERVER] REQUEST_CSV_EVENT");
                         }
                         case GET_HISTORY -> {
-                            pcs.firePropertyChange(GET_HISTORY.toString(),null,null);
+                            System.out.println("[SERVER] GET HISTORY");
                         }
                         case GET_HISTORY_FAIL -> {
-                            pcs.firePropertyChange(GET_HISTORY_FAIL.toString(),null,null);
+                            System.out.println("[SERVER] GET HISTORY FAIL");
                         }
                         case LIST_CREATED_EVENTS -> {
-                            pcs.firePropertyChange(LIST_CREATED_EVENTS.toString(),null,null);
                             System.out.println("[SERVER] LIST_CREATED_EVENTS");
                         }
                         case LIST_CREATED_EVENTS_FAIL -> {
-                            pcs.firePropertyChange(LIST_CREATED_EVENTS_FAIL.toString(),null,null);
                             System.out.println("[SERVER] LIST_CREATED_EVENTS_FAIL");
                         }
                         case DELETE_ATTENDANCE_MADE -> {
-                            pcs.firePropertyChange(DELETE_ATTENDANCE_MADE.toString(),null,null);
                             System.out.println("[SERVER] DELETE_ATTENDANCE_MADE");
                         }
                         case DELETE_ATTENDANCE_FAIL -> {
-                            pcs.firePropertyChange(DELETE_ATTENDANCE_FAIL.toString(),null,null);
                             System.out.println("[SERVER] DELETE_ATTENDANCE_FAIL");
                         }
                         case INSERT_ATTENDANCE_MADE -> {
-                            pcs.firePropertyChange(INSERT_ATTENDANCE_MADE.toString(),null,null);
                             System.out.println("[SERVER] INSERT_ATTENDANCE_MADE");
                         }
                         case INSERT_ATTENDANCE_FAIL -> {
-                            pcs.firePropertyChange(INSERT_ATTENDANCE_FAIL.toString(),null,null);
                             System.out.println("[SERVER] INSERT_ATTENDANCE_FAIL");
                         }
                         case MSG_STACK -> System.out.println("[LOG] Server:"+infoStatus.getMsg_log());
