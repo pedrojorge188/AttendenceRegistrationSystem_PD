@@ -15,8 +15,9 @@ public class Main_Server {
 
     public static void main(String[] args) {
 
-        if (args.length != 3) {
+        if (args.length != 4) {
             System.err.println("[REQUIRE] Java Main_Server <Port TCP> " +
+                    "<SQLite Directory> " +
                     "<Name of RMI service> <" +
                     "Port of Registry RMI>");
             System.exit(1);
@@ -25,13 +26,13 @@ public class Main_Server {
         List<Thread> clientThreads = new ArrayList<>();
 
         int portTCP = Integer.parseInt(args[0]);
-       // String dbDirectory = args[1];
-        String rmiServiceName = args[1];
-        int rmiRegistryPort = Integer.parseInt(args[2]);
+        String dbDirectory = args[1];
+        String rmiServiceName = args[2];
+        int rmiRegistryPort = Integer.parseInt(args[3]);
 
         try {
             DatabaseManager.getInstance();
-            DatabaseManager.getInstance().setValues("database\\", "ARSdatabase.sqlite");
+            DatabaseManager.getInstance().setValues(dbDirectory, "ARSdatabase.sqlite");
             DatabaseManager.getInstance().connect();
         }catch (Exception e){
             System.err.println("DATABASE FAIL!");
