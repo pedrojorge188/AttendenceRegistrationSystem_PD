@@ -37,6 +37,8 @@ public class InfoStatus implements Serializable {
         GET_HISTORY_FAIL,
         LIST_REGISTERED_ATTENDANCE,
         LIST_REGISTERED_ATTENDANCE_FAIL,
+        ASSOC_USER_EVENT_MADE,
+        ASSOC_USER_EVENT_FAIL,
         MSG_STACK;
 
     }

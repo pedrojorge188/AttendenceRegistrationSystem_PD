@@ -236,6 +236,11 @@ public class DatabaseManager{
                 deleteStatement.setInt(1, eventId);
 
                 int rowsAffected = deleteStatement.executeUpdate();
+
+                deleteSQL = "DELETE FROM users_events WHERE fk_event = ?";
+                deleteStatement = connection.prepareStatement(deleteSQL);
+                deleteStatement.setInt(1, eventId);
+                deleteStatement.executeUpdate();
                 updateVersion();
                 if (rowsAffected > 0) {
                     return true;
@@ -243,6 +248,49 @@ public class DatabaseManager{
             }
 
             return false;
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database Manager -> " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean assocUserEvent(Event event) {
+        int eventId, userId;
+        try {
+            String checkEventExist = "SELECT id FROM events WHERE name = ?";
+            PreparedStatement checkStatement = connection.prepareStatement(checkEventExist);
+            checkStatement.setString(1, event.getEvent_name());
+
+            ResultSet resultSet = checkStatement.executeQuery();
+
+            if (resultSet.next())
+                eventId = resultSet.getInt("id");
+            else
+                return false;
+
+            checkEventExist = "SELECT id FROM users WHERE username_email = ?";
+            checkStatement = connection.prepareStatement(checkEventExist);
+            checkStatement.setString(1, event.getEvent_identify());
+
+            resultSet = checkStatement.executeQuery();
+
+            if (resultSet.next())
+                userId = resultSet.getInt("id");
+            else
+                return false;
+
+            String sql = "INSERT INTO users_events (fk_user,fk_event,attendance) VALUES (?, ?, 0)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            statement.setInt(2, eventId);
+
+            int rowsInserted = statement.executeUpdate();
+            updateVersion();
+            if (rowsInserted > 0)
+                return true;
+            else
+                return false;
+
         } catch (SQLException e) {
             System.err.println("[ERROR] Database Manager -> " + e.getMessage());
             return false;
@@ -264,6 +312,7 @@ public class DatabaseManager{
     public Connection getConnection() {
         return connection;
     }
+
 }
 
 

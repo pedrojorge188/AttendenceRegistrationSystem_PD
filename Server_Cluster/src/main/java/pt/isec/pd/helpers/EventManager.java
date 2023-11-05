@@ -72,6 +72,23 @@ public class EventManager {
                     exception.printStackTrace();
                 }
             }
+            case ASSOC_USER_EVENT -> {
+                try {
+                    if (DatabaseManager.getInstance().assocUserEvent(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.ASSOC_USER_EVENT_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.ASSOC_USER_EVENT_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
             case GENERATE_CODE -> {
                 try {
                     if (DatabaseManager.getInstance().generateCode(event)) {

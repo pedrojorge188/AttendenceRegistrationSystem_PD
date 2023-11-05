@@ -78,7 +78,8 @@ public class Event implements Serializable {
         LIST_CREATED_EVENTS,
         LIST_CREATED_EVENTS_BY_USER,
         GENERATE_CODE,
-        LIST_REGISTERED_ATTENDANCE
+        LIST_REGISTERED_ATTENDANCE,
+        ASSOC_USER_EVENT
     }
 
 

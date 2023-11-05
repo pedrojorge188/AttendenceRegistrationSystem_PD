@@ -21,11 +21,15 @@ import static pt.isec.pd.data.Event.type_event.LIST_REGISTERED_ATTENDANCE;
 import static pt.isec.pd.data.InfoStatus.types_status.*;
 
 public class AdminController {
-    //Singleton que serve para comunicar com o servidor
     private static requestsAPI client = requestsAPI.getInstance();
+    private Event eventToSend;
+
     @FXML
     public TextField eventNameId;
-    private Event eventToSend;
+    @FXML
+    public TextField eventNameAssoc;
+    @FXML
+    public TextField userNameAssoc;
     @FXML
     private VBox box;
     @FXML
@@ -61,6 +65,25 @@ public class AdminController {
                 @Override
                 public void run() {
                     infoLabel.setText("Evento solicitado não existe");
+                    infoLabel.setTextFill(Color.RED);
+                }
+            });
+        });
+        requestsAPI.getInstance().addPropertyChangeListener(ASSOC_USER_EVENT_MADE.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Utilizador associado ao evento com sucesso");
+                    infoLabel.setTextFill(Color.GREEN);
+                }
+            });
+        });
+        //register handlers
+        requestsAPI.getInstance().addPropertyChangeListener(ASSOC_USER_EVENT_FAIL.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Ocorreu um erro a associar o utilizador ao evento");
                     infoLabel.setTextFill(Color.RED);
                 }
             });
@@ -398,6 +421,29 @@ public class AdminController {
         }
     }
 
+    public void assocUserEvent(ActionEvent actionEvent) {
+        String eventName = this.eventNameAssoc.getText();
+        String userName = this.userNameAssoc.getText();
+
+        if(eventName.isEmpty() || userName.isEmpty()){
+            infoLabel.setText("Por favor preencha todos os campos");
+            infoLabel.setTextFill(Color.RED);
+        }else{
+            eventToSend.setAttend_code(-1);
+            eventToSend.setType(ASSOC_USER_EVENT);
+            eventToSend.setEvent_date(null);
+            eventToSend.setEvent_location(null);
+            eventToSend.setEvent_name(eventName);
+            eventToSend.setEvent_identify(userName);
+            eventToSend.setEvent_start_time(null);
+            eventToSend.setEvent_end_time(null);
+            eventToSend.setUser_email(null);
+            if(!client.send(eventToSend)){
+                infoLabel.setText("Aconteceu algo de errado");
+                infoLabel.setTextFill(Color.RED);
+            }
+        }
+    }
     // csv file with all attendees of the specific event
     public void receiveCSVEvent(ActionEvent actionEvent) {
     }
@@ -405,4 +451,5 @@ public class AdminController {
     // csv file with all attendance at events for a specific user
     public void receiveCsvUserEvent(ActionEvent actionEvent) {
     }
+
 }

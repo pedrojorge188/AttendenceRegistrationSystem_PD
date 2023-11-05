@@ -84,5 +84,7 @@ public class MainAdminController {
         }
     }
 
-
+    public void assocUserEventAction(ActionEvent actionEvent) {
+        loadView("AdminViews/assoc-user-view.fxml");
+    }
 }

@@ -28,7 +28,7 @@
                 <MenuItem text="Criar" onAction="#createEventAction"/>
                 <MenuItem text="Editar" onAction="#editEventsAction"/>
                 <MenuItem text="Eliminar" onAction="#deleteEventsAction"/>
-                <MenuItem text="Adicionar utilizador a evento" onAction="#deleteEventsAction"/>
+                <MenuItem text="Associar utilizador a evento" onAction="#assocUserEventAction"/>
                 <MenuItem text="Consultar Eventos por Utilizador" onAction="#showUserEventsAction"/>
                 <MenuItem text="Consultar Eventos Criados" onAction="#showEventsAction"/>
             </Menu>
