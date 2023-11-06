@@ -445,7 +445,7 @@ public class AdminController {
         if (returnValue == JFileChooser.APPROVE_OPTION)
             selectedDirectory = fileChooser.getSelectedFile().getAbsolutePath();
 
-        requestsAPI.getInstance().setFileName(selectedDirectory+ File.separator + "EventUser"+ requestsAPI.getInstance().getMyUser()+".csv");
+        requestsAPI.getInstance().setFileName(selectedDirectory+ File.separator + "EventUser.csv");
 
         String userEmail = this.userEmailCsv.getText();
 

@@ -169,12 +169,9 @@ public class requestsAPI{
                     if (nbytes > 0) {
                         fileOutputStream.write(fileChunk, 0, nbytes);
                         totalBytes += nbytes;
-                        nChunks++;
-                    }else {
-                        break;
                     }
-
-                } while (nbytes > 0);
+                    break;
+                } while (true);
 
                 System.out.format("(CSV File Received)(%d bytes)\r\n", totalBytes);
 

@@ -117,7 +117,7 @@ public class EventManager {
                         response.setEventsName(DatabaseManager.getInstance().getCreatedEvents());
                         objectOutputStream.writeObject(response);
                         objectOutputStream.flush();
-                        DatabaseManager.getInstance().sendFile(defaultFileName,clientSocket);
+                        DatabaseManager.getInstance().sendCSVFile(defaultFileName,clientSocket);
                     }
 
                 }
