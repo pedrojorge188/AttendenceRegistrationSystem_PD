@@ -307,7 +307,7 @@ public class DatabaseManager{
         try(FileWriter csvWriter = new FileWriter(csvFile,false)){
 
             String sql = "SELECT u.name, u.student_id, u.username_email, e.name, e.location, e.user_email, e.date, e.Start_time" +
-                    " FROM users u, events e WHERE u.id = u.id and username_email = ?";
+                    " FROM users u, events e, users_events lig WHERE lig.fk_event = e.id and lig.fk_user = u.id and username_email = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, event.getUser_email());
             ResultSet dataSet = statement.executeQuery();
@@ -366,8 +366,7 @@ public class DatabaseManager{
                     }
                 } while (nbytes > 0);
 
-                File csvFile = new File(path);
-                csvFile.delete();
+
             }
             return true;
         } catch (IOException e) {
@@ -398,12 +397,12 @@ public class DatabaseManager{
 
         List<String> eventNames = new ArrayList<>();
         try {
-            String sql = "SELECT name FROM events";
+            String sql = "SELECT name, location, events.date , Start_time, end_time FROM events";
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                String eventName = resultSet.getString("name");
-                eventNames.add(eventName);
+                eventNames.add(resultSet.getString(1) + "\t"+ resultSet.getString(2) + "\t"+ resultSet.getString(3)
+                +"\t"+ resultSet.getString(4)+ "\t"+ resultSet.getString(5));
             }
         } catch (SQLException e) {
             e.printStackTrace();

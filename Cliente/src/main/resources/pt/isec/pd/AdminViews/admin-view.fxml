@@ -44,8 +44,9 @@
         </MenuBar>
     </top>
     <center>
+        <Label text="Bem vindo!" id="title"/>
         <VBox  fx:id="main_box">
-            <Label text="Bem vindo!" id="title"/>
+
         </VBox>
     </center>
     <stylesheets>

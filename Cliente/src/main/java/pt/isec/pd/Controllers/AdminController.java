@@ -158,6 +158,16 @@ public class AdminController {
             });
         });
 
+        requestsAPI.getInstance().addPropertyChangeListener(Event.type_event.REQUEST_CSV_EVENT.toString(), evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Ficheiro csv criado com sucesso ");
+                    infoLabel.setTextFill(Color.GREEN);
+                }
+            });
+        });
+
         requestsAPI.getInstance().addPropertyChangeListener(DELETE_ATTENDANCE_MADE.toString(),evt->{
             Platform.runLater(new Runnable() {
                 @Override
@@ -435,36 +445,45 @@ public class AdminController {
     }
 
     public void receiveCsvUserEvent(ActionEvent actionEvent) {
-        String selectedDirectory = null;
-        JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        JFileChooser directoryChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int directoryReturnValue = directoryChooser.showOpenDialog(null);
 
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (directoryReturnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedDirectory = directoryChooser.getSelectedFile();
 
-        int returnValue = fileChooser.showOpenDialog(null);
-
-        if (returnValue == JFileChooser.APPROVE_OPTION)
-            selectedDirectory = fileChooser.getSelectedFile().getAbsolutePath();
-
-        requestsAPI.getInstance().setFileName(selectedDirectory+ File.separator + "EventUser.csv");
-
-        String userEmail = this.userEmailCsv.getText();
-
-        if(userEmail.isEmpty()){
-            infoLabel.setText("Por favor preencha todos os campos");
-            infoLabel.setTextFill(Color.RED);
-        }else{
-            eventToSend.setEvent_name("");
-            eventToSend.setEvent_start_time(null);
-            eventToSend.setEvent_end_time(null);
-            eventToSend.setType(Event.type_event.REQUEST_CSV_EVENT);
-            eventToSend.setCsv_msg("UserEvents");
-            eventToSend.setCsv_dir(selectedDirectory);
-            eventToSend.setUser_email(userEmail);
-            eventToSend.setAttend_code(-1);
-            if(!client.send(eventToSend)) {
-                infoLabel.setText("Aconteceu algo de errado");
+            String fileName = JOptionPane.showInputDialog("Digite o nome do arquivo (sem extensão):");
+            if (fileName == null || fileName.trim().isEmpty()) {
+                infoLabel.setText("Nome do arquivo inválido.");
                 infoLabel.setTextFill(Color.RED);
+                return;
             }
+
+            String selectedDirectoryPath = selectedDirectory.getAbsolutePath();
+            String filePath = selectedDirectoryPath + File.separator + fileName + ".csv";
+
+            requestsAPI.getInstance().setFileName(filePath);
+
+            String userEmail = this.userEmailCsv.getText();
+
+            if (userEmail.isEmpty()) {
+                infoLabel.setText("Por favor, preencha todos os campos");
+                infoLabel.setTextFill(Color.RED);
+            } else {
+                eventToSend.setEvent_name("");
+                eventToSend.setEvent_start_time(null);
+                eventToSend.setEvent_end_time(null);
+                eventToSend.setType(Event.type_event.REQUEST_CSV_EVENT);
+                eventToSend.setCsv_msg("UserEvents");
+                eventToSend.setCsv_dir(selectedDirectoryPath);
+                eventToSend.setUser_email(userEmail);
+                eventToSend.setAttend_code(-1);
+                if (!client.send(eventToSend)) {
+                    infoLabel.setText("Ocorreu um erro.");
+                    infoLabel.setTextFill(Color.RED);
+                }
+            }
+
         }
     }
 
