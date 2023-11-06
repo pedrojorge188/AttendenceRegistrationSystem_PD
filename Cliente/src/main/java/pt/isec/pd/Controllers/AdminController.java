@@ -12,6 +12,8 @@ import pt.isec.pd.ClientApplication;
 import pt.isec.pd.data.Event;
 import pt.isec.pd.data.requestsAPI;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -48,8 +50,9 @@ public class AdminController {
     private TextField codeTime;
     @FXML
     private Label infoLabel;
+
     public void initialize(){
-        //register handlers
+
         requestsAPI.getInstance().addPropertyChangeListener(EDIT_EVENT_MADE.toString(),evt->{
             Platform.runLater(new Runnable() {
                 @Override
@@ -59,7 +62,7 @@ public class AdminController {
                 }
             });
         });
-        //register handlers
+
         requestsAPI.getInstance().addPropertyChangeListener(EDIT_EVENT_FAIL.toString(),evt->{
             Platform.runLater(new Runnable() {
                 @Override
@@ -78,7 +81,7 @@ public class AdminController {
                 }
             });
         });
-        //register handlers
+
         requestsAPI.getInstance().addPropertyChangeListener(ASSOC_USER_EVENT_FAIL.toString(),evt->{
             Platform.runLater(new Runnable() {
                 @Override
@@ -88,6 +91,7 @@ public class AdminController {
                 }
             });
         });
+
         requestsAPI.getInstance().addPropertyChangeListener(CREATE_EVENT_MADE.toString(),evt->{
             Platform.runLater(new Runnable() {
                 @Override
@@ -421,6 +425,7 @@ public class AdminController {
         }
     }
 
+    //associate user to a event
     public void assocUserEvent(ActionEvent actionEvent) {
         String eventName = this.eventNameAssoc.getText();
         String userName = this.userNameAssoc.getText();
@@ -444,12 +449,21 @@ public class AdminController {
             }
         }
     }
+
     // csv file with all attendees of the specific event
     public void receiveCSVEvent(ActionEvent actionEvent) {
     }
 
-    // csv file with all attendance at events for a specific user
     public void receiveCsvUserEvent(ActionEvent actionEvent) {
+        JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        int returnValue = fileChooser.showOpenDialog(null);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            String selectedDirectory = fileChooser.getSelectedFile().getAbsolutePath();
+        }
     }
 
 }
