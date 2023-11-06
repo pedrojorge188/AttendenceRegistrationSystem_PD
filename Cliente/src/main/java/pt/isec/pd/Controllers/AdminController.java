@@ -37,6 +37,8 @@ public class AdminController {
     private TextField eventLocal,eventStartHour, eventEndHour,codeTime;
     @FXML
     private Label infoLabel;
+    @FXML
+    public TextField userEmailCsv;
 
     public void initialize(){
 
@@ -432,14 +434,35 @@ public class AdminController {
     }
 
     public void receiveCsvUserEvent(ActionEvent actionEvent) {
+        String selectedDirectory = null;
         JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         int returnValue = fileChooser.showOpenDialog(null);
 
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            String selectedDirectory = fileChooser.getSelectedFile().getAbsolutePath();
+        if (returnValue == JFileChooser.APPROVE_OPTION)
+            selectedDirectory = fileChooser.getSelectedFile().getAbsolutePath();
+
+
+        String userEmail = this.userEmailCsv.getText();
+
+        if(userEmail.isEmpty()){
+            infoLabel.setText("Por favor preencha todos os campos");
+            infoLabel.setTextFill(Color.RED);
+        }else{
+            eventToSend.setEvent_name("");
+            eventToSend.setEvent_start_time(null);
+            eventToSend.setEvent_end_time(null);
+            eventToSend.setType(Event.type_event.REQUEST_CSV_EVENT);
+            eventToSend.setCsv_msg("UserEvents");
+            eventToSend.setCsv_dir(selectedDirectory);
+            eventToSend.setUser_email(userEmail);
+            eventToSend.setAttend_code(-1);
+            if(!client.send(eventToSend)) {
+                infoLabel.setText("Aconteceu algo de errado");
+                infoLabel.setTextFill(Color.RED);
+            }
         }
     }
 

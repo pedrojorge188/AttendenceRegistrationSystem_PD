@@ -4,6 +4,8 @@ import pt.isec.pd.Threads.HeartbeatHandler;
 import pt.isec.pd.data.Event;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -296,6 +298,50 @@ public class DatabaseManager{
         } catch (SQLException e) {
             System.err.println("[ERROR] Database Manager -> " + e.getMessage());
             return false;
+        }
+    }
+
+    public boolean csvUserEvents(Event event){
+        String defaultFileName = "userEvents.csv";
+        File csvFile = new File(defaultFileName);
+        int user_id;
+
+        try(FileWriter csvWriter = new FileWriter(csvFile,false)){
+
+            String sql = "SELECT u.name, u.student_id, u.username_email, e.name, e.location, e.user_email, e.date, e.Start_time" +
+                    " FROM users u, events e WHERE u.id = u.id and username_email = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, event.getUser_email());
+            ResultSet dataSet = statement.executeQuery();
+            if(!dataSet.next())
+                return false;
+
+            csvWriter.write("\"Nome\";\"Número identificação\";\"Email\"");
+            csvWriter.write("\n\n");
+            csvWriter.write("\"" + dataSet.getString(1) + "\";\"" +
+                            dataSet.getInt(2) + "\";\"" +
+                            dataSet.getString(3) + "\"");
+            csvWriter.write("\n\n");
+            csvWriter.write("\"Designação\";\"Local\";\"Data\";\"Hora ínicio\"");
+            csvWriter.write("\n");
+
+            do {
+                String eventName = dataSet.getString(4);
+                String eventLocation = dataSet.getString(5);
+                String eventDate = dataSet.getString(6);
+                String eventStartTime = dataSet.getString(7);
+
+                csvWriter.write(eventName + "\";\"" + eventLocation + "\";\"" + eventDate + "\";\"" + eventStartTime + "\"");
+                csvWriter.write("\n");
+            } while (dataSet.next());
+
+            return true;
+
+        }catch (SQLException e){
+            System.err.println("[ERROR] Database Manager -> " + e.getMessage());
+            return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
