@@ -5,6 +5,8 @@ import pt.isec.pd.data.Event;
 
 import java.io.File;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager{
     private String dbAddr;
@@ -313,6 +315,22 @@ public class DatabaseManager{
         return connection;
     }
 
+    public List<String> getCreatedEvents() {
+
+        List<String> eventNames = new ArrayList<>();
+        try {
+            String sql = "SELECT name FROM events";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String eventName = resultSet.getString("name");
+                eventNames.add(eventName);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return eventNames;
+    }
 }
 
 

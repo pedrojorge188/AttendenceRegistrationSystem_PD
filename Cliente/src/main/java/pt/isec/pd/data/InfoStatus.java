@@ -1,11 +1,13 @@
 package pt.isec.pd.data;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class InfoStatus implements Serializable {
 
     static final long SerialVersionUID = 1L;
     private String msg_log;
+    private List<String> eventsName;
     private types_status status;
 
     public enum types_status{
@@ -62,4 +64,7 @@ public class InfoStatus implements Serializable {
     public void setStatus(types_status status) {
         this.status = status;
     }
+
+    public List<String> getEventsName() {return eventsName;}
+    public void setEventsName(List<String> eventsName){ this.eventsName = eventsName;}
 }

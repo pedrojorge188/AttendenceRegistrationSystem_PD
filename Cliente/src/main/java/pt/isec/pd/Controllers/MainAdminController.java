@@ -6,7 +6,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import pt.isec.pd.ClientApplication;
 import pt.isec.pd.data.requestsAPI;
 
@@ -14,12 +16,27 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
+import static pt.isec.pd.data.InfoStatus.types_status.LIST_CREATED_EVENTS;
+
 public class MainAdminController {
     //Singleton que serve para comunicar com o servidor
     private static requestsAPI client = requestsAPI.getInstance();
 
     @FXML
     private VBox main_box;
+    public void initialize(){
+        requestsAPI.getInstance().addPropertyChangeListener(LIST_CREATED_EVENTS.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    main_box.getChildren().clear();
+                    for(String s: requestsAPI.getInstance().getEventsName()){
+                        main_box.getChildren().add(new Label(s));
+                    }
+                }
+            });
+        });
+    }
     private void loadView(String fxmlPath) {
         try {
             VBox pane = FXMLLoader.load(Objects.requireNonNull(ClientApplication.class.getResource(fxmlPath)));

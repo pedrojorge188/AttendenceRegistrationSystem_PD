@@ -4,6 +4,7 @@ import pt.isec.pd.data.Event;
 import pt.isec.pd.data.InfoStatus;
 import pt.isec.pd.data.User;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -116,6 +117,7 @@ public class EventManager {
             case LIST_CREATED_EVENTS -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_CREATED_EVENTS);
                 response.setMsg_log(event.getType().toString());
+                response.setEventsName(DatabaseManager.getInstance().getCreatedEvents());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
                 System.out.println("[CLIENT] LIST OF EVENTS SENT");

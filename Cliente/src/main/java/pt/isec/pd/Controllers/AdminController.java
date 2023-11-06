@@ -25,29 +25,16 @@ import static pt.isec.pd.data.InfoStatus.types_status.*;
 public class AdminController {
     private static requestsAPI client = requestsAPI.getInstance();
     private Event eventToSend;
-
     @FXML
-    public TextField eventNameId;
-    @FXML
-    public TextField eventNameAssoc;
-    @FXML
-    public TextField userNameAssoc;
+    public TextField eventNameId, eventNameAssoc, userNameAssoc;
     @FXML
     private VBox box;
     @FXML
-    private TextField userEmail;
-    @FXML
-    private TextField eventName;
+    private TextField userEmail, eventName;
     @FXML
     private DatePicker eventDate;
     @FXML
-    private TextField eventLocal;
-    @FXML
-    private TextField eventStartHour;
-    @FXML
-    private TextField eventEndHour;
-    @FXML
-    private TextField codeTime;
+    private TextField eventLocal,eventStartHour, eventEndHour,codeTime;
     @FXML
     private Label infoLabel;
 
@@ -129,16 +116,6 @@ public class AdminController {
             });
         });
         requestsAPI.getInstance().addPropertyChangeListener(LIST_REGISTERED_ATTENDANCE.toString(),evt->{
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    infoLabel.setText("Listagem de presencas com sucesso");
-                    infoLabel.setTextFill(Color.GREEN);
-                }
-            });
-        });
-
-        requestsAPI.getInstance().addPropertyChangeListener(LIST_CREATED_EVENTS.toString(),evt->{
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {

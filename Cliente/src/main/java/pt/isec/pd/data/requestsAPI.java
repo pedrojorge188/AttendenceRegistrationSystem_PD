@@ -6,6 +6,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static pt.isec.pd.data.InfoStatus.types_status.*;
@@ -19,6 +21,7 @@ public class requestsAPI{
     private static ObjectInputStream objectInputStream;
     private Socket socket;
     private String myUser;
+    private List<String> eventsName;
     private PropertyChangeSupport pcs;
     private requestsAPI() {
 
@@ -39,6 +42,7 @@ public class requestsAPI{
             socket = new Socket(ServerAddr, ServerPort);
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             pcs = new PropertyChangeSupport(this);
+            eventsName = new ArrayList<>();
         }catch(Exception exp){
             return false;
         }
@@ -80,7 +84,6 @@ public class requestsAPI{
 
         return true;
     }
-
     // <Event Sender>
     public boolean send(Event.type_event EVT, int code) {
 
@@ -107,7 +110,6 @@ public class requestsAPI{
         return true;
 
     }
-
     public boolean send(Event event){
         if (socket == null) {
             System.err.println("[CLIENT] Not connected!");
@@ -124,34 +126,30 @@ public class requestsAPI{
         }
         return true;
     }
-
     public void receive(ObjectInputStream receive) {
-
         while(isConnected()){
-
             try{
-
                 Object receiveObject = receive.readObject();
-                if(receiveObject instanceof InfoStatus infoStatus)
-                    pcs.firePropertyChange(infoStatus.getStatus().toString(),null,null);
-
+                if(receiveObject instanceof InfoStatus infoStatus) {
+                    if(infoStatus.getStatus()==LIST_CREATED_EVENTS){
+                        eventsName.clear();
+                        eventsName.addAll(infoStatus.getEventsName());
+                    }
+                    pcs.firePropertyChange(infoStatus.getStatus().toString(), null, null);
+                }
             }catch (Exception e){
                 pcs.firePropertyChange("SERVER_CLOSE",null,null);
             }
-
         }
-
     }
 
     public void disconnect() {
         if (socket != null) {
             try {
-
                 if (objectOutputStream != null)
                     objectOutputStream.close();
                 if (objectInputStream != null)
                     objectInputStream.close();
-
                 socket.close();
                 System.out.println("Desconectado do servidor");
                 System.exit(1);
@@ -160,18 +158,10 @@ public class requestsAPI{
             }
         }
     }
-
-    public String getMyUser() {
-        return myUser;
-    }
-
-    public Socket getSocket() {
-        return this.socket;
-    }
+    public String getMyUser() {return myUser;}
+    public Socket getSocket() {return this.socket;}
+    public List<String> getEventsName(){return eventsName;}
     public void addPropertyChangeListener(String property,PropertyChangeListener listener){
         pcs.addPropertyChangeListener(property,listener);
-    }
-    public void addPropertyChangeListener(PropertyChangeListener listener){
-        pcs.addPropertyChangeListener(listener);
     }
 }
