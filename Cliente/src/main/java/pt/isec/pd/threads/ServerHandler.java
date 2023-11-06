@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 public class ServerHandler extends Thread{
-    public ServerHandler() {
-
-    }
 
     @Override
     public void run() {
@@ -20,6 +17,5 @@ public class ServerHandler extends Thread{
             throw new RuntimeException(e);
         }
         requestsAPI.getInstance().receive(receive);
-
     }
 }

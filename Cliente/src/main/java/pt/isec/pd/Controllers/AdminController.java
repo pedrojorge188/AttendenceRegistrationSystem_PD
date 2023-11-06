@@ -14,6 +14,7 @@ import pt.isec.pd.data.requestsAPI;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -444,6 +445,7 @@ public class AdminController {
         if (returnValue == JFileChooser.APPROVE_OPTION)
             selectedDirectory = fileChooser.getSelectedFile().getAbsolutePath();
 
+        requestsAPI.getInstance().setFileName(selectedDirectory+ File.separator + "EventUser"+ requestsAPI.getInstance().getMyUser()+".csv");
 
         String userEmail = this.userEmailCsv.getText();
 

@@ -2,10 +2,10 @@ package pt.isec.pd.helpers;
 
 import pt.isec.pd.Threads.HeartbeatHandler;
 import pt.isec.pd.data.Event;
+import pt.isec.pd.data.InfoStatus;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -301,8 +301,7 @@ public class DatabaseManager{
         }
     }
 
-    public boolean csvUserEvents(Event event){
-        String defaultFileName = "userEvents.csv";
+    public boolean csvUserEvents(Event event, String defaultFileName){
         File csvFile = new File(defaultFileName);
         int user_id;
 
@@ -345,6 +344,40 @@ public class DatabaseManager{
         }
     }
 
+    public boolean sendFile(String path, Socket socket) {
+        byte[] fileChunk = new byte[5000];
+        int nbytes;
+        int totalBytes = 0;
+        int nChunks = 0;
+        try {
+            String requestedCanonicalFilePath = new File(path).getCanonicalPath();
+            try (InputStream requestedFileInputStream = new FileInputStream(requestedCanonicalFilePath)) {
+                System.out.println("Ficheiro " + requestedCanonicalFilePath + " aberto para leitura.");
+                OutputStream out = socket.getOutputStream();
+
+                do {
+                    nbytes = requestedFileInputStream.read(fileChunk);
+                    System.out.println(nbytes);
+
+                    if (nbytes > 0) {
+                        out.write(fileChunk, 0, nbytes);
+                        out.flush();
+                        totalBytes += nbytes;
+                        nChunks++;
+                    }
+                } while (nbytes > 0);
+
+                System.out.format("(CSV File Sent)(%d bytes)\r\n", nChunks);
+                File csvFile = new File(path);
+                csvFile.delete();
+            }
+
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean generateCode(Event event) {
         return false;
     }
@@ -377,6 +410,7 @@ public class DatabaseManager{
         }
         return eventNames;
     }
+
 }
 
 

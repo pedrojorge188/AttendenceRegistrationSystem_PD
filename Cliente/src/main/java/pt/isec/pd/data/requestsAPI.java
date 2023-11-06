@@ -1,5 +1,4 @@
 package pt.isec.pd.data;
-import pt.isec.pd.threads.ServerHandler;
 
 
 import java.beans.PropertyChangeListener;
@@ -10,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static pt.isec.pd.data.InfoStatus.types_status.*;
-
 public class requestsAPI{
 
     private static String ServerAddr;
@@ -20,6 +17,7 @@ public class requestsAPI{
     private static ObjectOutputStream objectOutputStream;
     private static ObjectInputStream objectInputStream;
     private Socket socket;
+    private String myFile;
     private String myUser;
     private List<String> eventsName;
     private PropertyChangeSupport pcs;
@@ -30,9 +28,11 @@ public class requestsAPI{
     public static requestsAPI getInstance() {
         if (instance == null) {
             instance = new requestsAPI();
+            instance.setFileName("csvFile");
         }
         return instance;
     }
+
     public boolean connect(String addr,int port){
         if(addr == null || port <= 0)
             return false;
@@ -118,22 +118,27 @@ public class requestsAPI{
         try {
             objectOutputStream.writeObject(event);
             objectOutputStream.flush();
-            System.out.println("Sent Event object to the server.");
+
         } catch (IOException e) {
             pcs.firePropertyChange("SERVER_CLOSE",null,null);
             System.err.println("Error sending Event object: " + e.getMessage());
             return false;
         }
+
         return true;
     }
     public void receive(ObjectInputStream receive) {
         while(isConnected()){
+
             try{
                 Object receiveObject = receive.readObject();
                 if(receiveObject instanceof InfoStatus infoStatus) {
-                    if(infoStatus.getStatus()==LIST_CREATED_EVENTS){
-                        eventsName.clear();
-                        eventsName.addAll(infoStatus.getEventsName());
+                    switch (infoStatus.getStatus()){
+                        case LIST_CREATED_EVENTS -> {
+                            eventsName.clear();
+                            eventsName.addAll(infoStatus.getEventsName());
+                        }
+                        case REQUEST_CSV_EVENT -> receiveCSVFile(this.getFileName());
                     }
                     pcs.firePropertyChange(infoStatus.getStatus().toString(), null, null);
                 }
@@ -142,6 +147,46 @@ public class requestsAPI{
             }
         }
     }
+
+    public void receiveCSVFile(String destinationPath) {
+        byte[] fileChunk = new byte[5000];
+        InputStream in = null;
+        int nbytes;
+        System.out.println();
+
+        String requestedCanonicalFilePath = null;
+        try {
+            requestedCanonicalFilePath = new File(destinationPath).getCanonicalPath();
+
+            try (OutputStream fileOutputStream = new FileOutputStream(requestedCanonicalFilePath)) {
+                in = this.socket.getInputStream();
+
+                int totalBytes = 0;
+                int nChunks = 0;
+                do {
+                    nbytes = in.read(fileChunk);
+
+                    if (nbytes > 0) {
+                        fileOutputStream.write(fileChunk, 0, nbytes);
+                        totalBytes += nbytes;
+                        nChunks++;
+                    }else {
+                        break;
+                    }
+
+                } while (nbytes > 0);
+
+                System.out.format("(CSV File Received)(%d bytes)\r\n", totalBytes);
+
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public void disconnect() {
         if (socket != null) {
@@ -159,8 +204,11 @@ public class requestsAPI{
         }
     }
     public String getMyUser() {return myUser;}
+    public String getFileName() {return myFile;}
+    public String setFileName(String file) {return myFile = file;}
     public Socket getSocket() {return this.socket;}
     public List<String> getEventsName(){return eventsName;}
+
     public void addPropertyChangeListener(String property,PropertyChangeListener listener){
         pcs.addPropertyChangeListener(property,listener);
     }

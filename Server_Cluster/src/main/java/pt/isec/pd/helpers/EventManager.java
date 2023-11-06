@@ -108,14 +108,18 @@ public class EventManager {
                 }
             }
             case REQUEST_CSV_EVENT -> {
-                if(event.getCsv_msg().equals("UserEvents")){
-                    System.out.println("CSV->"+event.getUser_email()+"-"+event.getCsv_dir()+"-"+event.getCsv_msg());
-                    if(DatabaseManager.getInstance().csvUserEvents(event)){
+                String defaultFileName;
+                if(event.getCsv_msg().equals("UserEvents")) {
+                    defaultFileName = "userEvents.csv";
+                    if(DatabaseManager.getInstance().csvUserEvents(event, defaultFileName)){
                         InfoStatus response = new InfoStatus(InfoStatus.types_status.REQUEST_CSV_EVENT);
                         response.setMsg_log(event.getType().toString());
+                        response.setEventsName(DatabaseManager.getInstance().getCreatedEvents());
                         objectOutputStream.writeObject(response);
                         objectOutputStream.flush();
+                        DatabaseManager.getInstance().sendFile(defaultFileName,clientSocket);
                     }
+
                 }
             }
             case LIST_CREATED_EVENTS -> {
