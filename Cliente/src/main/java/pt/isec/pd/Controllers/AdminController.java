@@ -58,6 +58,7 @@ public class AdminController {
                 @Override
                 public void run() {
                     infoLabel.setText("Evento solicitado não existe");
+                    eventToSend = new Event(null,-1);
                     infoLabel.setTextFill(Color.RED);
                 }
             });
@@ -77,6 +78,7 @@ public class AdminController {
                 @Override
                 public void run() {
                     infoLabel.setText("Ocorreu um erro a associar o utilizador ao evento");
+                    eventToSend = new Event(null,-1);
                     infoLabel.setTextFill(Color.RED);
                 }
             });
@@ -96,6 +98,7 @@ public class AdminController {
                 @Override
                 public void run() {
                     infoLabel.setText("Ocorreu um erro ao criar o evento");
+                    eventToSend = new Event(null,-1);
                     infoLabel.setTextFill(Color.RED);
                 }
             });

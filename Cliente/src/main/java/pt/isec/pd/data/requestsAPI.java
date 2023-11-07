@@ -23,9 +23,7 @@ public class requestsAPI{
     private PropertyChangeSupport pcs;
     private int event_code;
 
-    private requestsAPI() {
-
-    }
+    private requestsAPI() {}
 
     public static requestsAPI getInstance() {
         if (instance == null) {
@@ -217,7 +215,6 @@ public class requestsAPI{
     public String setFileName(String file) {return myFile = file;}
     public Socket getSocket() {return this.socket;}
     public List<String> getEventsName(){return eventsName;}
-
     public void addPropertyChangeListener(String property,PropertyChangeListener listener){
         pcs.addPropertyChangeListener(property,listener);
     }
