@@ -6,8 +6,7 @@ import pt.isec.pd.data.Event;
 import java.io.*;
 import java.net.Socket;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class DatabaseManager{
     private String dbAddr;
@@ -374,11 +373,84 @@ public class DatabaseManager{
         }
     }
 
-
-
-
     public boolean generateCode(Event event) {
-        return false;
+        int code = generateRandomCode();
+        int eventId;
+        try {
+            String checkEventExist = "SELECT id FROM events WHERE name = ?";
+            PreparedStatement checkStatement = connection.prepareStatement(checkEventExist);
+            checkStatement.setString(1, event.getEvent_name());
+
+            ResultSet resultSet = checkStatement.executeQuery();
+
+            if (resultSet.next())
+                eventId = resultSet.getInt("id");
+            else
+                return false;
+
+            // Verifique se já existe um código para o mesmo evento
+            String checkExistingCodeSql = "SELECT code FROM code_register WHERE fk_event = ?";
+            checkStatement = connection.prepareStatement(checkExistingCodeSql);
+            checkStatement.setInt(1, eventId);
+            resultSet = checkStatement.executeQuery();
+
+            if (resultSet.next()) {
+                int existingCode = resultSet.getInt("code");
+                // Remove o código anterior
+                String deleteExistingCodeSql = "DELETE FROM code_register WHERE fk_event = ?";
+                PreparedStatement deleteStatement = connection.prepareStatement(deleteExistingCodeSql);
+                deleteStatement.setInt(1, eventId);
+                deleteStatement.executeUpdate();
+            }
+
+            String sql = "INSERT INTO code_register (code,time_minutes,fk_event) VALUES (?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, code);
+            statement.setInt(2, Integer.parseInt(event.getEvent_end_time()));
+            statement.setInt(3, eventId);
+
+            int rowsInserted = statement.executeUpdate();
+            updateVersion();
+
+            if (rowsInserted > 0) {
+                event.setAttend_code(code);
+                return true;
+            }else
+                return false;
+
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database Manager -> " + e.getMessage());
+            return false;
+        }
+    }
+
+    private int generateRandomCode() {
+        Random random = new Random();
+        StringBuilder code = new StringBuilder();
+
+        for (int i = 0; i < 6; i++) {
+            int digit = random.nextInt(10);
+            code.append(digit);
+        }
+
+        // verifica se existe algum codigo com o mesmo numero
+        String checkCodeExists = "SELECT id FROM code_register WHERE code = ?";
+        try {
+            PreparedStatement checkStatement = checkStatement = connection.prepareStatement(checkCodeExists);
+            checkStatement.setInt(1, Integer.parseInt(code.toString()));
+
+            ResultSet resultSet = checkStatement.executeQuery();
+
+            // se existir volta a chamar a função
+            if (resultSet.next())
+                generateRandomCode();
+
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database Manager -> " + e.getMessage());
+            return 0;
+        }
+
+        return Integer.parseInt(code.toString());
     }
 
     public String getDbAddr() {

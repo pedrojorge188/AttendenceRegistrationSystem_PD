@@ -94,7 +94,7 @@ public class EventManager {
                 try {
                     if (DatabaseManager.getInstance().generateCode(event)) {
                         InfoStatus response = new InfoStatus(InfoStatus.types_status.GENERATE_CODE_MADE);
-                        response.setMsg_log(event.getType().toString());
+                        response.setMsg_log(String.valueOf(event.getAttend_code()));
                         objectOutputStream.writeObject(response);
                         objectOutputStream.flush();
                     } else {

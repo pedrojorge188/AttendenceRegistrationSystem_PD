@@ -21,6 +21,8 @@ public class requestsAPI{
     private String myUser;
     private List<String> eventsName;
     private PropertyChangeSupport pcs;
+    private int event_code;
+
     private requestsAPI() {
 
     }
@@ -138,7 +140,12 @@ public class requestsAPI{
                             eventsName.clear();
                             eventsName.addAll(infoStatus.getEventsName());
                         }
-                        case REQUEST_CSV_EVENT -> receiveCSVFile(this.getFileName());
+                        case REQUEST_CSV_EVENT ->
+                            receiveCSVFile(this.getFileName());
+
+                        case GENERATE_CODE_MADE ->
+                            setEventCode(Integer.parseInt(infoStatus.getMsg_log()));
+
                     }
                     pcs.firePropertyChange(infoStatus.getStatus().toString(), null, null);
                 }
@@ -184,7 +191,6 @@ public class requestsAPI{
         }
     }
 
-
     public void disconnect() {
         if (socket != null) {
             try {
@@ -200,6 +206,12 @@ public class requestsAPI{
             }
         }
     }
+    public void setEventCode(int code){
+        this.event_code = code;
+    }
+    public int getEventCode() {
+        return this.event_code;
+    }
     public String getMyUser() {return myUser;}
     public String getFileName() {return myFile;}
     public String setFileName(String file) {return myFile = file;}
@@ -209,4 +221,5 @@ public class requestsAPI{
     public void addPropertyChangeListener(String property,PropertyChangeListener listener){
         pcs.addPropertyChangeListener(property,listener);
     }
+
 }

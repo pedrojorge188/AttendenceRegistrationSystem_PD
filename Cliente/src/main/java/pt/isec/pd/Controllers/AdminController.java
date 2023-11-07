@@ -132,7 +132,7 @@ public class AdminController {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    infoLabel.setText("Código gerado com sucesso");
+                    infoLabel.setText("Código gerado com sucesso: " + client.getEventCode());
                     infoLabel.setTextFill(Color.GREEN);
                 }
             });
