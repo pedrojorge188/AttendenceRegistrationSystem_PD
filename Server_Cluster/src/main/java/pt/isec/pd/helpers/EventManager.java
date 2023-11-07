@@ -3,8 +3,8 @@ package pt.isec.pd.helpers;
 import pt.isec.pd.data.Event;
 import pt.isec.pd.data.InfoStatus;
 import pt.isec.pd.data.User;
+import pt.isec.pd.database.DatabaseManager;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -110,7 +110,7 @@ public class EventManager {
             case REQUEST_CSV_EVENT -> {
                 String defaultFileName;
                 if(event.getCsv_msg().equals("UserEvents")) {
-                    defaultFileName = "userEvents.csv";
+                    defaultFileName = "userEvents-"+event.getUser_email()+".csv";
                     if(DatabaseManager.getInstance().csvUserEvents(event, defaultFileName)){
                         InfoStatus response = new InfoStatus(InfoStatus.types_status.REQUEST_CSV_EVENT);
                         response.setMsg_log(event.getType().toString());
@@ -119,7 +119,6 @@ public class EventManager {
                         objectOutputStream.flush();
                         DatabaseManager.getInstance().sendCSVFile(defaultFileName,clientSocket);
                     }
-
                 }
             }
             case LIST_CREATED_EVENTS -> {

@@ -1,7 +1,8 @@
 package pt.isec.pd.Threads;
 
 import pt.isec.pd.data.HeartBeatInfo;
-import pt.isec.pd.helpers.DatabaseManager;
+import pt.isec.pd.database.DatabaseManager;
+import pt.isec.pd.database.elements.Version;
 import pt.isec.pd.helpers.MULTICAST;
 
 import java.io.ByteArrayOutputStream;
@@ -27,7 +28,10 @@ public class HeartbeatHandler extends Thread {
     public static void sendHb(){
 
         try (DatagramSocket multicastSocket = new DatagramSocket()) {
-            HeartBeatInfo heartbeatInfo = new HeartBeatInfo(rmiRegistryPort, rmiServiceName, DatabaseManager.getInstance().getVersion());
+            while(DatabaseManager.getInstance().getConnection() == null){}
+            HeartBeatInfo heartbeatInfo = new HeartBeatInfo(rmiRegistryPort, rmiServiceName,
+                    Version.getVersion(DatabaseManager.getInstance().getConnection())
+                    );
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);

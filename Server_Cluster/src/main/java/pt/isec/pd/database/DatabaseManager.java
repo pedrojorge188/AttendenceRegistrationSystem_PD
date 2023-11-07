@@ -1,7 +1,9 @@
-package pt.isec.pd.helpers;
+package pt.isec.pd.database;
 
 import pt.isec.pd.Threads.HeartbeatHandler;
 import pt.isec.pd.data.Event;
+import pt.isec.pd.database.elements.Create;
+import pt.isec.pd.database.elements.Version;
 
 import java.io.*;
 import java.net.Socket;
@@ -38,16 +40,19 @@ public class DatabaseManager{
             return;
         }
 
+        String dbURL = "jdbc:sqlite:" + dbAddr  + dbName;
         if((new File(this.dbAddr + this.dbName)).exists()){
+
             try{
-                connection = DriverManager.getConnection("jdbc:sqlite:" + dbAddr  + dbName);
+                connection = DriverManager.getConnection(dbURL);
                 System.out.println("[SERVER] Database connection made!");
             }catch (Exception e){
                 System.err.println("[ERROR - DATABASE]" );e.printStackTrace();
             }
+
+        }else{
+            Create.action(connection,dbURL);
         }
-
-
     }
 
     public String userExists(String username, String password) {
@@ -83,7 +88,7 @@ public class DatabaseManager{
             statement.setString(3, name);
             statement.setInt(4, student_id);
             int rowsInserted = statement.executeUpdate();
-            updateVersion();
+            Version.updateVersion(connection);
             if (rowsInserted > 0)
                 return true;
             else
@@ -116,7 +121,7 @@ public class DatabaseManager{
             updateStatement.setInt(3, resultSet.getInt("id"));
 
             int rowsAffected = updateStatement.executeUpdate();
-            updateVersion();
+            Version.updateVersion(connection);
             if (rowsAffected > 0)
                 return true;
              else
@@ -125,33 +130,6 @@ public class DatabaseManager{
         } catch (SQLException e) {
             System.err.println("[ERROR] Database Manager -> " + e.getMessage());
             return false;
-        }
-    }
-
-
-    public int getVersion(){
-        try{
-
-            String sql = "SELECT version_serial FROM version WHERE id = 1";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            return  statement.executeQuery().getInt(1);
-
-        }catch (SQLException e){
-            System.err.println("[ERROR] Database Manager ->" + e.getMessage());
-            return -1;
-        }
-    }
-
-    private void updateVersion(){
-        try{
-
-            String sql = "UPDATE version SET version_serial = "+(getVersion()+1)+" WHERE id = 1";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.executeUpdate();
-            HeartbeatHandler.sendHb();
-
-        }catch (SQLException e){
-            System.err.println("[ERROR] Database Manager ->" + e.getMessage());
         }
     }
 
@@ -175,7 +153,7 @@ public class DatabaseManager{
             statement.setString(6, event.getUser_email());
 
             int rowsInserted = statement.executeUpdate();
-            updateVersion();
+            Version.updateVersion(connection);
             if (rowsInserted > 0)
                 return true;
             else
@@ -210,7 +188,7 @@ public class DatabaseManager{
             updateStatement.setInt(6, resultSet.getInt("id"));
 
             int rowsAffected = updateStatement.executeUpdate();
-            updateVersion();
+            Version.updateVersion(connection);
             if (rowsAffected > 0)
                 return true;
             else
@@ -243,7 +221,7 @@ public class DatabaseManager{
                 deleteStatement = connection.prepareStatement(deleteSQL);
                 deleteStatement.setInt(1, eventId);
                 deleteStatement.executeUpdate();
-                updateVersion();
+                Version.updateVersion(connection);
                 if (rowsAffected > 0) {
                     return true;
                 }
@@ -287,7 +265,7 @@ public class DatabaseManager{
             statement.setInt(2, eventId);
 
             int rowsInserted = statement.executeUpdate();
-            updateVersion();
+            Version.updateVersion(connection);
             if (rowsInserted > 0)
                 return true;
             else
@@ -347,7 +325,6 @@ public class DatabaseManager{
         int nbytes;
         int totalBytes = 0;
         int nChunks = 0;
-
         try {
             String requestedCanonicalFilePath = new File(path).getCanonicalPath();
             try (InputStream requestedFileInputStream = new FileInputStream(requestedCanonicalFilePath)) {
@@ -367,6 +344,9 @@ public class DatabaseManager{
 
 
             }
+            if(new File(path).exists())
+                new File(path).delete();
+
             return true;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -388,7 +368,6 @@ public class DatabaseManager{
             else
                 return false;
 
-            // Verifique se já existe um código para o mesmo evento
             String checkExistingCodeSql = "SELECT code FROM code_register WHERE fk_event = ?";
             checkStatement = connection.prepareStatement(checkExistingCodeSql);
             checkStatement.setInt(1, eventId);
@@ -396,7 +375,6 @@ public class DatabaseManager{
 
             if (resultSet.next()) {
                 int existingCode = resultSet.getInt("code");
-                // Remove o código anterior
                 String deleteExistingCodeSql = "DELETE FROM code_register WHERE fk_event = ?";
                 PreparedStatement deleteStatement = connection.prepareStatement(deleteExistingCodeSql);
                 deleteStatement.setInt(1, eventId);
@@ -410,7 +388,7 @@ public class DatabaseManager{
             statement.setInt(3, eventId);
 
             int rowsInserted = statement.executeUpdate();
-            updateVersion();
+            Version.updateVersion(connection);
 
             if (rowsInserted > 0) {
                 event.setAttend_code(code);
@@ -433,7 +411,6 @@ public class DatabaseManager{
             code.append(digit);
         }
 
-        // verifica se existe algum codigo com o mesmo numero
         String checkCodeExists = "SELECT id FROM code_register WHERE code = ?";
         try {
             PreparedStatement checkStatement = checkStatement = connection.prepareStatement(checkCodeExists);
@@ -441,7 +418,6 @@ public class DatabaseManager{
 
             ResultSet resultSet = checkStatement.executeQuery();
 
-            // se existir volta a chamar a função
             if (resultSet.next())
                 generateRandomCode();
 

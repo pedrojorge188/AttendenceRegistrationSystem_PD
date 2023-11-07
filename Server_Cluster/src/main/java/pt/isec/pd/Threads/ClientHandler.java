@@ -1,18 +1,14 @@
 package pt.isec.pd.Threads;
 
 import pt.isec.pd.data.Event;
-import pt.isec.pd.data.InfoStatus;
 import pt.isec.pd.data.User;
-import pt.isec.pd.helpers.DatabaseManager;
 import pt.isec.pd.helpers.EventManager;
 import pt.isec.pd.helpers.UserManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.concurrent.TimeoutException;
 
 public class ClientHandler extends Thread {
 
