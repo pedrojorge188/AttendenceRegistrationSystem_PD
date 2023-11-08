@@ -1,6 +1,9 @@
 package pt.isec.pd.Controllers;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -122,11 +125,47 @@ public class AdminController {
             });
         });
         requestsAPI.getInstance().addPropertyChangeListener(LIST_REGISTERED_ATTENDANCE.toString(),evt->{
+            System.out.println("entrei");
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    infoLabel.setText("Listagem de presencas com sucesso");
-                    infoLabel.setTextFill(Color.GREEN);
+                    System.out.println("LIST_REGISTERED_ATTENDANCE");
+                    TableView<ObservableList<String>> tableView = new TableView<>();
+                    VBox vbox = new VBox();
+                    vbox.setSpacing(16);
+                    Label label = new Label("Listagem de Presenças");
+                    label.setStyle("-fx-font-size: 35px;");
+
+                    for (String attendanceString : requestsAPI.getInstance().getAttendanceRecords()) {
+                        String[] parts = attendanceString.split("\t");
+                        System.out.println("lenght: " + parts.length + " " + attendanceString);
+                        if (parts.length == 2) {
+                            ObservableList<String> row = FXCollections.observableArrayList(parts);
+                            tableView.getItems().add(row);
+                        }
+                    }
+
+                    for (int i = 0; i < 2; i++) {
+                        TableColumn<ObservableList<String>, String> column = new TableColumn<>();
+                        final int columnIndex = i;
+                        column.setCellValueFactory(param -> {
+                            return new SimpleStringProperty(param.getValue().get(columnIndex));
+                        });
+                        column.setText(getColumnName(i));
+                        column.setStyle("-fx-background-color: #fff; -fx-text-fill: #000; -fx-font-weight: bold; -fx-border-color: #444; -fx-border-width: 0.5px; -fx-text-decoration: none; -fx-alignment: center;");
+
+                        column.getStyleClass().add("custom-header");
+
+                        tableView.getColumns().add(column);
+                    }
+
+                    tableView.setMaxHeight(200);
+                    tableView.setStyle("-fx-background-color: #ffffff;");
+                    tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+                    vbox.getChildren().addAll(label, tableView);
+                    box.getChildren().clear();
+                    box.getChildren().add(vbox);
                 }
             });
         });
@@ -136,16 +175,6 @@ public class AdminController {
                 @Override
                 public void run() {
                     infoLabel.setText("Código gerado com sucesso: " + client.getEventCode());
-                    infoLabel.setTextFill(Color.GREEN);
-                }
-            });
-        });
-
-        requestsAPI.getInstance().addPropertyChangeListener(LIST_REGISTERED_ATTENDANCE.toString(),evt->{
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    infoLabel.setText("Presenças Listadas com sucesso");
                     infoLabel.setTextFill(Color.GREEN);
                 }
             });
@@ -395,19 +424,17 @@ public class AdminController {
         }
     }
 
-    // search attendence in a event
+    // search attendence in an event
     public void searchAttendence(ActionEvent actionEvent) {
         String eventName = this.eventName.getText();
-        String eventStartHour = this.eventStartHour.getText();
-        String eventEndHour = this.eventEndHour.getText();
 
-        if(eventName.isEmpty() || eventStartHour.isEmpty() || eventEndHour.isEmpty()){
+        if(eventName.isEmpty()){
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         }else{
             eventToSend.setEvent_name(eventName);
-            eventToSend.setEvent_start_time(eventStartHour);
-            eventToSend.setEvent_end_time(eventEndHour);
+            eventToSend.setEvent_start_time(null);
+            eventToSend.setEvent_end_time(null);
             eventToSend.setType(LIST_REGISTERED_ATTENDANCE);
             eventToSend.setEvent_location(null);
             eventToSend.setAttend_code(-1);
@@ -415,6 +442,17 @@ public class AdminController {
                 infoLabel.setText("Aconteceu algo de errado");
                 infoLabel.setTextFill(Color.RED);
             }
+        }
+    }
+
+    private String getColumnName(int columnIndex) {
+        switch (columnIndex) {
+            case 0:
+                return "Nome";
+            case 1:
+                return "Email";
+            default:
+                return "-";
         }
     }
 

@@ -41,7 +41,6 @@ public class MainAdminController {
             });
         });
     }
-
     private String getColumnName(int columnIndex) {
         switch (columnIndex) {
             case 0:
@@ -169,10 +168,10 @@ public class MainAdminController {
         tableView.setStyle("-fx-background-color: #ffffff;");
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+
         vbox.getChildren().addAll(label, tableView);
         main_box.getChildren().clear();
         main_box.getChildren().add(vbox);
-
     }
 
 }

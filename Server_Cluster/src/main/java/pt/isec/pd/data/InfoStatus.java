@@ -8,6 +8,7 @@ public class InfoStatus implements Serializable {
     static final long SerialVersionUID = 1L;
     private String msg_log;
     private List<String> eventsName;
+    private List<String> attendanceRecords;
     private types_status status;
 
     public enum types_status{
@@ -67,4 +68,7 @@ public class InfoStatus implements Serializable {
 
     public List<String> getEventsName() {return eventsName;}
     public void setEventsName(List<String> eventsName){ this.eventsName = eventsName;}
+
+    public List<String> getAttendanceRecords() {return attendanceRecords;}
+    public void setAttendanceRecords(List<String> attendanceRecords){ this.attendanceRecords = attendanceRecords;}
 }

@@ -1,6 +1,15 @@
 package pt.isec.pd.data;
 
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.*;
@@ -20,6 +29,12 @@ public class requestsAPI{
     private String myFile;
     private String myUser;
     private List<String> eventsName;
+
+    public List<String> getAttendanceRecords() {
+        return attendanceRecords;
+    }
+
+    private List<String> attendanceRecords;
     private PropertyChangeSupport pcs;
     private int event_code;
 
@@ -138,6 +153,10 @@ public class requestsAPI{
                             eventsName.clear();
                             eventsName.addAll(infoStatus.getEventsName());
                         }
+                        case LIST_REGISTERED_ATTENDANCE -> {
+                            attendanceRecords = new ArrayList<>();
+                            attendanceRecords.addAll(infoStatus.getAttendanceRecords());
+                        }
                         case REQUEST_CSV_EVENT ->
                             receiveCSVFile(this.getFileName());
 
@@ -145,6 +164,7 @@ public class requestsAPI{
                             setEventCode(Integer.parseInt(infoStatus.getMsg_log()));
 
                     }
+                    System.out.println(infoStatus.getStatus().toString());
                     pcs.firePropertyChange(infoStatus.getStatus().toString(), null, null);
                 }
             }catch (Exception e){

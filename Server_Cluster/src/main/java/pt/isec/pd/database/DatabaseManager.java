@@ -92,7 +92,7 @@ public class DatabaseManager{
             if (rowsInserted > 0)
                 return true;
             else
-               return false;
+                return false;
 
         } catch (SQLException e) {
             System.err.println("[ERROR] Database Manager -> "+ e.getMessage());
@@ -124,7 +124,7 @@ public class DatabaseManager{
             Version.updateVersion(connection);
             if (rowsAffected > 0)
                 return true;
-             else
+            else
                 return false;
 
         } catch (SQLException e) {
@@ -294,8 +294,8 @@ public class DatabaseManager{
             csvWriter.write("\"Nome\";\"Número identificação\";\"Email\"");
             csvWriter.write("\n\n");
             csvWriter.write("\"" + dataSet.getString(1) + "\";\"" +
-                            dataSet.getInt(2) + "\";\"" +
-                            dataSet.getString(3) + "\"");
+                    dataSet.getInt(2) + "\";\"" +
+                    dataSet.getString(3) + "\"");
             csvWriter.write("\n\n");
             csvWriter.write("\"Designação\";\"Local\";\"Data\";\"Hora ínicio\"");
             csvWriter.write("\n");
@@ -450,14 +450,148 @@ public class DatabaseManager{
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 eventNames.add(resultSet.getString(1) + "\t"+ resultSet.getString(2) + "\t"+ resultSet.getString(3)
-                +"\t"+ resultSet.getString(4)+ "\t"+ resultSet.getString(5));
+                        +"\t"+ resultSet.getString(4)+ "\t"+ resultSet.getString(5));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return eventNames;
     }
+    public List<String> getAttendance(Event event) {
+        int eventId;
+        List<String> attendance = new ArrayList<>();
+        try {
+            // Primeiro, obter o ID do evento com o nome desejado
+            String eventIdQuery = "SELECT id FROM events WHERE name = ?";
+            PreparedStatement eventIdStatement = connection.prepareStatement(eventIdQuery);
+            eventIdStatement.setString(1, event.getEvent_name());
+            ResultSet eventIdResult = eventIdStatement.executeQuery();
 
+            if (eventIdResult.next()) {
+                eventId = eventIdResult.getInt("id");
+
+                String sql = "SELECT users.name, users.username_email " +
+                        "FROM users_events " +
+                        "INNER JOIN users ON users_events.fk_user = users.id " +
+                        "WHERE fk_event = ? AND attendance = 1";
+
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setInt(1, eventId);
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+                    String name = resultSet.getString("name");
+                    String email = resultSet.getString("username_email");
+                    attendance.add(name + "\t" + email);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return attendance;
+    }
+
+    public boolean insertAttendance(Event event) {
+        int eventId, userId;
+        try {
+            String checkEventAndUserExist = "SELECT e.id AS event_id, u.id AS user_id " +
+                    "FROM events e " +
+                    "INNER JOIN users u ON e.name = ? AND u.username_email = ?";
+
+            PreparedStatement checkStatement = connection.prepareStatement(checkEventAndUserExist);
+            checkStatement.setString(1, event.getEvent_name());
+            checkStatement.setString(2, event.getUser_email());
+
+            ResultSet resultSet = checkStatement.executeQuery();
+
+            if (resultSet.next()) {
+                eventId = resultSet.getInt("event_id");
+                userId = resultSet.getInt("user_id");
+            } else {
+                return false;
+            }
+
+            String sql = "SELECT attendance FROM users_events WHERE fk_user = ? and fk_event = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            statement.setInt(2, eventId);
+
+            ResultSet attendanceResultSet = statement.executeQuery();
+
+            if (attendanceResultSet.next()) {
+                int attendance = attendanceResultSet.getInt("attendance");
+                System.out.println("attendance = " + attendance);
+                if (attendance == 1) {
+                    return false;
+                } else if (attendance == 0) {
+                    sql = "UPDATE users_events SET attendance = 1 WHERE fk_user = ? and fk_event = ?";
+                    statement = connection.prepareStatement(sql);
+                    statement.setInt(1, userId);
+                    statement.setInt(2, eventId);
+                }
+            } else {
+                sql = "INSERT INTO users_events (fk_user, fk_event, attendance) VALUES (?, ?, 1)";
+                statement = connection.prepareStatement(sql);
+                statement.setInt(1, userId);
+                statement.setInt(2, eventId);
+            }
+
+            int rowsInserted = statement.executeUpdate();
+            Version.updateVersion(connection);
+
+            if (rowsInserted > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database Manager -> " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteAttendance(Event event) {
+        int eventId, userId;
+        try {
+            String checkEventExist = "SELECT id FROM events WHERE name = ?";
+            PreparedStatement checkStatement = connection.prepareStatement(checkEventExist);
+            checkStatement.setString(1, event.getEvent_name());
+
+            ResultSet resultSet = checkStatement.executeQuery();
+
+            if (resultSet.next())
+                eventId = resultSet.getInt("id");
+            else
+                return false;
+
+            checkEventExist = "SELECT id FROM users WHERE username_email = ?";
+            checkStatement = connection.prepareStatement(checkEventExist);
+            checkStatement.setString(1, event.getUser_email());
+
+            resultSet = checkStatement.executeQuery();
+
+            if (resultSet.next())
+                userId = resultSet.getInt("id");
+            else
+                return false;
+
+            String sql = "UPDATE users_events SET attendance = 0 WHERE fk_user = ? and fk_event = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            statement.setInt(2, eventId);
+
+            int rowsInserted = statement.executeUpdate();
+            Version.updateVersion(connection);
+
+            if (rowsInserted > 0) {
+                return true;
+            } else
+                return false;
+
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Database Manager -> " + e.getMessage());
+            return false;
+        }
+    }
 }
-
 

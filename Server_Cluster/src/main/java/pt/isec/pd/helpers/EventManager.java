@@ -146,23 +146,45 @@ public class EventManager {
             case LIST_REGISTERED_ATTENDANCE -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_REGISTERED_ATTENDANCE);
                 response.setMsg_log(event.getType().toString());
+                response.setAttendanceRecords(DatabaseManager.getInstance().getAttendance(event));
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
-                System.out.println("[CLIENT] LIST OF REGISTERD ATTENDENCE SENT");
             }
             case INSERT_ATTENDANCE -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.INSERT_ATTENDANCE_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
-                System.out.println("[CLIENT] CLIENT INSERTED TO ATTENDANCE");
+                try {
+                    if (DatabaseManager.getInstance().insertAttendance(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.INSERT_ATTENDANCE_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.INSERT_ATTENDANCE_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+
             }
             case DELETE_ATTENDANCE -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_ATTENDANCE_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
-                System.out.println("[CLIENT] CLIENT DELETED FROM ATTENDANCE");
+                try {
+                    if (DatabaseManager.getInstance().deleteAttendance(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_ATTENDANCE_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_ATTENDANCE_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
         }
 
