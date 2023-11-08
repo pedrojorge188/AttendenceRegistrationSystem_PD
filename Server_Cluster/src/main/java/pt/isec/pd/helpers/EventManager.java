@@ -139,9 +139,9 @@ public class EventManager {
             case GET_ATTENDANCE_HISTORY -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.GET_HISTORY);
                 response.setMsg_log(event.getType().toString());
+                response.setUserAttendanceRecords(DatabaseManager.getInstance().getUserAttendance(event));
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
-                System.out.println("[CLIENT] LIST ATTENDANCE HISTORY REQUESTED");
             }
             case LIST_REGISTERED_ATTENDANCE -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_REGISTERED_ATTENDANCE);

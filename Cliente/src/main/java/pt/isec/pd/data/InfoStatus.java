@@ -10,6 +10,7 @@ public class InfoStatus implements Serializable {
     private List<String> eventsName;
     private List<String> attendanceRecords;
     private types_status status;
+    private List<String> userAttendanceRecords;
 
     public enum types_status{
         LOGIN_MADE_USER,
@@ -71,4 +72,8 @@ public class InfoStatus implements Serializable {
 
     public List<String> getAttendanceRecords() {return attendanceRecords;}
     public void setAttendanceRecords(List<String> attendanceRecords){ this.attendanceRecords = attendanceRecords;}
+    public void setUserAttendanceRecords(List<String> userAttendance) {
+        this.userAttendanceRecords = userAttendance;
+    }
+    public List<String> getUserAttendanceRecords() {return userAttendanceRecords;}
 }

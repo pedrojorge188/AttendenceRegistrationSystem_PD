@@ -520,7 +520,6 @@ public class DatabaseManager{
 
             if (attendanceResultSet.next()) {
                 int attendance = attendanceResultSet.getInt("attendance");
-                System.out.println("attendance = " + attendance);
                 if (attendance == 1) {
                     return false;
                 } else if (attendance == 0) {
@@ -592,6 +591,42 @@ public class DatabaseManager{
             System.err.println("[ERROR] Database Manager -> " + e.getMessage());
             return false;
         }
+    }
+
+    public List<String> getUserAttendance(Event event) {
+        List<String> eventsList = new ArrayList<>();
+        try {
+            // Primeiro, obtenha o ID do usuário com o email desejado
+            String userIdQuery = "SELECT id FROM users WHERE username_email = ?";
+            PreparedStatement userIdStatement = connection.prepareStatement(userIdQuery);
+            userIdStatement.setString(1, event.getUser_email());
+            ResultSet userIdResult = userIdStatement.executeQuery();
+
+            if (userIdResult.next()) {
+                int userId = userIdResult.getInt("id");
+
+                String sql = "SELECT events.name, events.start_time, events.end_time, events.date " +
+                        "FROM users_events " +
+                        "INNER JOIN events ON users_events.fk_event = events.id " +
+                        "WHERE fk_user = ? AND attendance = 1";
+
+
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setInt(1, userId);
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+                    String name = resultSet.getString("name");
+                    String startTime = resultSet.getString("start_time");
+                    String endTime = resultSet.getString("end_time");
+                    String date = resultSet.getString("date");
+                    eventsList.add(name + "\t" + startTime + "\t" + endTime + "\t" + date);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return eventsList;
     }
 }
 

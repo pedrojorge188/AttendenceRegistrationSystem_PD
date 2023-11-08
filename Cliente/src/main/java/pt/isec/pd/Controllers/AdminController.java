@@ -129,43 +129,16 @@ public class AdminController {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println("LIST_REGISTERED_ATTENDANCE");
-                    TableView<ObservableList<String>> tableView = new TableView<>();
-                    VBox vbox = new VBox();
-                    vbox.setSpacing(16);
-                    Label label = new Label("Listagem de Presenças");
-                    label.setStyle("-fx-font-size: 35px;");
+                    initAttendanceTable();
+                }
+            });
+        });
 
-                    for (String attendanceString : requestsAPI.getInstance().getAttendanceRecords()) {
-                        String[] parts = attendanceString.split("\t");
-                        System.out.println("lenght: " + parts.length + " " + attendanceString);
-                        if (parts.length == 2) {
-                            ObservableList<String> row = FXCollections.observableArrayList(parts);
-                            tableView.getItems().add(row);
-                        }
-                    }
-
-                    for (int i = 0; i < 2; i++) {
-                        TableColumn<ObservableList<String>, String> column = new TableColumn<>();
-                        final int columnIndex = i;
-                        column.setCellValueFactory(param -> {
-                            return new SimpleStringProperty(param.getValue().get(columnIndex));
-                        });
-                        column.setText(getColumnName(i));
-                        column.setStyle("-fx-background-color: #fff; -fx-text-fill: #000; -fx-font-weight: bold; -fx-border-color: #444; -fx-border-width: 0.5px; -fx-text-decoration: none; -fx-alignment: center;");
-
-                        column.getStyleClass().add("custom-header");
-
-                        tableView.getColumns().add(column);
-                    }
-
-                    tableView.setMaxHeight(200);
-                    tableView.setStyle("-fx-background-color: #ffffff;");
-                    tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-                    vbox.getChildren().addAll(label, tableView);
-                    box.getChildren().clear();
-                    box.getChildren().add(vbox);
+        requestsAPI.getInstance().addPropertyChangeListener(GET_HISTORY.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    initUserAttendanceTable();
                 }
             });
         });
@@ -180,12 +153,32 @@ public class AdminController {
             });
         });
 
+        requestsAPI.getInstance().addPropertyChangeListener(GENERATE_CODE_FAIL.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Erro ao gerar o código");
+                    infoLabel.setTextFill(Color.RED);
+                }
+            });
+        });
+
         requestsAPI.getInstance().addPropertyChangeListener(INSERT_ATTENDANCE_MADE.toString(),evt->{
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
                     infoLabel.setText("Presença inserida com sucesso");
                     infoLabel.setTextFill(Color.GREEN);
+                }
+            });
+        });
+
+        requestsAPI.getInstance().addPropertyChangeListener(INSERT_ATTENDANCE_FAIL.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Erro ao inserir presença");
+                    infoLabel.setTextFill(Color.RED);
                 }
             });
         });
@@ -206,6 +199,16 @@ public class AdminController {
                 public void run() {
                     infoLabel.setText("Presença eliminada com sucesso");
                     infoLabel.setTextFill(Color.GREEN);
+                }
+            });
+        });
+
+        requestsAPI.getInstance().addPropertyChangeListener(DELETE_ATTENDANCE_FAIL.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    infoLabel.setText("Erro ao eliminar presença");
+                    infoLabel.setTextFill(Color.RED);
                 }
             });
         });
@@ -303,16 +306,16 @@ public class AdminController {
         }
     }
 
-    // show all events of a specific user
+    // show all events of a specific user attended
     public void showUserEvents(ActionEvent actionEvent) {
-        String userEmail = this.userEmail.getText();
+        String userEmail = this.userEmailCsv.getText();
 
         if (userEmail.isEmpty()) {
             infoLabel.setText("Por favor preencha todos os campos");
             infoLabel.setTextFill(Color.RED);
         } else {
             eventToSend.setAttend_code(-1);
-            eventToSend.setType(LIST_CREATED_EVENTS_BY_USER);
+            eventToSend.setType(GET_ATTENDANCE_HISTORY);
             eventToSend.setEvent_date(null);
             eventToSend.setEvent_location(null);
             eventToSend.setEvent_name(null);
@@ -445,17 +448,6 @@ public class AdminController {
         }
     }
 
-    private String getColumnName(int columnIndex) {
-        switch (columnIndex) {
-            case 0:
-                return "Nome";
-            case 1:
-                return "Email";
-            default:
-                return "-";
-        }
-    }
-
     //associate user to a event
     public void assocUserEvent(ActionEvent actionEvent) {
         String eventName = this.eventNameAssoc.getText();
@@ -527,5 +519,105 @@ public class AdminController {
 
         }
     }
+    private String getColumnName(int columnIndex) {
+        switch (columnIndex) {
+            case 0:
+                return "Nome";
+            case 1:
+                return "Email";
+            default:
+                return "-";
+        }
+    }
+
+    public void initAttendanceTable(){
+        TableView<ObservableList<String>> tableView = new TableView<>();
+        VBox vbox = new VBox();
+        vbox.setSpacing(16);
+        Label label = new Label("Listagem de Presenças");
+        label.setStyle("-fx-font-size: 35px;");
+
+        for (String attendanceString : requestsAPI.getInstance().getAttendanceRecords()) {
+            String[] parts = attendanceString.split("\t");
+            if (parts.length == 2) {
+                ObservableList<String> row = FXCollections.observableArrayList(parts);
+                tableView.getItems().add(row);
+            }
+        }
+        for (int i = 0; i < 2; i++) {
+            TableColumn<ObservableList<String>, String> column = new TableColumn<>();
+            final int columnIndex = i;
+            column.setCellValueFactory(param -> {
+                return new SimpleStringProperty(param.getValue().get(columnIndex));
+            });
+            column.setText(getColumnName(i));
+            column.setStyle("-fx-background-color: #fff; -fx-text-fill: #000; -fx-font-weight: bold; -fx-border-color: #444; -fx-border-width: 0.5px; -fx-text-decoration: none; -fx-alignment: center;");
+
+            column.getStyleClass().add("custom-header");
+
+            tableView.getColumns().add(column);
+        }
+
+        tableView.setMaxHeight(200);
+        tableView.setStyle("-fx-background-color: #ffffff;");
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        vbox.getChildren().addAll(label, tableView);
+        box.getChildren().clear();
+        box.getChildren().add(vbox);
+    }
+
+    public void initUserAttendanceTable(){
+        TableView<ObservableList<String>> tableView = new TableView<>();
+        VBox vbox = new VBox();
+        vbox.setSpacing(16);
+        Label label = new Label("Listagem de Presenças");
+        label.setStyle("-fx-font-size: 35px;");
+
+        for (String attendanceString : requestsAPI.getInstance().getUserAttendanceRecords()) {
+            String[] parts = attendanceString.split("\t");
+            if (parts.length == 4) {
+                ObservableList<String> row = FXCollections.observableArrayList(parts);
+                tableView.getItems().add(row);
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            TableColumn<ObservableList<String>, String> column = new TableColumn<>();
+            final int columnIndex = i;
+            column.setCellValueFactory(param -> {
+                return new SimpleStringProperty(param.getValue().get(columnIndex));
+            });
+            column.setText(getColumnNameUserAttendance(i));
+            column.setStyle("-fx-background-color: #fff; -fx-text-fill: #000; -fx-font-weight: bold; -fx-border-color: #444; -fx-border-width: 0.5px; -fx-text-decoration: none; -fx-alignment: center;");
+
+            column.getStyleClass().add("custom-header");
+
+            tableView.getColumns().add(column);
+        }
+
+        tableView.setMaxHeight(200);
+        tableView.setStyle("-fx-background-color: #ffffff;");
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        vbox.getChildren().addAll(label, tableView);
+        box.getChildren().clear();
+        box.getChildren().add(vbox);
+    }
+
+    private String getColumnNameUserAttendance(int i) {
+        switch (i) {
+            case 0:
+                return "Nome Evento";
+            case 1:
+                return "Hora inicio";
+            case 2:
+                return "Hora fim";
+            case 3:
+                return "Data";
+            default:
+                return "-";
+        }
+    }
+
 
 }

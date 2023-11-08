@@ -29,12 +29,8 @@ public class requestsAPI{
     private String myFile;
     private String myUser;
     private List<String> eventsName;
-
-    public List<String> getAttendanceRecords() {
-        return attendanceRecords;
-    }
-
     private List<String> attendanceRecords;
+    private List<String> userAttendanceRecords;
     private PropertyChangeSupport pcs;
     private int event_code;
 
@@ -157,6 +153,10 @@ public class requestsAPI{
                             attendanceRecords = new ArrayList<>();
                             attendanceRecords.addAll(infoStatus.getAttendanceRecords());
                         }
+                        case GET_HISTORY -> {
+                            userAttendanceRecords = new ArrayList<>();
+                            userAttendanceRecords.addAll(infoStatus.getUserAttendanceRecords());
+                        }
                         case REQUEST_CSV_EVENT ->
                             receiveCSVFile(this.getFileName());
 
@@ -235,6 +235,13 @@ public class requestsAPI{
     public String setFileName(String file) {return myFile = file;}
     public Socket getSocket() {return this.socket;}
     public List<String> getEventsName(){return eventsName;}
+    public List<String> getUserAttendanceRecords() {
+        return userAttendanceRecords;
+    }
+    public List<String> getAttendanceRecords() {
+        return attendanceRecords;
+    }
+
     public void addPropertyChangeListener(String property,PropertyChangeListener listener){
         pcs.addPropertyChangeListener(property,listener);
     }
