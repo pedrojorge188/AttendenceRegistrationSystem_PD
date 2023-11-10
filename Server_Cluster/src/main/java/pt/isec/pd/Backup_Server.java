@@ -39,18 +39,10 @@ public class Backup_Server {
             System.exit(1);
         }
 
-        try {
-            multicastSocket = new MulticastSocket();
-            multicastGroup = InetAddress.getByName(MULTICAST.ADDR);
-            multicastSocket.joinGroup(multicastGroup);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
 
         System.out.println("Backup Server Started!! -> backup_directory => "+args[0]+" <-");
         backupDir = args[0];
-        HeartbeatListener heartbeatListener = new HeartbeatListener(multicastSocket,databaseVersion);
+        HeartbeatListener heartbeatListener = new HeartbeatListener(databaseVersion);
         heartbeatListener.start();
     }
 }

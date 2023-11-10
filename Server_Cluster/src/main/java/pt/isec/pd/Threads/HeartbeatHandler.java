@@ -43,6 +43,7 @@ public class HeartbeatHandler extends Thread {
             multicastSocket.joinGroup(group);
             DatagramPacket packet = new DatagramPacket(serializedObject, serializedObject.length, group, multicastPort);
             multicastSocket.send(packet);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
