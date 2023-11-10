@@ -191,7 +191,7 @@ public class requestsAPI{
                 do {
                     nbytes = in.read(fileChunk);
 
-                    if (nbytes > 0) {
+                    if (nbytes > -1) {
                         fileOutputStream.write(fileChunk, 0, nbytes);
                         totalBytes += nbytes;
                     }
