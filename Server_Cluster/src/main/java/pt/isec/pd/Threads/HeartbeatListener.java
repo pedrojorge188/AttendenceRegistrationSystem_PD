@@ -1,62 +1,55 @@
 package pt.isec.pd.Threads;
 
 import pt.isec.pd.data.HeartBeatInfo;
+import pt.isec.pd.helpers.MULTICAST;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.net.DatagramPacket;
-import java.net.MulticastSocket;
+import java.net.*;
+
 
 public class HeartbeatListener extends Thread {
-    private final MulticastSocket multicastSocket;
     private static int dbVersion;
 
-    public HeartbeatListener(MulticastSocket ms, int dbVersion) {
-        this.multicastSocket = ms;
+    public HeartbeatListener(int dbVersion) {
         this.dbVersion = dbVersion;
-
-        try {
-            multicastSocket.setSoTimeout(30000);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void run() {
-        while (true) {
-            try {
-                byte[] receiveData = new byte[1024];
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                multicastSocket.receive(receivePacket);
+        try (MulticastSocket multicastSocket = new MulticastSocket(MULTICAST.PORT)) {
+            InetAddress group = InetAddress.getByName(MULTICAST.ADDR);
+            multicastSocket.joinGroup(group);
 
-                byte[] serializedObject = receivePacket.getData();
-                try (ByteArrayInputStream bais = new ByteArrayInputStream(serializedObject);
-                     ObjectInputStream ois = new ObjectInputStream(bais)) {
-                    HeartBeatInfo heartbeatInfo = (HeartBeatInfo) ois.readObject();
+            byte[] receiveData = new byte[1024];
 
-                    System.out.println("[SERVER] Received Backup with Info (" +
-                            "RMI_PORT:" + heartbeatInfo.getRmiRegistryPort()
-                            + "\tRMI_SERVICE_NAME:" + heartbeatInfo.getRmiServiceName()
-                            + "\tDATABASE_VERSION:" + heartbeatInfo.getDatabaseVersion()
-                            + "v ).");
+            while (true) {
+                try {
+                    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                    multicastSocket.receive(receivePacket);
 
-                    if (dbVersion != heartbeatInfo.getDatabaseVersion()) {
-                        dbVersion = heartbeatInfo.getDatabaseVersion();
-                        System.out.println("DATABASE VERSION UPDATE, BACKUP LOADING....");
-                        /*
-                         * Fazer backup
-                         */
+                    byte[] serializedObject = receivePacket.getData();
+
+                    try (ByteArrayInputStream bais = new ByteArrayInputStream(serializedObject);
+                         ObjectInputStream ois = new ObjectInputStream(bais)) {
+                        HeartBeatInfo heartbeatInfo = (HeartBeatInfo) ois.readObject();
+
+                        System.out.println("[SERVER] Received Heartbeat with Info (" +
+                                "RMI_PORT:" + heartbeatInfo.getRmiRegistryPort() +
+                                "\tRMI_SERVICE_NAME:" + heartbeatInfo.getRmiServiceName() +
+                                "\tDATABASE_VERSION:" + heartbeatInfo.getDatabaseVersion() + "v ).");
+
+                    } catch (ClassNotFoundException | IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+
+                } catch (SocketTimeoutException e) {
+                    System.out.println("[SERVER] No heartbeat received for 30 seconds. Exiting...");
+                    System.exit(0);
                 }
-            } catch (java.net.SocketTimeoutException e) {
-                System.out.println("[BACKUP SERVER] No heartbeat sent by the main server for 30 seconds. Exiting...");
-                System.exit(0);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

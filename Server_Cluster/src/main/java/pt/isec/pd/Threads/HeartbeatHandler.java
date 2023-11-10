@@ -27,6 +27,9 @@ public class HeartbeatHandler extends Thread {
     public static void sendHb() {
         try (MulticastSocket multicastSocket = new MulticastSocket()) {
 
+            InetAddress group = InetAddress.getByName(multicastAddress);
+            multicastSocket.joinGroup(group);
+
             HeartBeatInfo heartbeatInfo = new HeartBeatInfo(
                     rmiRegistryPort,
                     rmiServiceName,
@@ -38,9 +41,6 @@ public class HeartbeatHandler extends Thread {
                 oos.writeObject(heartbeatInfo);
             }
             byte[] serializedObject = baos.toByteArray();
-
-            InetAddress group = InetAddress.getByName(multicastAddress);
-            multicastSocket.joinGroup(group);
 
             DatagramPacket packet = new DatagramPacket(serializedObject, serializedObject.length, group, multicastPort);
             multicastSocket.send(packet);
