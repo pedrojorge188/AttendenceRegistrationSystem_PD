@@ -1,13 +1,13 @@
 package pt.isec.pd.data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class Event implements Serializable {
 
     static final long SerialVersionUID = 1L;
 
     private String csv_msg;
+    private String csv_dir;
     private String event_identify;
     private String event_name;
     private String event_location;
@@ -78,9 +78,9 @@ public class Event implements Serializable {
         LIST_CREATED_EVENTS,
         LIST_CREATED_EVENTS_BY_USER,
         GENERATE_CODE,
-        LIST_REGISTERED_ATTENDANCE
+        LIST_REGISTERED_ATTENDANCE,
+        ASSOC_USER_EVENT
     }
-
 
     public Event(type_event type, int attend_code) {
         this.attend_code = attend_code;
@@ -98,6 +98,14 @@ public class Event implements Serializable {
 
     public String getCsv_msg() {
         return csv_msg;
+    }
+
+    public String getCsv_dir() {
+        return csv_dir;
+    }
+
+    public void setCsv_dir(String csv_dir) {
+        this.csv_dir = csv_dir;
     }
 
     public void setCsv_msg(String csv_msg) {

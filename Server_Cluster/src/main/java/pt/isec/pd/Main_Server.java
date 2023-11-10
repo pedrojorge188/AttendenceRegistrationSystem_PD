@@ -2,14 +2,13 @@ package pt.isec.pd;
 
 import pt.isec.pd.Threads.ClientHandler;
 import pt.isec.pd.Threads.HeartbeatHandler;
-import pt.isec.pd.helpers.DatabaseManager;
+import pt.isec.pd.database.DatabaseManager;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.*;
 
 public class Main_Server {
 

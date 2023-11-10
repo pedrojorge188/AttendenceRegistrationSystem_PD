@@ -1,14 +1,22 @@
 package pt.isec.pd.data;
-import pt.isec.pd.threads.ServerHandler;
 
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-
-import static pt.isec.pd.data.InfoStatus.types_status.*;
 
 public class requestsAPI{
 
@@ -18,18 +26,24 @@ public class requestsAPI{
     private static ObjectOutputStream objectOutputStream;
     private static ObjectInputStream objectInputStream;
     private Socket socket;
+    private String myFile;
     private String myUser;
+    private List<String> eventsName;
+    private List<String> attendanceRecords;
+    private List<String> userAttendanceRecords;
     private PropertyChangeSupport pcs;
-    private requestsAPI() {
+    private int event_code;
 
-    }
+    private requestsAPI() {}
 
     public static requestsAPI getInstance() {
         if (instance == null) {
             instance = new requestsAPI();
+            instance.setFileName("csvFile");
         }
         return instance;
     }
+
     public boolean connect(String addr,int port){
         if(addr == null || port <= 0)
             return false;
@@ -39,6 +53,7 @@ public class requestsAPI{
             socket = new Socket(ServerAddr, ServerPort);
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             pcs = new PropertyChangeSupport(this);
+            eventsName = new ArrayList<>();
         }catch(Exception exp){
             return false;
         }
@@ -80,7 +95,6 @@ public class requestsAPI{
 
         return true;
     }
-
     // <Event Sender>
     public boolean send(Event.type_event EVT, int code) {
 
@@ -107,7 +121,6 @@ public class requestsAPI{
         return true;
 
     }
-
     public boolean send(Event event){
         if (socket == null) {
             System.err.println("[CLIENT] Not connected!");
@@ -116,139 +129,93 @@ public class requestsAPI{
         try {
             objectOutputStream.writeObject(event);
             objectOutputStream.flush();
-            System.out.println("Sent Event object to the server.");
+
         } catch (IOException e) {
             pcs.firePropertyChange("SERVER_CLOSE",null,null);
             System.err.println("Error sending Event object: " + e.getMessage());
             return false;
         }
+
         return true;
     }
-
     public void receive(ObjectInputStream receive) {
-
         while(isConnected()){
 
             try{
-
                 Object receiveObject = receive.readObject();
-
-                if(receiveObject instanceof InfoStatus infoStatus){
-                    pcs.firePropertyChange(infoStatus.getStatus().toString(),null,null);
+                if(receiveObject instanceof InfoStatus infoStatus) {
                     switch (infoStatus.getStatus()){
-                        case LOGIN_MADE_USER -> {
-                            this.myUser = infoStatus.getMsg_log();
-                            System.out.println("[SERVER] Login Made (normal client)!");
-                        }
-                        case LOGIN_MADE_ADMIN -> {
-                            this.myUser = infoStatus.getMsg_log();
-                            System.out.println("[SERVER] Login Made (admin client)!");
-                        }
-                        case LOGIN_FAIL -> {
-                            this.disconnect();
-                            System.out.println("[SERVER] Login Fail!");
-                            System.exit(1);
-                        }
-                        case REGISTER_MADE -> {
-                            this.myUser = infoStatus.getMsg_log();
-                            System.out.println("[SERVER] Register Made!");
-                        }
-                        case REGISTER_FAIL -> {
-                            System.out.println("[SERVER] Register Fail!");
-                        }
-                        case CHANGES_MADE -> {
-                            this.myUser = infoStatus.getMsg_log();
-                            System.out.println("[SERVER] Changes Made!");
-                        }
-                        case CHANGES_FAIL -> {
-                            System.out.println("[SERVER] Changes Fail!");
-                        }
-                        case CODE_SEND_MADE -> {
-                            System.out.println("[SERVER] Code SEND!");
-                        }
-                        case CODE_SEND_FAIL -> {
-                            System.out.println("[SERVER] Code SEND Fail!");
-                        }
-                        case EDIT_EVENT_MADE ->{
-                            System.out.println("[SERVER] Event edited");
-                        }
-                        case EDIT_EVENT_FAIL -> {
-                            System.out.println("[SERVER] Event edit failed");
-                        }
-                        case CREATE_EVENT_MADE -> {
-                            System.out.println("[SERVER] Event Created");
-                        }
-                        case CREATE_EVENT_FAIL -> {
-                            System.out.println("[SERVER] Event Creation Failed");
-                        }
-                        case DELETE_EVENT_MADE -> {
-                            System.out.println("[SERVER] Event Deleted");
-                        }
-                        case DELETE_EVENT_FAIL -> {
-                            System.out.println("[SERVER] Event Deleted fail");
+                        case LIST_CREATED_EVENTS -> {
+                            eventsName.clear();
+                            eventsName.addAll(infoStatus.getEventsName());
                         }
                         case LIST_REGISTERED_ATTENDANCE -> {
-                            System.out.println("[SERVER] Attendances listed");
-                        }
-                        case LIST_REGISTERED_ATTENDANCE_FAIL -> {
-                            System.out.println("[SERVER] Attendances list fail");
-                        }
-                        case GENERATE_CODE_MADE -> {
-                            System.out.println("[SERVER] Code generated");
-                        }
-                        case GENERATE_CODE_FAIL -> {
-                            System.out.println("[SERVER] Code generate fail");
-                        }
-                        case REQUEST_CSV_EVENT -> {
-                            System.out.println("[SERVER] REQUEST_CSV_EVENT");
+                            attendanceRecords = new ArrayList<>();
+                            attendanceRecords.addAll(infoStatus.getAttendanceRecords());
                         }
                         case GET_HISTORY -> {
-                            System.out.println("[SERVER] GET HISTORY");
+                            userAttendanceRecords = new ArrayList<>();
+                            userAttendanceRecords.addAll(infoStatus.getUserAttendanceRecords());
                         }
-                        case GET_HISTORY_FAIL -> {
-                            System.out.println("[SERVER] GET HISTORY FAIL");
-                        }
-                        case LIST_CREATED_EVENTS -> {
-                            System.out.println("[SERVER] LIST_CREATED_EVENTS");
-                        }
-                        case LIST_CREATED_EVENTS_FAIL -> {
-                            System.out.println("[SERVER] LIST_CREATED_EVENTS_FAIL");
-                        }
-                        case DELETE_ATTENDANCE_MADE -> {
-                            System.out.println("[SERVER] DELETE_ATTENDANCE_MADE");
-                        }
-                        case DELETE_ATTENDANCE_FAIL -> {
-                            System.out.println("[SERVER] DELETE_ATTENDANCE_FAIL");
-                        }
-                        case INSERT_ATTENDANCE_MADE -> {
-                            System.out.println("[SERVER] INSERT_ATTENDANCE_MADE");
-                        }
-                        case INSERT_ATTENDANCE_FAIL -> {
-                            System.out.println("[SERVER] INSERT_ATTENDANCE_FAIL");
-                        }
-                        case MSG_STACK -> System.out.println("[LOG] Server:"+infoStatus.getMsg_log());
+                        case REQUEST_CSV_EVENT ->
+                            receiveCSVFile(this.getFileName());
 
-                        default -> System.out.println("Implementa no requestApi comunicacao assincrona");
+                        case GENERATE_CODE_MADE ->
+                            setEventCode(Integer.parseInt(infoStatus.getMsg_log()));
+
                     }
+                    System.out.println(infoStatus.getStatus().toString());
+                    pcs.firePropertyChange(infoStatus.getStatus().toString(), null, null);
                 }
-
             }catch (Exception e){
                 pcs.firePropertyChange("SERVER_CLOSE",null,null);
             }
-
         }
+    }
 
+    public void receiveCSVFile(String destinationPath) {
+        byte[] fileChunk = new byte[5000];
+        InputStream in = null;
+        int nbytes;
+        System.out.println();
+
+        String requestedCanonicalFilePath = null;
+        try {
+            requestedCanonicalFilePath = new File(destinationPath).getCanonicalPath();
+
+            try (OutputStream fileOutputStream = new FileOutputStream(requestedCanonicalFilePath)) {
+                in = this.socket.getInputStream();
+
+                int totalBytes = 0;
+                int nChunks = 0;
+                do {
+                    nbytes = in.read(fileChunk);
+
+                    if (nbytes > -1) {
+                        fileOutputStream.write(fileChunk, 0, nbytes);
+                        totalBytes += nbytes;
+                    }
+                    break;
+                } while (true);
+
+                System.out.format("(CSV File Received)(%d bytes)\r\n", totalBytes);
+
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void disconnect() {
         if (socket != null) {
             try {
-
                 if (objectOutputStream != null)
                     objectOutputStream.close();
                 if (objectInputStream != null)
                     objectInputStream.close();
-
                 socket.close();
                 System.out.println("Desconectado do servidor");
                 System.exit(1);
@@ -257,18 +224,26 @@ public class requestsAPI{
             }
         }
     }
-
-    public String getMyUser() {
-        return myUser;
+    public void setEventCode(int code){
+        this.event_code = code;
+    }
+    public int getEventCode() {
+        return this.event_code;
+    }
+    public String getMyUser() {return myUser;}
+    public String getFileName() {return myFile;}
+    public String setFileName(String file) {return myFile = file;}
+    public Socket getSocket() {return this.socket;}
+    public List<String> getEventsName(){return eventsName;}
+    public List<String> getUserAttendanceRecords() {
+        return userAttendanceRecords;
+    }
+    public List<String> getAttendanceRecords() {
+        return attendanceRecords;
     }
 
-    public Socket getSocket() {
-        return this.socket;
-    }
     public void addPropertyChangeListener(String property,PropertyChangeListener listener){
         pcs.addPropertyChangeListener(property,listener);
     }
-    public void addPropertyChangeListener(PropertyChangeListener listener){
-        pcs.addPropertyChangeListener(listener);
-    }
+
 }

@@ -3,6 +3,7 @@ package pt.isec.pd.helpers;
 import pt.isec.pd.data.Event;
 import pt.isec.pd.data.InfoStatus;
 import pt.isec.pd.data.User;
+import pt.isec.pd.database.DatabaseManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -72,11 +73,28 @@ public class EventManager {
                     exception.printStackTrace();
                 }
             }
+            case ASSOC_USER_EVENT -> {
+                try {
+                    if (DatabaseManager.getInstance().assocUserEvent(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.ASSOC_USER_EVENT_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.ASSOC_USER_EVENT_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
             case GENERATE_CODE -> {
                 try {
                     if (DatabaseManager.getInstance().generateCode(event)) {
                         InfoStatus response = new InfoStatus(InfoStatus.types_status.GENERATE_CODE_MADE);
-                        response.setMsg_log(event.getType().toString());
+                        response.setMsg_log(String.valueOf(event.getAttend_code()));
                         objectOutputStream.writeObject(response);
                         objectOutputStream.flush();
                     } else {
@@ -90,15 +108,23 @@ public class EventManager {
                 }
             }
             case REQUEST_CSV_EVENT -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.REQUEST_CSV_EVENT);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
-                System.out.println("[CLIENT] CSV FOR: "+event.getEvent_name()+" EVENT SENT");
+                String defaultFileName;
+                if(event.getCsv_msg().equals("UserEvents")) {
+                    defaultFileName = "userEvents-"+event.getUser_email()+".csv";
+                    if(DatabaseManager.getInstance().csvUserEvents(event, defaultFileName)){
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.REQUEST_CSV_EVENT);
+                        response.setMsg_log(event.getType().toString());
+                        response.setEventsName(DatabaseManager.getInstance().getCreatedEvents());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                        DatabaseManager.getInstance().sendCSVFile(defaultFileName,clientSocket);
+                    }
+                }
             }
             case LIST_CREATED_EVENTS -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_CREATED_EVENTS);
                 response.setMsg_log(event.getType().toString());
+                response.setEventsName(DatabaseManager.getInstance().getCreatedEvents());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
                 System.out.println("[CLIENT] LIST OF EVENTS SENT");
@@ -113,30 +139,52 @@ public class EventManager {
             case GET_ATTENDANCE_HISTORY -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.GET_HISTORY);
                 response.setMsg_log(event.getType().toString());
+                response.setUserAttendanceRecords(DatabaseManager.getInstance().getUserAttendance(event));
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
-                System.out.println("[CLIENT] LIST ATTENDANCE HISTORY REQUESTED");
             }
             case LIST_REGISTERED_ATTENDANCE -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_REGISTERED_ATTENDANCE);
                 response.setMsg_log(event.getType().toString());
+                response.setAttendanceRecords(DatabaseManager.getInstance().getAttendance(event));
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
-                System.out.println("[CLIENT] LIST OF REGISTERD ATTENDENCE SENT");
             }
             case INSERT_ATTENDANCE -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.INSERT_ATTENDANCE_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
-                System.out.println("[CLIENT] CLIENT INSERTED TO ATTENDANCE");
+                try {
+                    if (DatabaseManager.getInstance().insertAttendance(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.INSERT_ATTENDANCE_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.INSERT_ATTENDANCE_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+
             }
             case DELETE_ATTENDANCE -> {
-                InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_ATTENDANCE_MADE);
-                response.setMsg_log(event.getType().toString());
-                objectOutputStream.writeObject(response);
-                objectOutputStream.flush();
-                System.out.println("[CLIENT] CLIENT DELETED FROM ATTENDANCE");
+                try {
+                    if (DatabaseManager.getInstance().deleteAttendance(event)) {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_ATTENDANCE_MADE);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    } else {
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.DELETE_ATTENDANCE_FAIL);
+                        response.setMsg_log(event.getType().toString());
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
         }
 

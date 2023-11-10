@@ -1,11 +1,15 @@
 package pt.isec.pd.data;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class InfoStatus implements Serializable {
 
     static final long SerialVersionUID = 1L;
     private String msg_log;
+    private List<String> eventsName;
+    private List<String> attendanceRecords;
+    private List<String> userAttendanceRecords;
     private types_status status;
 
     public enum types_status{
@@ -37,6 +41,8 @@ public class InfoStatus implements Serializable {
         GET_HISTORY_FAIL,
         LIST_REGISTERED_ATTENDANCE,
         LIST_REGISTERED_ATTENDANCE_FAIL,
+        ASSOC_USER_EVENT_MADE,
+        ASSOC_USER_EVENT_FAIL,
         MSG_STACK;
 
     }
@@ -60,4 +66,15 @@ public class InfoStatus implements Serializable {
     public void setStatus(types_status status) {
         this.status = status;
     }
+
+    public List<String> getEventsName() {return eventsName;}
+    public void setEventsName(List<String> eventsName){ this.eventsName = eventsName;}
+
+    public List<String> getAttendanceRecords() {return attendanceRecords;}
+    public void setAttendanceRecords(List<String> attendanceRecords){ this.attendanceRecords = attendanceRecords;}
+    public void setUserAttendanceRecords(List<String> userAttendance) {
+        this.userAttendanceRecords = userAttendance;
+    }
+    public List<String> getUserAttendanceRecords() {return userAttendanceRecords;}
+
 }

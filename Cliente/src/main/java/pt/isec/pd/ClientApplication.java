@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import pt.isec.pd.data.requestsAPI;
 import pt.isec.pd.threads.ServerHandler;
 

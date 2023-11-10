@@ -1,18 +1,14 @@
 package pt.isec.pd.Threads;
 
 import pt.isec.pd.data.Event;
-import pt.isec.pd.data.InfoStatus;
 import pt.isec.pd.data.User;
-import pt.isec.pd.helpers.DatabaseManager;
 import pt.isec.pd.helpers.EventManager;
 import pt.isec.pd.helpers.UserManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.concurrent.TimeoutException;
 
 public class ClientHandler extends Thread {
 
@@ -24,7 +20,7 @@ public class ClientHandler extends Thread {
 
     public ClientHandler(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
-        this.clientSocket.setSoTimeout(0); // depois tem de ser 10000
+        this.clientSocket.setSoTimeout(30000); // depois tem de ser 10000+
         isLogged = false;
         objectInputStream = new  ObjectInputStream(clientSocket.getInputStream());
         objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());

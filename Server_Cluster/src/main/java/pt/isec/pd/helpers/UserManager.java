@@ -2,8 +2,8 @@ package pt.isec.pd.helpers;
 
 import pt.isec.pd.data.InfoStatus;
 import pt.isec.pd.data.User;
+import pt.isec.pd.database.DatabaseManager;
 
-import javax.xml.crypto.Data;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
