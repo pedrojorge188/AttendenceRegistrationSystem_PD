@@ -71,16 +71,28 @@ public class NormalClientController {
             });
 
         });
+        requestsAPI.getInstance().addPropertyChangeListener(CODE_SEND_FAIL.toString(),evt->{
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (infoLabelCode != null) {
+                        infoLabelCode.setText("Código não existe");
+                        infoLabelCode.setTextFill(Color.RED);
+                    }
+                }
+            });
+
+        });
         requestsAPI.getInstance().addPropertyChangeListener(CHANGES_MADE.toString(),evt -> {
             Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(infoLabel!=null) {
-                                infoLabel.setText("Operação concluída com sucesso.");
-                                infoLabel.setTextFill(Color.GREEN);
-                            }
-                        }
-                    }
+                                  @Override
+                                  public void run() {
+                                      if(infoLabel!=null) {
+                                          infoLabel.setText("Operação concluída com sucesso.");
+                                          infoLabel.setTextFill(Color.GREEN);
+                                      }
+                                  }
+                              }
             );
         });
         requestsAPI.getInstance().addPropertyChangeListener(CHANGES_FAIL.toString(),evt -> {
@@ -153,7 +165,7 @@ public class NormalClientController {
     public void confirmChangeDataAction(ActionEvent actionEvent) throws IOException {
         // verificações
         if(!Objects.equals(passwordField.getText(), passwordFieldConfirm.getText())
-            || passwordField.getText().isEmpty() || passwordFieldConfirm.getText().isEmpty()) {
+                || passwordField.getText().isEmpty() || passwordFieldConfirm.getText().isEmpty()) {
             infoLabel.setText("Passwords não correspondem");
             infoLabel.setTextFill(Color.RED);
             return;

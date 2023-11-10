@@ -465,7 +465,7 @@ public class AdminController {
     //associate user to a event
     public void assocUserEvent(ActionEvent actionEvent) {
         String eventName = this.eventNameAssoc.getText();
-        String userName = this.userNameAssoc.getText();
+       String userName = this.userNameAssoc.getText();
 
         if(eventName.isEmpty() || userName.isEmpty()){
             infoLabel.setText("Por favor preencha todos os campos");
@@ -486,9 +486,48 @@ public class AdminController {
             }
         }
     }
-
-    // csv file with all attendees of the specific event
     public void receiveCSVEvent(ActionEvent actionEvent) {
+        String eventName = this.eventName.getText();
+
+        JFileChooser directoryChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int directoryReturnValue = directoryChooser.showOpenDialog(null);
+
+        if (directoryReturnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedDirectory = directoryChooser.getSelectedFile();
+
+            String fileName = JOptionPane.showInputDialog("Digite o nome do arquivo (sem extensão):");
+            if (fileName == null || fileName.trim().isEmpty()) {
+                infoLabel.setText("Nome do arquivo inválido.");
+                infoLabel.setTextFill(Color.RED);
+                return;
+            }
+
+            String selectedDirectoryPath = selectedDirectory.getAbsolutePath();
+            String filePath = selectedDirectoryPath + File.separator + fileName + ".csv";
+
+            requestsAPI.getInstance().setFileName(filePath);
+
+
+            if (eventName.isEmpty()) {
+                infoLabel.setText("Por favor, preencha todos os campos");
+                infoLabel.setTextFill(Color.RED);
+            } else {
+                eventToSend.setEvent_name(eventName);
+                eventToSend.setEvent_start_time(null);
+                eventToSend.setEvent_end_time(null);
+                eventToSend.setType(Event.type_event.REQUEST_CSV_EVENT);
+                eventToSend.setCsv_msg("EventAttend");
+                eventToSend.setCsv_dir(selectedDirectoryPath);
+                eventToSend.setUser_email("");
+                eventToSend.setAttend_code(-1);
+                if (!client.send(eventToSend)) {
+                    infoLabel.setText("Ocorreu um erro.");
+                    infoLabel.setTextFill(Color.RED);
+                }
+            }
+
+        }
     }
 
     public void receiveCsvUserEvent(ActionEvent actionEvent) {

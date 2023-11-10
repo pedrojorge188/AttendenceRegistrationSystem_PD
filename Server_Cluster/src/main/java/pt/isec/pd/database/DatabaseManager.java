@@ -281,6 +281,123 @@ public class DatabaseManager{
             return false;
         }
     }
+    public boolean csvAttendEvents(Event event, String defaultFileName) {
+        File csvFile = new File(defaultFileName);
+
+        try(FileWriter csvWriter = new FileWriter(csvFile,false)){
+
+            String sql = "SELECT e.name, e.location, e.date, e.start_time, e.end_time, u.name, u.student_id, u.username_email" +
+                    " FROM users u, events e, users_events lig WHERE lig.fk_event = e.id and lig.fk_user = u.id and e.name = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, event.getEvent_name());
+            ResultSet dataSet = statement.executeQuery();
+            if(!dataSet.next())
+                return false;
+
+            csvWriter.write("\"Designação \";\"" + dataSet.getString(1) + "\n");
+            csvWriter.write("\"Local \";\"" + dataSet.getString(2) + "\n");
+            csvWriter.write("\"Data \";\"" + dataSet.getString(3) + "\n");
+            csvWriter.write("\"Hora ínicio \";\"" + dataSet.getString(4) + "\n");
+            csvWriter.write("\"Hora fim \";\"" + dataSet.getString(5) + "\n");
+            csvWriter.write("\n");
+            csvWriter.write("\"Nome\";\"Número identificação\";\"Email\"");csvWriter.write("\n");
+            do {
+                String uName = dataSet.getString(6);
+                String uID = dataSet.getString(7);
+                String uEmail = dataSet.getString(8);
+
+                csvWriter.write("\""+uName + "\";\"" + uID + "\";\"" + uEmail + "\"\n" );
+            } while (dataSet.next());
+
+            return true;
+
+        }catch (SQLException e){
+            System.err.println("[ERROR] Database Manager -> " + e.getMessage());
+            return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean verifyCode(Event event) {
+        boolean codeExists = false;
+        try {
+            String sql = "SELECT COUNT(*) FROM code_register WHERE code = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, event.getAttend_code());
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int count = resultSet.getInt(1);
+                        codeExists = count > 0;
+                    }
+                }
+            }
+
+            if (codeExists) {
+                if(registerUserEventRelationship(event)){
+                    return true;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle this exception properly in your production code
+            return false;
+        }
+
+        return codeExists;
+    }
+
+    private boolean registerUserEventRelationship(Event event) throws SQLException {
+
+        int userId = getUserIdByUsernameOrEmail(event.getUser_email());
+        int eventId = determineFkEventFromCodeRegister(event);
+        if(userId == -1|| userId == -1)
+            return false;
+
+        if (userId != -1) {
+            String insertSql = "INSERT INTO users_events (fk_event, fk_user, attendance) VALUES (?, ?, 1)";
+            try (PreparedStatement insertStatement = connection.prepareStatement(insertSql)) {
+                insertStatement.setInt(1, eventId); // Assuming getFk_event() retrieves the event ID
+                insertStatement.setInt(2, userId);
+
+                insertStatement.executeUpdate();
+            }
+        }
+
+        return true;
+    }
+
+    private int getUserIdByUsernameOrEmail(String username) throws SQLException {
+
+        String selectSql = "SELECT id FROM users WHERE username_email = ?";
+        try (PreparedStatement selectStatement = connection.prepareStatement(selectSql)) {
+            selectStatement.setString(1, username);
+
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("id");
+                }
+            }
+        }
+        return -1;
+    }
+
+    private int determineFkEventFromCodeRegister(Event event) throws SQLException {
+
+        String codeRegisterSql = "SELECT fk_event FROM code_register WHERE code = ?";
+        try (PreparedStatement codeRegisterStatement = connection.prepareStatement(codeRegisterSql)) {
+            codeRegisterStatement.setInt(1, event.getAttend_code());
+
+            try (ResultSet codeRegisterResultSet = codeRegisterStatement.executeQuery()) {
+                if (codeRegisterResultSet.next()) {
+                    return codeRegisterResultSet.getInt("fk_event");
+                }
+            }
+        }
+
+        return -1;
+    }
 
     public boolean csvUserEvents(Event event, String defaultFileName){
         File csvFile = new File(defaultFileName);
@@ -663,5 +780,6 @@ public class DatabaseManager{
         }
         return eventsList;
     }
+
 }
 

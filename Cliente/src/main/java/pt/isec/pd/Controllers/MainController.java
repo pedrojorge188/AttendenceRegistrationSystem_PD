@@ -55,7 +55,7 @@ public class MainController {
                 }
             });
         });
-        requestsAPI.getInstance().addPropertyChangeListener(LOGIN_MADE_USER.name(), evt->{
+        requestsAPI.getInstance().addPropertyChangeListener(LOGIN_MADE_USER.toString(), evt->{
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
