@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 
 public class HeartbeatHandler extends Thread {
     private static  String multicastAddress;
@@ -19,15 +20,15 @@ public class HeartbeatHandler extends Thread {
     private static  int databaseVersion;
 
     public HeartbeatHandler(int rmiRegistryPort, String rmiServiceName, int databaseVersion) {
-        this.multicastAddress = MULTICAST.ADDR;
-        this.multicastPort = MULTICAST.PORT;
-        this.rmiRegistryPort = rmiRegistryPort;
-        this.rmiServiceName = rmiServiceName;
-        this.databaseVersion = databaseVersion;
+        multicastAddress = MULTICAST.ADDR;
+        multicastPort = MULTICAST.PORT;
+        HeartbeatHandler.rmiRegistryPort = rmiRegistryPort;
+        HeartbeatHandler.rmiServiceName = rmiServiceName;
+        HeartbeatHandler.databaseVersion = databaseVersion;
     }
     public static void sendHb(){
 
-        try (DatagramSocket multicastSocket = new DatagramSocket()) {
+        try (MulticastSocket multicastSocket = new MulticastSocket()) {
             while(DatabaseManager.getInstance().getConnection() == null){}
             HeartBeatInfo heartbeatInfo = new HeartBeatInfo(rmiRegistryPort, rmiServiceName,
                     Version.getVersion(DatabaseManager.getInstance().getConnection())
@@ -39,6 +40,7 @@ public class HeartbeatHandler extends Thread {
             byte[] serializedObject = baos.toByteArray();
 
             InetAddress group = InetAddress.getByName(multicastAddress);
+            multicastSocket.joinGroup(group);
             DatagramPacket packet = new DatagramPacket(serializedObject, serializedObject.length, group, multicastPort);
             multicastSocket.send(packet);
         } catch (Exception e) {
@@ -54,7 +56,6 @@ public class HeartbeatHandler extends Thread {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                //System.out.println("[SERVER] Heartbeat send to " + multicastAddress + ":" + multicastPort);
             }
     }
 }

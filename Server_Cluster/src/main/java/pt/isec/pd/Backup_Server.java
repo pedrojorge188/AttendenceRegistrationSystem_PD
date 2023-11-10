@@ -40,7 +40,7 @@ public class Backup_Server {
         }
 
         try {
-            multicastSocket = new MulticastSocket(MULTICAST.PORT);
+            multicastSocket = new MulticastSocket();
             multicastGroup = InetAddress.getByName(MULTICAST.ADDR);
             multicastSocket.joinGroup(multicastGroup);
         } catch (IOException e) {

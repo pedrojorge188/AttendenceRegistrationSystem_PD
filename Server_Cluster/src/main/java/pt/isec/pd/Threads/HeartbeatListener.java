@@ -1,6 +1,7 @@
 package pt.isec.pd.Threads;
 
 import pt.isec.pd.data.HeartBeatInfo;
+import pt.isec.pd.helpers.MULTICAST;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class HeartbeatListener extends Thread {
             while (true) {
                 try {
                     byte[] receiveData = new byte[1024];
-                    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length, MULTICAST.PORT);
                     multicastSocket.receive(receivePacket);
 
                     byte[] serializedObject = receivePacket.getData();
