@@ -163,7 +163,7 @@ public class NormalClientController {
             return;
         }
 
-        if(!client.send(User.types_msg.CHANGES, "", usernameField.getText(), passwordField.getText())){
+        if(!client.send(User.types_msg.CHANGES, 0, "", usernameField.getText(), passwordField.getText())){
             infoLabel.setText("Erro ao realizar a operação. Por favor, verifique os dados.");
             infoLabel.setTextFill(Color.RED);
         }

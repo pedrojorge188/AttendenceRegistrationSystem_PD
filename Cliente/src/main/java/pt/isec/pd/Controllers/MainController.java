@@ -100,7 +100,7 @@ public class MainController {
             return;
         }
 
-        if(client.send(User.types_msg.LOGIN,"",username,password)){
+        if(client.send(User.types_msg.LOGIN,0,"",username,password)){
 
         }else{
             errorLabelReg.setText("Ocorreu um erro!");
@@ -129,7 +129,7 @@ public class MainController {
             return;
         }
 
-        if(client.send(User.types_msg.REGISTER,name,username,password)){
+        if(client.send(User.types_msg.REGISTER,Integer.parseInt(studentNumber),name,username,password)){
 
         }else{
             errorLabelReg.setText("Dados introduzidos inválidos");

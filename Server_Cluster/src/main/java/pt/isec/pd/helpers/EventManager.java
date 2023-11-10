@@ -114,7 +114,19 @@ public class EventManager {
                     if(DatabaseManager.getInstance().csvUserEvents(event, defaultFileName)){
                         InfoStatus response = new InfoStatus(InfoStatus.types_status.REQUEST_CSV_EVENT);
                         response.setMsg_log(event.getType().toString());
-                        response.setEventsName(DatabaseManager.getInstance().getCreatedEvents());
+                        event.setEvent_name("");event.setEvent_end_time("");event.setEvent_start_time("");
+                        response.setEventsName(DatabaseManager.getInstance().getCreatedEvents(event));
+                        objectOutputStream.writeObject(response);
+                        objectOutputStream.flush();
+                        DatabaseManager.getInstance().sendCSVFile(defaultFileName,clientSocket);
+                    }
+                }else if(event.getCsv_msg().equals("EventAttend")){
+                    defaultFileName = "eventAttend-"+event.getUser_email()+".csv";
+                    if(DatabaseManager.getInstance().csvUserEvents(event, defaultFileName)){
+                        InfoStatus response = new InfoStatus(InfoStatus.types_status.REQUEST_CSV_EVENT);
+                        response.setMsg_log(event.getType().toString());
+                        event.setEvent_name("");event.setEvent_end_time("");event.setEvent_start_time("");
+                        response.setEventsName(DatabaseManager.getInstance().getCreatedEvents(event));
                         objectOutputStream.writeObject(response);
                         objectOutputStream.flush();
                         DatabaseManager.getInstance().sendCSVFile(defaultFileName,clientSocket);
@@ -124,17 +136,15 @@ public class EventManager {
             case LIST_CREATED_EVENTS -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_CREATED_EVENTS);
                 response.setMsg_log(event.getType().toString());
-                response.setEventsName(DatabaseManager.getInstance().getCreatedEvents());
+                response.setEventsName(DatabaseManager.getInstance().getCreatedEvents(event));
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
-                System.out.println("[CLIENT] LIST OF EVENTS SENT");
             }
             case LIST_CREATED_EVENTS_BY_USER -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.LIST_CREATED_EVENTS);
                 response.setMsg_log(event.getType().toString() + "by user:" + event.getUser_email());
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
-                System.out.println("[CLIENT] LIST OF EVENTS OF USER "+ event.getUser_email()+"sent");
             }
             case GET_ATTENDANCE_HISTORY -> {
                 InfoStatus response = new InfoStatus(InfoStatus.types_status.GET_HISTORY);

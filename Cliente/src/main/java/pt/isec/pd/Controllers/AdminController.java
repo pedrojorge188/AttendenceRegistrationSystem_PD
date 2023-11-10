@@ -125,7 +125,6 @@ public class AdminController {
             });
         });
         requestsAPI.getInstance().addPropertyChangeListener(LIST_REGISTERED_ATTENDANCE.toString(),evt->{
-            System.out.println("entrei");
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -214,6 +213,12 @@ public class AdminController {
         });
 
         eventToSend = new Event(null,-1);
+        eventToSend.setEvent_name("");
+        eventToSend.setEvent_date("");
+        eventToSend.setEvent_start_time("");
+        eventToSend.setEvent_end_time("");
+        eventToSend.setEvent_location("");
+        eventToSend.setUser_email(client.getMyUser());
     }
 
     public void retButton(ActionEvent actionEvent) {
@@ -408,23 +413,32 @@ public class AdminController {
         String eventStartHour = this.eventStartHour.getText();
         String eventEndHour = this.eventEndHour.getText();
 
-        if(eventName.isEmpty() && eventStartHour.isEmpty() && eventEndHour.isEmpty()){
-            infoLabel.setText("Por favor preencha um dos campos");
-            infoLabel.setTextFill(Color.RED);
-        }else{
-            eventToSend.setEvent_name(eventName);
-            eventToSend.setEvent_start_time(eventStartHour);
-            eventToSend.setEvent_end_time(eventEndHour);
-            eventToSend.setEvent_date(null);
-            eventToSend.setType(LIST_CREATED_EVENTS);
-            eventToSend.setAttend_code(-1);
-            eventToSend.setEvent_location(null);
-            if(!client.send(eventToSend)){
-                infoLabel.setText("Aconteceu algo de errado");
+        if (!eventStartHour.isEmpty()){
+            if(eventEndHour.isEmpty()){
+                infoLabel.setText("Preencha a hora de fim ");
                 infoLabel.setTextFill(Color.RED);
+                return;
             }
-
+        }else if(!eventEndHour.isEmpty()){
+            if(eventStartHour.isEmpty()){
+                infoLabel.setText("Preencha a hora de Inicio ");
+                infoLabel.setTextFill(Color.RED);
+                return;
+            }
         }
+
+        eventToSend.setEvent_name(eventName);
+        eventToSend.setEvent_start_time(eventStartHour);
+        eventToSend.setEvent_end_time(eventEndHour);
+        eventToSend.setEvent_date(null);
+        eventToSend.setType(LIST_CREATED_EVENTS);
+        eventToSend.setAttend_code(-1);
+        eventToSend.setEvent_location(null);
+        if(!client.send(eventToSend)){
+            infoLabel.setText("Aconteceu algo de errado");
+            infoLabel.setTextFill(Color.RED);
+        }
+
     }
 
     // search attendence in an event

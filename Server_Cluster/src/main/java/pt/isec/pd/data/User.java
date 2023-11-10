@@ -17,10 +17,10 @@ public class User implements Serializable {
     private String username_email;
     private String password;
 
-    public User(types_msg type, String name, String username_email, String password) {
+    public User(types_msg type, int uid, String name, String username_email, String password) {
         this.type = type;
         this.name = name;
-        Student_uid = 0;
+        Student_uid = uid;
         this.username_email = username_email;
         this.password = password;
     }

@@ -87,6 +87,9 @@ public class Event implements Serializable {
         this.attend_code = attend_code;
         this.type = type;
         csv_msg = "";
+        this.event_start_time = "";
+        this.event_name = "";
+        this.event_end_time = "";
     }
 
     public int getAttend_code() {

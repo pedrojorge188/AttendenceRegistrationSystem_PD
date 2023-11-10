@@ -51,7 +51,12 @@ public class DatabaseManager{
             }
 
         }else{
-            Create.action(connection,dbURL);
+            try {
+                Create.action(connection,dbURL);
+                connection = DriverManager.getConnection(dbURL);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -441,22 +446,50 @@ public class DatabaseManager{
         return connection;
     }
 
-    public List<String> getCreatedEvents() {
-
+    public List<String> getCreatedEvents(Event event) {
         List<String> eventNames = new ArrayList<>();
         try {
-            String sql = "SELECT name, location, events.date , Start_time, end_time FROM events";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                eventNames.add(resultSet.getString(1) + "\t"+ resultSet.getString(2) + "\t"+ resultSet.getString(3)
-                        +"\t"+ resultSet.getString(4)+ "\t"+ resultSet.getString(5));
+            String sql = "SELECT name, location, events.date, Start_time, end_time FROM events";
+            String whereClause = "";
+
+            if (event.getEvent_name() != null && event.getEvent_start_time() != null
+                    && !event.getEvent_name().isEmpty() && !event.getEvent_start_time().isEmpty()) {
+                whereClause = " WHERE name = ? AND start_time = ?";
+            } else if (event.getEvent_name() != null && event.getEvent_end_time() != null
+                    && !event.getEvent_name().isEmpty() && (event.getEvent_end_time().isEmpty() || event.getEvent_end_time().equals(""))) {
+                whereClause = " WHERE name = ?";
             }
+
+            sql += whereClause;
+
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                if (!whereClause.isEmpty()) {
+                    int parameterIndex = 1;
+                    if (event.getEvent_name() != null && event.getEvent_start_time() != null
+                            && !event.getEvent_name().isEmpty() && !event.getEvent_start_time().isEmpty()) {
+                        statement.setString(parameterIndex++, event.getEvent_name());
+                        statement.setString(parameterIndex, event.getEvent_start_time());
+                    } else if (event.getEvent_name() != null && event.getEvent_end_time() != null
+                            && !event.getEvent_name().isEmpty() && (event.getEvent_end_time().isEmpty() || event.getEvent_end_time().equals(""))) {
+                        statement.setString(parameterIndex, event.getEvent_name());
+                    }
+                }
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        eventNames.add(resultSet.getString(1) + "\t" + resultSet.getString(2) + "\t" + resultSet.getString(3)
+                                + "\t" + resultSet.getString(4) + "\t" + resultSet.getString(5));
+                    }
+                }
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return eventNames;
     }
+
     public List<String> getAttendance(Event event) {
         int eventId;
         List<String> attendance = new ArrayList<>();
@@ -490,6 +523,8 @@ public class DatabaseManager{
         }
         return attendance;
     }
+
+
 
     public boolean insertAttendance(Event event) {
         int eventId, userId;
