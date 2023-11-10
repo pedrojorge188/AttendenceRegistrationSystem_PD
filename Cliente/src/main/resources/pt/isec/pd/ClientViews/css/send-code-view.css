@@ -16,6 +16,11 @@
     -fx-background-color: #10388c;
     -fx-text-fill: white;
 }
+#csvButton{
+    -fx-font-size: 16px;
+    -fx-background-color: #10388c;
+    -fx-text-fill: white;
+}
 #backBtn{
     -fx-font-size: 16px;
     -fx-background-color: #6b0e0e;
