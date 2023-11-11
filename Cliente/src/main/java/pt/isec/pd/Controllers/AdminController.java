@@ -125,7 +125,6 @@ public class AdminController {
             });
         });
         requestsAPI.getInstance().addPropertyChangeListener(LIST_REGISTERED_ATTENDANCE.toString(),evt->{
-            System.out.println("entrei");
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -214,6 +213,12 @@ public class AdminController {
         });
 
         eventToSend = new Event(null,-1);
+        eventToSend.setEvent_name("");
+        eventToSend.setEvent_date("");
+        eventToSend.setEvent_start_time("");
+        eventToSend.setEvent_end_time("");
+        eventToSend.setEvent_location("");
+        eventToSend.setUser_email(client.getMyUser());
     }
 
     public void retButton(ActionEvent actionEvent) {
@@ -408,23 +413,32 @@ public class AdminController {
         String eventStartHour = this.eventStartHour.getText();
         String eventEndHour = this.eventEndHour.getText();
 
-        if(eventName.isEmpty() && eventStartHour.isEmpty() && eventEndHour.isEmpty()){
-            infoLabel.setText("Por favor preencha um dos campos");
-            infoLabel.setTextFill(Color.RED);
-        }else{
-            eventToSend.setEvent_name(eventName);
-            eventToSend.setEvent_start_time(eventStartHour);
-            eventToSend.setEvent_end_time(eventEndHour);
-            eventToSend.setEvent_date(null);
-            eventToSend.setType(LIST_CREATED_EVENTS);
-            eventToSend.setAttend_code(-1);
-            eventToSend.setEvent_location(null);
-            if(!client.send(eventToSend)){
-                infoLabel.setText("Aconteceu algo de errado");
+        if (!eventStartHour.isEmpty()){
+            if(eventEndHour.isEmpty()){
+                infoLabel.setText("Preencha a hora de fim ");
                 infoLabel.setTextFill(Color.RED);
+                return;
             }
-
+        }else if(!eventEndHour.isEmpty()){
+            if(eventStartHour.isEmpty()){
+                infoLabel.setText("Preencha a hora de Inicio ");
+                infoLabel.setTextFill(Color.RED);
+                return;
+            }
         }
+
+        eventToSend.setEvent_name(eventName);
+        eventToSend.setEvent_start_time(eventStartHour);
+        eventToSend.setEvent_end_time(eventEndHour);
+        eventToSend.setEvent_date(null);
+        eventToSend.setType(LIST_CREATED_EVENTS);
+        eventToSend.setAttend_code(-1);
+        eventToSend.setEvent_location(null);
+        if(!client.send(eventToSend)){
+            infoLabel.setText("Aconteceu algo de errado");
+            infoLabel.setTextFill(Color.RED);
+        }
+
     }
 
     // search attendence in an event
@@ -451,7 +465,7 @@ public class AdminController {
     //associate user to a event
     public void assocUserEvent(ActionEvent actionEvent) {
         String eventName = this.eventNameAssoc.getText();
-        String userName = this.userNameAssoc.getText();
+       String userName = this.userNameAssoc.getText();
 
         if(eventName.isEmpty() || userName.isEmpty()){
             infoLabel.setText("Por favor preencha todos os campos");
@@ -472,9 +486,48 @@ public class AdminController {
             }
         }
     }
-
-    // csv file with all attendees of the specific event
     public void receiveCSVEvent(ActionEvent actionEvent) {
+        String eventName = this.eventName.getText();
+
+        JFileChooser directoryChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int directoryReturnValue = directoryChooser.showOpenDialog(null);
+
+        if (directoryReturnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedDirectory = directoryChooser.getSelectedFile();
+
+            String fileName = JOptionPane.showInputDialog("Digite o nome do arquivo (sem extensão):");
+            if (fileName == null || fileName.trim().isEmpty()) {
+                infoLabel.setText("Nome do arquivo inválido.");
+                infoLabel.setTextFill(Color.RED);
+                return;
+            }
+
+            String selectedDirectoryPath = selectedDirectory.getAbsolutePath();
+            String filePath = selectedDirectoryPath + File.separator + fileName + ".csv";
+
+            requestsAPI.getInstance().setFileName(filePath);
+
+
+            if (eventName.isEmpty()) {
+                infoLabel.setText("Por favor, preencha todos os campos");
+                infoLabel.setTextFill(Color.RED);
+            } else {
+                eventToSend.setEvent_name(eventName);
+                eventToSend.setEvent_start_time(null);
+                eventToSend.setEvent_end_time(null);
+                eventToSend.setType(Event.type_event.REQUEST_CSV_EVENT);
+                eventToSend.setCsv_msg("EventAttend");
+                eventToSend.setCsv_dir(selectedDirectoryPath);
+                eventToSend.setUser_email("");
+                eventToSend.setAttend_code(-1);
+                if (!client.send(eventToSend)) {
+                    infoLabel.setText("Ocorreu um erro.");
+                    infoLabel.setTextFill(Color.RED);
+                }
+            }
+
+        }
     }
 
     public void receiveCsvUserEvent(ActionEvent actionEvent) {

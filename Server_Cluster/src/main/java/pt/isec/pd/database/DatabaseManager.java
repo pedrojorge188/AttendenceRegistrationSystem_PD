@@ -2,6 +2,7 @@ package pt.isec.pd.database;
 
 import pt.isec.pd.Threads.HeartbeatHandler;
 import pt.isec.pd.data.Event;
+import pt.isec.pd.database.elements.CodeExpirationThread;
 import pt.isec.pd.database.elements.Create;
 import pt.isec.pd.database.elements.Version;
 
@@ -13,6 +14,7 @@ import java.util.*;
 public class DatabaseManager{
     private String dbAddr;
     private String dbName;
+    private CodeExpirationThread codeExpirationThread;
     private Connection connection;
     private DatabaseManager(){
     }
@@ -51,8 +53,16 @@ public class DatabaseManager{
             }
 
         }else{
-            Create.action(connection,dbURL);
+            try {
+                Create.action(connection,dbURL);
+                connection = DriverManager.getConnection(dbURL);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
+
+        codeExpirationThread = new CodeExpirationThread(connection);
+        codeExpirationThread.start();
     }
 
     public String userExists(String username, String password) {
@@ -276,6 +286,123 @@ public class DatabaseManager{
             return false;
         }
     }
+    public boolean csvAttendEvents(Event event, String defaultFileName) {
+        File csvFile = new File(defaultFileName);
+
+        try(FileWriter csvWriter = new FileWriter(csvFile,false)){
+
+            String sql = "SELECT e.name, e.location, e.date, e.start_time, e.end_time, u.name, u.student_id, u.username_email" +
+                    " FROM users u, events e, users_events lig WHERE lig.fk_event = e.id and lig.fk_user = u.id and e.name = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, event.getEvent_name());
+            ResultSet dataSet = statement.executeQuery();
+            if(!dataSet.next())
+                return false;
+
+            csvWriter.write("\"Designação \";\"" + dataSet.getString(1) + "\n");
+            csvWriter.write("\"Local \";\"" + dataSet.getString(2) + "\n");
+            csvWriter.write("\"Data \";\"" + dataSet.getString(3) + "\n");
+            csvWriter.write("\"Hora ínicio \";\"" + dataSet.getString(4) + "\n");
+            csvWriter.write("\"Hora fim \";\"" + dataSet.getString(5) + "\n");
+            csvWriter.write("\n");
+            csvWriter.write("\"Nome\";\"Número identificação\";\"Email\"");csvWriter.write("\n");
+            do {
+                String uName = dataSet.getString(6);
+                String uID = dataSet.getString(7);
+                String uEmail = dataSet.getString(8);
+
+                csvWriter.write("\""+uName + "\";\"" + uID + "\";\"" + uEmail + "\"\n" );
+            } while (dataSet.next());
+
+            return true;
+
+        }catch (SQLException e){
+            System.err.println("[ERROR] Database Manager -> " + e.getMessage());
+            return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean verifyCode(Event event) {
+        boolean codeExists = false;
+        try {
+            String sql = "SELECT COUNT(*) FROM code_register WHERE code = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, event.getAttend_code());
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int count = resultSet.getInt(1);
+                        codeExists = count > 0;
+                    }
+                }
+            }
+
+            if (codeExists) {
+                if(registerUserEventRelationship(event)){
+                    return true;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return codeExists;
+    }
+
+    private boolean registerUserEventRelationship(Event event) throws SQLException {
+
+        int userId = getUserIdByUsernameOrEmail(event.getUser_email());
+        int eventId = determineFkEventFromCodeRegister(event);
+        if(userId == -1|| userId == -1)
+            return false;
+
+        if (userId != -1) {
+            String insertSql = "INSERT INTO users_events (fk_event, fk_user, attendance) VALUES (?, ?, 1)";
+            try (PreparedStatement insertStatement = connection.prepareStatement(insertSql)) {
+                insertStatement.setInt(1, eventId); // Assuming getFk_event() retrieves the event ID
+                insertStatement.setInt(2, userId);
+
+                insertStatement.executeUpdate();
+            }
+        }
+
+        return true;
+    }
+
+    private int getUserIdByUsernameOrEmail(String username) throws SQLException {
+
+        String selectSql = "SELECT id FROM users WHERE username_email = ?";
+        try (PreparedStatement selectStatement = connection.prepareStatement(selectSql)) {
+            selectStatement.setString(1, username);
+
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("id");
+                }
+            }
+        }
+        return -1;
+    }
+
+    private int determineFkEventFromCodeRegister(Event event) throws SQLException {
+
+        String codeRegisterSql = "SELECT fk_event FROM code_register WHERE code = ?";
+        try (PreparedStatement codeRegisterStatement = connection.prepareStatement(codeRegisterSql)) {
+            codeRegisterStatement.setInt(1, event.getAttend_code());
+
+            try (ResultSet codeRegisterResultSet = codeRegisterStatement.executeQuery()) {
+                if (codeRegisterResultSet.next()) {
+                    return codeRegisterResultSet.getInt("fk_event");
+                }
+            }
+        }
+
+        return -1;
+    }
 
     public boolean csvUserEvents(Event event, String defaultFileName){
         File csvFile = new File(defaultFileName);
@@ -441,22 +568,50 @@ public class DatabaseManager{
         return connection;
     }
 
-    public List<String> getCreatedEvents() {
-
+    public List<String> getCreatedEvents(Event event) {
         List<String> eventNames = new ArrayList<>();
         try {
-            String sql = "SELECT name, location, events.date , Start_time, end_time FROM events";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                eventNames.add(resultSet.getString(1) + "\t"+ resultSet.getString(2) + "\t"+ resultSet.getString(3)
-                        +"\t"+ resultSet.getString(4)+ "\t"+ resultSet.getString(5));
+            String sql = "SELECT name, location, events.date, Start_time, end_time FROM events";
+            String whereClause = "";
+
+            if (event.getEvent_name() != null && event.getEvent_start_time() != null
+                    && !event.getEvent_name().isEmpty() && !event.getEvent_start_time().isEmpty()) {
+                whereClause = " WHERE name = ? AND start_time = ?";
+            } else if (event.getEvent_name() != null && event.getEvent_end_time() != null
+                    && !event.getEvent_name().isEmpty() && (event.getEvent_end_time().isEmpty() || event.getEvent_end_time().equals(""))) {
+                whereClause = " WHERE name = ?";
             }
+
+            sql += whereClause;
+
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                if (!whereClause.isEmpty()) {
+                    int parameterIndex = 1;
+                    if (event.getEvent_name() != null && event.getEvent_start_time() != null
+                            && !event.getEvent_name().isEmpty() && !event.getEvent_start_time().isEmpty()) {
+                        statement.setString(parameterIndex++, event.getEvent_name());
+                        statement.setString(parameterIndex, event.getEvent_start_time());
+                    } else if (event.getEvent_name() != null && event.getEvent_end_time() != null
+                            && !event.getEvent_name().isEmpty() && (event.getEvent_end_time().isEmpty() || event.getEvent_end_time().equals(""))) {
+                        statement.setString(parameterIndex, event.getEvent_name());
+                    }
+                }
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        eventNames.add(resultSet.getString(1) + "\t" + resultSet.getString(2) + "\t" + resultSet.getString(3)
+                                + "\t" + resultSet.getString(4) + "\t" + resultSet.getString(5));
+                    }
+                }
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return eventNames;
     }
+
     public List<String> getAttendance(Event event) {
         int eventId;
         List<String> attendance = new ArrayList<>();
@@ -490,6 +645,8 @@ public class DatabaseManager{
         }
         return attendance;
     }
+
+
 
     public boolean insertAttendance(Event event) {
         int eventId, userId;
@@ -628,5 +785,5 @@ public class DatabaseManager{
         }
         return eventsList;
     }
-}
 
+}

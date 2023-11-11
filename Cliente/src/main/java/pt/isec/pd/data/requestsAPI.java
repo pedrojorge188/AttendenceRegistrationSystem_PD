@@ -65,7 +65,7 @@ public class requestsAPI{
     }
 
     // <User Sender>
-    public boolean send(User.types_msg MSG, String name, String username, String password) throws IOException {
+    public boolean send(User.types_msg MSG, int uid,  String name, String username, String password) throws IOException {
 
         if(Objects.equals(name, ""))
             name = this.myUser;
@@ -80,7 +80,7 @@ public class requestsAPI{
         }
 
         try {
-            User userObject = new User(MSG, name, username, password);
+            User userObject = new User(MSG, uid, name, username, password);
 
             objectOutputStream.writeObject(userObject);
             objectOutputStream.flush();
@@ -159,7 +159,7 @@ public class requestsAPI{
                         }
                         case REQUEST_CSV_EVENT ->
                             receiveCSVFile(this.getFileName());
-
+                        case LOGIN_MADE_USER, LOGIN_MADE_ADMIN -> this.myUser = infoStatus.getMsg_log();
                         case GENERATE_CODE_MADE ->
                             setEventCode(Integer.parseInt(infoStatus.getMsg_log()));
 
@@ -187,7 +187,7 @@ public class requestsAPI{
                 in = this.socket.getInputStream();
 
                 int totalBytes = 0;
-                int nChunks = 0;
+
                 do {
                     nbytes = in.read(fileChunk);
 

@@ -14,7 +14,7 @@
       fx:controller="pt.isec.pd.Controllers.AdminController" fx:id="box">
 
     <Label fx:id="infoLabel"/>
-    <Label text="Criar Evento" id="title"/>
+    <Label text="Associar um evento a um utilizador (admin/debug)" id="title"/>
 
     <Label text="Nome do Evento"/>
     <TextField fx:id="eventNameAssoc" promptText="Nome do Evento"  styleClass="textFields"/>
