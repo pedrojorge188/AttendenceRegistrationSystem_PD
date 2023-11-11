@@ -94,7 +94,7 @@ public class NormalClientController {
             });
 
         });
-        
+
 
         requestsAPI.getInstance().addPropertyChangeListener(CODE_SEND_FAIL.toString(),evt->{
             Platform.runLater(new Runnable() {

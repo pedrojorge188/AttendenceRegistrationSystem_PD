@@ -2,6 +2,7 @@ package pt.isec.pd.database;
 
 import pt.isec.pd.Threads.HeartbeatHandler;
 import pt.isec.pd.data.Event;
+import pt.isec.pd.database.elements.CodeExpirationThread;
 import pt.isec.pd.database.elements.Create;
 import pt.isec.pd.database.elements.Version;
 
@@ -13,6 +14,7 @@ import java.util.*;
 public class DatabaseManager{
     private String dbAddr;
     private String dbName;
+    private CodeExpirationThread codeExpirationThread;
     private Connection connection;
     private DatabaseManager(){
     }
@@ -58,6 +60,9 @@ public class DatabaseManager{
                 throw new RuntimeException(e);
             }
         }
+
+        codeExpirationThread = new CodeExpirationThread(connection);
+        codeExpirationThread.start();
     }
 
     public String userExists(String username, String password) {
@@ -341,7 +346,7 @@ public class DatabaseManager{
             }
 
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle this exception properly in your production code
+            e.printStackTrace();
             return false;
         }
 
@@ -782,4 +787,3 @@ public class DatabaseManager{
     }
 
 }
-
