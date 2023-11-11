@@ -3,15 +3,56 @@ package pt.isec.pd;
 import pt.isec.pd.Threads.ClientHandler;
 import pt.isec.pd.Threads.HeartbeatHandler;
 import pt.isec.pd.database.DatabaseManager;
+import pt.isec.pd.database.IRemoteBackupService;
 
+import javax.xml.crypto.Data;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class Main_Server {
+public class Main_Server implements IRemoteBackupService {
+    public static final int MAX_CHUNK_SIZE = 10000;
+    @Override
+    public byte[] getDatabase() throws RemoteException,IOException {
+        String requestedCanonicalFilePath = null;
+        byte[] fileChunk = new byte[MAX_CHUNK_SIZE];
+        int nbytes;
+        String fileName = DatabaseManager.getInstance().getDbName();
+        File localDirectory = new File(DatabaseManager.getInstance().getDbAddr());
+        fileName = fileName.trim();
+        try {
+            requestedCanonicalFilePath = new File(localDirectory + File.separator + fileName).getCanonicalPath();
 
+            if (!requestedCanonicalFilePath.startsWith(localDirectory.getCanonicalPath() + File.separator)) {
+                System.out.println("Nao e' permitido aceder ao ficheiro " + requestedCanonicalFilePath + "!");
+                System.out.println("A directoria de base nao corresponde a " + localDirectory.getCanonicalPath() + "!");
+                return null;
+            }
+            try (FileInputStream requestedFileInputStream = new FileInputStream(requestedCanonicalFilePath)) {
+                nbytes = requestedFileInputStream.read(fileChunk);
+                if (nbytes == -1) { //EOF
+                    return null;
+                }
+                if (nbytes < fileChunk.length) {
+                    return Arrays.copyOf(fileChunk,nbytes);
+                }
+            }
+            return fileChunk;
+        } catch (FileNotFoundException e) { // Subclasse de IOException
+            System.out.println("Ocorreu a excepcao {" + e + "} ao tentar abrir o ficheiro!");
+            throw new FileNotFoundException(fileName);
+        } catch (IOException e) {
+            System.out.println("Ocorreu a excepcao de E/S: \n\t" + e);
+            throw new IOException(fileName,e.getCause());
+        }
+    }
     public static void main(String[] args) {
 
         if (args.length != 4) {
@@ -73,5 +114,6 @@ public class Main_Server {
             DatabaseManager.getInstance().disconnect();
         }
     }
+
 
 }
