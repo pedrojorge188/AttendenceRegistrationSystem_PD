@@ -7,5 +7,5 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface IRemoteBackupService extends Remote {
-    byte[] getDatabase() throws RemoteException,IOException;
+    byte[] getDatabase(long offset) throws RemoteException,IOException;
 }

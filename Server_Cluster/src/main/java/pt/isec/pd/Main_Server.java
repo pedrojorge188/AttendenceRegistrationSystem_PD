@@ -20,7 +20,7 @@ import java.util.List;
 public class Main_Server implements IRemoteBackupService {
     public static final int MAX_CHUNK_SIZE = 10000;
     @Override
-    public byte[] getDatabase() throws RemoteException,IOException {
+    public byte[] getDatabase(long offset) throws RemoteException,IOException {
         String requestedCanonicalFilePath = null;
         byte[] fileChunk = new byte[MAX_CHUNK_SIZE];
         int nbytes;
@@ -36,6 +36,7 @@ public class Main_Server implements IRemoteBackupService {
                 return null;
             }
             try (FileInputStream requestedFileInputStream = new FileInputStream(requestedCanonicalFilePath)) {
+                requestedFileInputStream.skip(offset);
                 nbytes = requestedFileInputStream.read(fileChunk);
                 if (nbytes == -1) { //EOF
                     return null;
