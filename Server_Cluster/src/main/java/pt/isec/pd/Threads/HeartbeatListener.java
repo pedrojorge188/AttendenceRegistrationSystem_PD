@@ -85,6 +85,7 @@ public class HeartbeatListener extends Thread {
                                 return;
                             }
                         }else{
+                            dbVersion= heartbeatInfo.getDatabaseVersion();
                             addBackup(backupFileName ,rmiIp , heartbeatInfo.getRmiRegistryPort(), heartbeatInfo.getRmiServiceName());
                             firstTime=false;
                         }
