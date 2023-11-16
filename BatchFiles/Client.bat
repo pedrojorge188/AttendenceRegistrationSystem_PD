@@ -1,6 +1,6 @@
 @echo off
 
-cd ..\Cliente
+cd ..\Client
 
 mvn clean javafx:run -Dexec.args="localhost 2000"
 
