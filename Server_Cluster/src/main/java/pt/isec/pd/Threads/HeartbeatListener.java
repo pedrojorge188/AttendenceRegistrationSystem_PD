@@ -16,11 +16,13 @@ public class HeartbeatListener extends Thread {
     private File backupDir;
     private final String rmiIp = "127.0.0.1";
     private String backupFileName;
+
     public HeartbeatListener(int dbVersion,File backupDir,String backupFileName) {
         this.dbVersion = dbVersion;
         this.backupDir=backupDir;
         this.backupFileName=backupFileName;
     }
+
     public void addBackup(String fileName, String rmiIp, int rmiPort, String rmiName) {
         if (backupDir == null) {
             return;

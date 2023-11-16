@@ -62,6 +62,7 @@ public class Backup_Server {
             System.exit(1);
         }
         Backup_Server backupServer=new Backup_Server(new File(args[0]));
+
         if(!backupServer.isDirEmpty()){System.out.println("Directory is not empty!");return;}
         backupServer.createBackupDirectory();
         System.out.println("Backup Server Started!! -> backup_directory => "+args[0]+" <-");
