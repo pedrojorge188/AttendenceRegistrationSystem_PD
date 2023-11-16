@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.concurrent.TimeUnit;
 
 public class CodeExpirationThread extends Thread {
     private final Connection connection;

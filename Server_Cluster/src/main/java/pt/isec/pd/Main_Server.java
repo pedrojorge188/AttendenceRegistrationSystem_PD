@@ -3,15 +3,28 @@ package pt.isec.pd;
 import pt.isec.pd.Threads.ClientHandler;
 import pt.isec.pd.Threads.HeartbeatHandler;
 import pt.isec.pd.database.DatabaseManager;
+import pt.isec.pd.database.IRemoteBackupService;
+import pt.isec.pd.database.RemoteBackupService;
 
+import javax.xml.crypto.Data;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.AlreadyBoundException;
+import java.rmi.Naming;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class Main_Server {
+import static pt.isec.pd.database.RemoteBackupService.createRMIService;
 
+public class Main_Server  {
     public static void main(String[] args) {
 
         if (args.length != 4) {
@@ -28,7 +41,7 @@ public class Main_Server {
         String dbDirectory = args[1];
         String rmiServiceName = args[2];
         int rmiRegistryPort = Integer.parseInt(args[3]);
-
+        RemoteBackupService.createRMIService(rmiServiceName,rmiRegistryPort);
         try {
             DatabaseManager.getInstance();
             DatabaseManager.getInstance().setValues(dbDirectory, "ARSdatabase.sqlite");
@@ -73,5 +86,6 @@ public class Main_Server {
             DatabaseManager.getInstance().disconnect();
         }
     }
+
 
 }
