@@ -1,6 +1,7 @@
 package pt.isec.pd.Threads;
 
 import pt.isec.pd.data.HeartBeatInfo;
+import pt.isec.pd.database.DatabaseManager;
 import pt.isec.pd.database.IRemoteBackupService;
 import pt.isec.pd.helpers.MULTICAST;
 
@@ -23,6 +24,7 @@ public class HeartbeatListener extends Thread {
     }
 
     public void addBackup(String fileName, String rmiIp, int rmiPort, String rmiName) {
+
         if (backupDir == null) {
             return;
         }

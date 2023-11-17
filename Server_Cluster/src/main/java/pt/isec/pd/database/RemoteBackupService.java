@@ -47,6 +47,7 @@ public class RemoteBackupService extends UnicastRemoteObject implements IRemoteB
 
     @Override
     public byte[] getDatabase(long offset) throws RemoteException, IOException {
+        DatabaseManager.getInstance().lockDatabase();
         String requestedCanonicalFilePath = null;
         byte[] fileChunk = new byte[MAX_CHUNK_SIZE];
         int nbytes;
@@ -84,5 +85,6 @@ public class RemoteBackupService extends UnicastRemoteObject implements IRemoteB
     @Override
     public void callBack(String msg) throws RemoteException {
         System.out.println("[CALLBACK] -> BACKUP with msg: " + msg);
+        DatabaseManager.getInstance().unLockDatabase();
     }
 }
