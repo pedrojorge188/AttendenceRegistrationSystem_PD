@@ -8,12 +8,18 @@ public class HeartBeatInfo implements Serializable {
 
     private int rmiRegistryPort;
     private String rmiServiceName;
+    private String rmiIp;
     private int databaseVersion;
 
-    public HeartBeatInfo(int rmiRegistryPort, String rmiServiceName, int databaseVersion) {
+    public HeartBeatInfo(int rmiRegistryPort, String rmiServiceName,String rmiIp, int databaseVersion) {
         this.rmiRegistryPort = rmiRegistryPort;
         this.rmiServiceName = rmiServiceName;
+        this.rmiIp = rmiIp;
         this.databaseVersion = databaseVersion;
+    }
+
+    public String getRmiIp() {
+        return rmiIp;
     }
 
     public int getRmiRegistryPort() {

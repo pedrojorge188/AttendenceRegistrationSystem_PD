@@ -15,7 +15,6 @@ import java.rmi.RemoteException;
 public class HeartbeatListener extends Thread {
     private static int dbVersion;
     private File backupDir;
-    private final String rmiIp = "127.0.0.1";
     private String backupFileName;
 
     public HeartbeatListener(int dbVersion,File backupDir,String backupFileName) {
@@ -97,7 +96,7 @@ public class HeartbeatListener extends Thread {
                             }
                         }else{
                             dbVersion= heartbeatInfo.getDatabaseVersion();
-                            addBackup(backupFileName ,rmiIp , heartbeatInfo.getRmiRegistryPort(), heartbeatInfo.getRmiServiceName());
+                            addBackup(backupFileName ,heartbeatInfo.getRmiIp() , heartbeatInfo.getRmiRegistryPort(), heartbeatInfo.getRmiServiceName());
                             firstTime=false;
                         }
                     } catch (ClassNotFoundException | IOException e) {

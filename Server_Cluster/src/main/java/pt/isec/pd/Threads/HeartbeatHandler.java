@@ -42,6 +42,7 @@ public class HeartbeatHandler extends Thread {
             HeartBeatInfo heartbeatInfo = new HeartBeatInfo(
                     rmiRegistryPort,
                     rmiServiceName,
+                    InetAddress. getLocalHost().getHostName(),
                     Version.getVersion(DatabaseManager.getInstance().getConnection())
             );
 
