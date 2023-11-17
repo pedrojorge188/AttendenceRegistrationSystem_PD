@@ -26,12 +26,11 @@ public class HeartbeatHandler extends Thread {
         try (MulticastSocket multicastSocket = new MulticastSocket()) {
 
             InetAddress group = InetAddress.getByName(multicastAddress);
-            String NicId = "wlan0";
             NetworkInterface nif;
             try{
-                nif = NetworkInterface.getByInetAddress(InetAddress.getByName(NicId));
+                nif = NetworkInterface.getByInetAddress(InetAddress.getByName(MULTICAST.wlan));
             }catch (Exception ex){
-                nif = NetworkInterface.getByName(NicId);
+                nif = NetworkInterface.getByName(MULTICAST.wlan);
             }
 
             multicastSocket.joinGroup(new InetSocketAddress(group, multicastPort), nif);
