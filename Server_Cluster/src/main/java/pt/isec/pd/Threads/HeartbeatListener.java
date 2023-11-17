@@ -72,6 +72,7 @@ public class HeartbeatListener extends Thread {
             }
 
             multicastSocket.joinGroup(new InetSocketAddress(group, MULTICAST.PORT), nif);
+            multicastSocket.setSoTimeout(30000);
 
             byte[] receiveData = new byte[1024];
             boolean firstTime=true;
