@@ -7,9 +7,7 @@ import pt.isec.pd.helpers.MULTICAST;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
+import java.net.*;
 
 public class HeartbeatHandler extends Thread {
     private static String multicastAddress = MULTICAST.ADDR;
@@ -28,7 +26,18 @@ public class HeartbeatHandler extends Thread {
         try (MulticastSocket multicastSocket = new MulticastSocket()) {
 
             InetAddress group = InetAddress.getByName(multicastAddress);
-            multicastSocket.joinGroup(group);
+            String NicId = "wlan0";
+            NetworkInterface nif;
+            try{
+                nif = NetworkInterface.getByInetAddress(InetAddress.getByName(NicId));
+            }catch (Exception ex){
+                nif = NetworkInterface.getByName(NicId);
+            }
+
+            multicastSocket.joinGroup(new InetSocketAddress(group, multicastPort), nif);
+
+            //InetAddress group = InetAddress.getByName(multicastAddress);
+            //multicastSocket.joinGroup(group);
 
             HeartBeatInfo heartbeatInfo = new HeartBeatInfo(
                     rmiRegistryPort,
