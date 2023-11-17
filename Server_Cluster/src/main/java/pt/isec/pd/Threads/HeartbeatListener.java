@@ -11,7 +11,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 
-
 public class HeartbeatListener extends Thread {
     private static int dbVersion;
     private File backupDir;
