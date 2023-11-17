@@ -11,6 +11,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 
+
 public class HeartbeatListener extends Thread {
     private static int dbVersion;
     private File backupDir;
@@ -63,7 +64,15 @@ public class HeartbeatListener extends Thread {
     public void run() {
         try (MulticastSocket multicastSocket = new MulticastSocket(MULTICAST.PORT)) {
             InetAddress group = InetAddress.getByName(MULTICAST.ADDR);
-            multicastSocket.joinGroup(group);
+            String NicId = "wlan0";
+            NetworkInterface nif;
+            try{
+                nif = NetworkInterface.getByInetAddress(InetAddress.getByName(NicId));
+            }catch (Exception ex){
+                nif = NetworkInterface.getByName(NicId);
+            }
+
+            multicastSocket.joinGroup(new InetSocketAddress(group, MULTICAST.PORT), nif);
 
             byte[] receiveData = new byte[1024];
             boolean firstTime=true;
