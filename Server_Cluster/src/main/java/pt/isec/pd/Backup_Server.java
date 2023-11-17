@@ -21,6 +21,7 @@ public class Backup_Server {
         this.backupDir = backupDir;
         this.databaseVersion = 0;
     }
+
     public boolean isDirEmpty(){
         if (backupDir == null || !backupDir.exists() || !backupDir.isDirectory()||!backupDir.canWrite()) {
             System.out.println("Invalid backup directory");
@@ -29,6 +30,7 @@ public class Backup_Server {
         String[] files = backupDir.list();
         return files == null || files.length == 0;
     }
+
     public void createBackupDirectory() {
         if (backupDir == null) {
             System.out.println("Invalid backup directory");
@@ -41,6 +43,7 @@ public class Backup_Server {
     }
 
     public File getBackupDir() {return backupDir;}
+
     public String askBackupFileName(){
         String backupFileName;
         Scanner sc = new Scanner(System.in);
@@ -52,6 +55,7 @@ public class Backup_Server {
         System.out.println();
         return backupFileName;
     }
+
     public static void main(String[] args) {
         int databaseVersion = 0;
         MulticastSocket multicastSocket;

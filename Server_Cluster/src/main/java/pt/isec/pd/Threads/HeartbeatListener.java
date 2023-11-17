@@ -14,7 +14,6 @@ import java.rmi.RemoteException;
 public class HeartbeatListener extends Thread {
     private static int dbVersion;
     private File backupDir;
-    private final String rmiIp = "127.0.0.1";
     private String backupFileName;
 
     public HeartbeatListener(int dbVersion,File backupDir,String backupFileName) {
@@ -63,7 +62,15 @@ public class HeartbeatListener extends Thread {
     public void run() {
         try (MulticastSocket multicastSocket = new MulticastSocket(MULTICAST.PORT)) {
             InetAddress group = InetAddress.getByName(MULTICAST.ADDR);
-            multicastSocket.joinGroup(group);
+            NetworkInterface nif;
+            try{
+                nif = NetworkInterface.getByInetAddress(InetAddress.getByName(MULTICAST.wlan));
+            }catch (Exception ex){
+                nif = NetworkInterface.getByName(MULTICAST.wlan);
+            }
+
+            multicastSocket.joinGroup(new InetSocketAddress(group, MULTICAST.PORT), nif);
+            multicastSocket.setSoTimeout(30000); // timeout 30 segundos
 
             byte[] receiveData = new byte[1024];
             boolean firstTime=true;
@@ -88,7 +95,7 @@ public class HeartbeatListener extends Thread {
                             }
                         }else{
                             dbVersion= heartbeatInfo.getDatabaseVersion();
-                            addBackup(backupFileName ,rmiIp , heartbeatInfo.getRmiRegistryPort(), heartbeatInfo.getRmiServiceName());
+                            addBackup(backupFileName ,heartbeatInfo.getRmiIp() , heartbeatInfo.getRmiRegistryPort(), heartbeatInfo.getRmiServiceName());
                             firstTime=false;
                         }
                     } catch (ClassNotFoundException | IOException e) {

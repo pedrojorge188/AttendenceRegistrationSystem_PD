@@ -29,7 +29,7 @@ public class RemoteBackupService extends UnicastRemoteObject implements IRemoteB
 
             LocateRegistry.createRegistry(rmiPort);
 
-            String rmiUrl = "rmi://127.0.0.1:" + rmiPort + "/" + rmiName;
+            String rmiUrl = "rmi://localhost:" + rmiPort + "/" + rmiName;
             RemoteBackupService backupService = new RemoteBackupService();
             Naming.bind(rmiUrl, backupService);
 
