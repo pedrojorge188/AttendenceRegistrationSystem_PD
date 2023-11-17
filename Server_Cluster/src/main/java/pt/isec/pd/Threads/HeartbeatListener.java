@@ -46,6 +46,7 @@ public class HeartbeatListener extends Thread {
                 offset += b.length;
             }
 
+            remoteBackupService.callBack("Backup realizador com sucesso no ficheiro ("+fileName+")");
             System.out.println("Transferencia do ficheiro " + fileName + " concluida.");
 
         } catch (RemoteException e) {

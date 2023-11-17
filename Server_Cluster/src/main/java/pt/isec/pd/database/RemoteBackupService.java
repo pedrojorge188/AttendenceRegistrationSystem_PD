@@ -80,4 +80,9 @@ public class RemoteBackupService extends UnicastRemoteObject implements IRemoteB
             throw new IOException(fileName,e.getCause());
         }
     }
+
+    @Override
+    public void callBack(String msg) throws RemoteException {
+        System.out.println("[CALLBACK] -> BACKUP with msg: " + msg);
+    }
 }
