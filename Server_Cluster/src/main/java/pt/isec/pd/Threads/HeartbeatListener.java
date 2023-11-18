@@ -1,8 +1,8 @@
 package pt.isec.pd.Threads;
 
 import pt.isec.pd.data.HeartBeatInfo;
-import pt.isec.pd.database.DatabaseManager;
-import pt.isec.pd.database.IRemoteBackupService;
+import pt.isec.pd.rmi.observers.GetRemoteFileClientService;
+import pt.isec.pd.rmi.services.GetRemoteFileServiceInterface;
 import pt.isec.pd.helpers.MULTICAST;
 
 import java.io.*;
@@ -12,8 +12,10 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 
-public class HeartbeatListener extends Thread {
+public class HeartbeatListener extends Thread{
     private static int dbVersion;
+    GetRemoteFileClientService myRemoteService = null;
+    GetRemoteFileServiceInterface remoteFileService;
     private File backupDir;
     private String backupFileName;
 
@@ -38,17 +40,11 @@ public class HeartbeatListener extends Thread {
         }
 
         try (FileOutputStream localFileOutputStream = new FileOutputStream(localFilePath)) {
-            IRemoteBackupService remoteBackupService = (IRemoteBackupService) Naming.lookup("rmi://" + rmiIp+":"+rmiPort + "/" + rmiName);
-            System.out.println("Ficheiro " + localFilePath + " criado.");
+            remoteFileService = (GetRemoteFileServiceInterface) Naming.lookup("rmi://" + rmiIp+":"+rmiPort + "/" + rmiName);
+            myRemoteService = new GetRemoteFileClientService();
+            myRemoteService.setFout(localFileOutputStream);
+            remoteFileService.getFile(backupDir, fileName, myRemoteService);
 
-            long offset = 0;
-            byte[] b;
-            while ((b = remoteBackupService.getDatabase(offset)) != null) {
-                localFileOutputStream.write(b);
-                offset += b.length;
-            }
-
-            remoteBackupService.callBack("Backup realizador com sucesso no ficheiro ("+fileName+")");
             System.out.println("Transferencia do ficheiro " + fileName + " concluida.");
 
         } catch (RemoteException e) {
@@ -57,6 +53,8 @@ public class HeartbeatListener extends Thread {
             System.out.println("Servico remoto desconhecido - " + e);
         } catch (IOException e) {
             System.out.println("Erro E/S - " + e);
+        } catch (IllegalArgumentException e){
+            System.out.println("erro:" + e);
         } catch (Exception e) {
             System.out.println("Erro - " + e);
         }
@@ -114,4 +112,5 @@ public class HeartbeatListener extends Thread {
             e.printStackTrace();
         }
     }
+
 }

@@ -1,16 +1,10 @@
 package pt.isec.pd;
 
 import pt.isec.pd.Threads.HeartbeatListener;
-import pt.isec.pd.database.IRemoteBackupService;
-import pt.isec.pd.helpers.MULTICAST;
 
 import java.io.*;
 import java.net.*;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.Scanner;
-import java.util.Timer;
 
 public class Backup_Server {
     private int databaseVersion;
