@@ -55,9 +55,6 @@ public class HeartbeatListener extends Thread{
                 offset += b.length;
             }
 
-            service.notifyNewOperationConcluded("[CALL_BACK] file tranfer made!");
-
-
         } catch (RemoteException e) {
             System.out.println("Erro remoto - " + e);
         } catch (NotBoundException e) {

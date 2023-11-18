@@ -95,6 +95,9 @@ public class GetRemoteFileService extends UnicastRemoteObject implements GetRemo
                     return Arrays.copyOf(fileChunk,nbytes);
                 }
             }
+
+            //notifica todos os observers
+            this.notifyObservers("Database tranfer in action");
             return fileChunk;
 
         } catch (FileNotFoundException e) {
@@ -105,6 +108,7 @@ public class GetRemoteFileService extends UnicastRemoteObject implements GetRemo
             System.out.println("Ocorreu a excepcao de E/S: \n\t" + e);
             throw new IOException(fileName,e.getCause());
         }
+
     }
 
     protected void notifyObservers(String msg){
