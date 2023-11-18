@@ -1,8 +1,6 @@
-package pt.isec.pd.rmi.services;
+package pt.isec.pd.rmi;
 
 import pt.isec.pd.database.DatabaseManager;
-import pt.isec.pd.rmi.observers.GetRemoteFileClientInterface;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,7 +9,6 @@ import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
@@ -109,48 +106,6 @@ public class GetRemoteFileService extends UnicastRemoteObject implements GetRemo
             throw new IOException(fileName,e.getCause());
         }
     }
-
-    @Override
-    public void getFile(File dir, String fileName, GetRemoteFileClientInterface cliRemoto) throws IOException {
-        File localDirectory = new File(DatabaseManager.getInstance().getDbAddr());
-        fileName = fileName.trim();
-
-        try {
-            notifyObservers("getFile: recebido pedido remoto de " + getClientHost() + " para: " + fileName);
-        } catch (ServerNotActiveException e) {
-            System.out.println("getFile: recebido pedido local para: " + fileName);
-            notifyObservers("getFile: recebido pedido local para " + fileName);
-        }
-
-        String requestedCanonicalFilePath = new File(dir + File.separator + fileName).getCanonicalPath();
-
-        if (!requestedCanonicalFilePath.startsWith(dir.getCanonicalPath() + File.separator)) {
-            System.out.println("Não é permitido acessar o arquivo " + requestedCanonicalFilePath + "!");
-            System.out.println("O diretório base não corresponde a " + localDirectory.getCanonicalPath() + "!");
-            throw new IllegalArgumentException("Acesso não permitido ao arquivo");
-        }
-
-        try (FileInputStream requestedFileInputStream = new FileInputStream(requestedCanonicalFilePath)) {
-            byte[] fileChunk = new byte[MAX_CHUNK_SIZE];
-            int nbytes;
-
-            while ((nbytes = requestedFileInputStream.read(fileChunk)) != -1) {
-
-                cliRemoto.writeFileChunk(fileChunk, nbytes);
-            }
-
-            notifyObservers("[CALL_BACK] - " + requestedCanonicalFilePath + " - received by BackUpServer");
-            System.out.println();
-
-        } catch (FileNotFoundException e) {
-            System.out.println("Ocorreu a exceção ao tentar abrir o arquivo: " + e);
-            throw new FileNotFoundException(fileName);
-        } catch (IOException e) {
-            System.out.println("Ocorreu a exceção de E/S: \n\t" + e);
-            throw new IOException(fileName, e.getCause());
-        }
-    }
-
 
     protected void notifyObservers(String msg){
         List<GetRemoteFileObserverInterface> observersToRemove = new ArrayList<>();

@@ -3,7 +3,7 @@ package pt.isec.pd;
 import pt.isec.pd.Threads.ClientHandler;
 import pt.isec.pd.Threads.HeartbeatHandler;
 import pt.isec.pd.database.DatabaseManager;
-import pt.isec.pd.rmi.services.GetRemoteFileService;
+import pt.isec.pd.rmi.GetRemoteFileService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
