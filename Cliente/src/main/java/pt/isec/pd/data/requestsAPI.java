@@ -160,6 +160,7 @@ public class requestsAPI{
                         case REQUEST_CSV_EVENT ->
                             receiveCSVFile(this.getFileName());
                         case LOGIN_MADE_USER, LOGIN_MADE_ADMIN -> this.myUser = infoStatus.getMsg_log();
+                        case LOGIN_FAIL -> System.exit(-1);
                         case GENERATE_CODE_MADE ->
                             setEventCode(Integer.parseInt(infoStatus.getMsg_log()));
 
@@ -224,6 +225,7 @@ public class requestsAPI{
             }
         }
     }
+
     public void setEventCode(int code){
         this.event_code = code;
     }
