@@ -8,6 +8,7 @@ import pt.isec.pd.helpers.MULTICAST;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
+import java.util.Collections;
 
 public class HeartbeatHandler extends Thread {
     private static String multicastAddress = MULTICAST.ADDR;
@@ -22,16 +23,34 @@ public class HeartbeatHandler extends Thread {
         HeartbeatHandler.databaseVersion = databaseVersion;
     }
 
+    public static NetworkInterface selectNetworkInterface() throws SocketException {
+        for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+            if (!iface.isLoopback() && !iface.isVirtual() && iface.supportsMulticast()) {
+                for (InetAddress addr : Collections.list(iface.getInetAddresses())) {
+                    if (addr instanceof Inet4Address) {
+                        return iface; // Retorna a interface se suporta multicast e é IPv4
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public static void sendHb() {
+
         try (MulticastSocket multicastSocket = new MulticastSocket()) {
 
             InetAddress group = InetAddress.getByName(multicastAddress);
             NetworkInterface nif;
+            nif = selectNetworkInterface();
+
+            /*
             try{
                 nif = NetworkInterface.getByInetAddress(InetAddress.getByName(MULTICAST.wlan));
             }catch (Exception ex){
                 nif = NetworkInterface.getByName(MULTICAST.wlan);
             }
+             */
 
             multicastSocket.joinGroup(new InetSocketAddress(group, multicastPort), nif);
 

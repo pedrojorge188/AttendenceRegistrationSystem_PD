@@ -11,6 +11,9 @@ import java.net.*;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Collections;
+
+import static pt.isec.pd.Threads.HeartbeatHandler.selectNetworkInterface;
 
 
 public class HeartbeatListener extends Thread{
@@ -66,15 +69,13 @@ public class HeartbeatListener extends Thread{
         }
     }
 
+
+
     public void run() {
         try (MulticastSocket multicastSocket = new MulticastSocket(MULTICAST.PORT)) {
             InetAddress group = InetAddress.getByName(MULTICAST.ADDR);
             NetworkInterface nif;
-            try{
-                nif = NetworkInterface.getByInetAddress(InetAddress.getByName(MULTICAST.wlan));
-            }catch (Exception ex){
-                nif = NetworkInterface.getByName(MULTICAST.wlan);
-            }
+            nif = selectNetworkInterface();
 
             multicastSocket.joinGroup(new InetSocketAddress(group, MULTICAST.PORT), nif);
             multicastSocket.setSoTimeout(30000); // timeout 30 segundos
