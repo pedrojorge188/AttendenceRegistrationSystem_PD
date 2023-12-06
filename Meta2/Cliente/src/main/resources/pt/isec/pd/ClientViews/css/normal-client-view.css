@@ -1,0 +1,14 @@
+#menuBar{
+    -fx-background-color: #ffffff;
+    -fx-padding: 15px;
+    -fx-font-size: 15px;
+}
+#main_box{
+    -fx-alignment: CENTER;
+    -fx-spacing: 10;
+    -fx-padding: 20px;
+}
+#title{
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}

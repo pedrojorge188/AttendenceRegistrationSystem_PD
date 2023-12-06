@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<?import java.net.URL?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.isec.pd.Controllers.NormalClientController"
+      fx:id="box">
+
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+    <Label text="Ver presenças" id="title"/>
+
+    <HBox spacing="10">
+        <Button text="Listar" onAction="#listAttendances" fx:id="sendBtn"/>
+        <Button text="Receber ficheiro CSV" onAction="#csvReceive" fx:id="csvButton"/>
+    </HBox>
+
+
+    <stylesheets>
+        <URL value="@css/send-code-view.css" />
+    </stylesheets>
+</VBox>
