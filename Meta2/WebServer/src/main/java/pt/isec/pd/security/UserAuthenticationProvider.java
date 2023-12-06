@@ -7,6 +7,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import pt.isec.pd.models.database.DatabaseManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,14 +21,18 @@ public class UserAuthenticationProvider implements AuthenticationProvider
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        if (username.equals("admin") && password.equals("admin")) {
-
-            //temos que ir a base de dados buscar o utilizador e verificar password e etc
+        if(DatabaseManager.getInstance().userExists(username, password).equals("admin")){
 
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ADMIN"));
-
             return new UsernamePasswordAuthenticationToken(username, password, authorities);
+
+        } else if (DatabaseManager.getInstance().userExists(username, password).equals("normal")) {
+
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority("UTIL"));
+            return new UsernamePasswordAuthenticationToken(username, password, authorities);
+
         }
 
         return null;
