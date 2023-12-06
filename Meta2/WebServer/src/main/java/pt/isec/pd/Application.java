@@ -38,6 +38,7 @@ public class Application {
 		this.rsaKeys = rsaKeys;
 	}
 
+
 	@Configuration
 	@EnableWebSecurity
 	public class SecurityConfig
@@ -63,6 +64,16 @@ public class Application {
 				.build();
 		}
 
+		@Bean
+		public SecurityFilterChain unauthenticatedFilterChain(HttpSecurity http) throws Exception
+		{
+			return http
+					.csrf(csrf -> csrf.disable())
+					.securityMatcher("/register", "/register/**")
+					.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+					.build();
+		}
 
 		@Bean
 		public SecurityFilterChain genericFilterChain(HttpSecurity http) throws Exception
@@ -89,6 +100,7 @@ public class Application {
 	{
 		return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
 	}
+
 	public static void main(String[] args) {
 		String dbDirectory = "./database/";
 

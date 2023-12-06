@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>pt.isec.pd.spring_boot</groupId>
-	<artifactId>Exemplo3</artifactId>
+	<artifactId>WebServer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Exemplo3</name>
 	<description>Exemplo com autenticação</description>
