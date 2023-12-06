@@ -226,26 +226,32 @@ public class DatabaseManager{
                 if (resultSet.next()) {
                     int eventId = resultSet.getInt("id");
 
+                    String checkUserEventExist = "SELECT COUNT(*) AS count FROM users_events WHERE fk_event = ?";
+                    PreparedStatement checkUserEventStatement = connection.prepareStatement(checkUserEventExist);
+                    checkUserEventStatement.setInt(1, eventId);
+
+                    ResultSet userEventResultSet = checkUserEventStatement.executeQuery();
+                    if (userEventResultSet.next()) {
+                        int count = userEventResultSet.getInt("count");
+
+                        if (count > 0) {
+                            return false;
+                        }
+                    }
+
                     String deleteSQL = "DELETE FROM events WHERE id = ?";
                     PreparedStatement deleteStatement = connection.prepareStatement(deleteSQL);
                     deleteStatement.setInt(1, eventId);
 
                     int rowsAffected = deleteStatement.executeUpdate();
 
-                    deleteSQL = "DELETE FROM users_events WHERE fk_event = ?";
-                    deleteStatement = connection.prepareStatement(deleteSQL);
-                    deleteStatement.setInt(1, eventId);
-                    deleteStatement.executeUpdate();
-                    Version.updateVersion(connection);
                     if (rowsAffected > 0) {
+                        Version.updateVersion(connection);
                         return true;
                     }
                 }
-
-                return false;
             } catch (SQLException e) {
-                System.err.println("[ERROR] Database Manager -> " + e.getMessage());
-                return false;
+                e.printStackTrace();
             }
         }
         return false;

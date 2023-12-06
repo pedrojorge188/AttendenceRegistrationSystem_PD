@@ -3,6 +3,7 @@ package pt.isec.pd.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,16 @@ public class AuthController {
         return tokenService.generateToken(authentication);
     }
 
+    //POST: localhost:8080/permission -> devolve true ou false conforme a role JWT da conta indicada
+
+    @PostMapping("/permission")
+    public Boolean permission(Authentication authentication) {
+        Jwt acc_details = (Jwt) authentication.getPrincipal();
+        return acc_details.getClaim("scope").toString().equals("ADMIN");
+    }
+
     //POST: localhost:8080/register/id={studentId}&username={username}&email={email}&password={password}
+
     @PostMapping("/register/id={studentId}&username={username}&email={email}&password={password}")
     public ResponseEntity register(
             @PathVariable("studentId") int id,
