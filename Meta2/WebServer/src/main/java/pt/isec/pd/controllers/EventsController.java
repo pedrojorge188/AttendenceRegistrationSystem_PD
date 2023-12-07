@@ -48,7 +48,7 @@ public class EventsController {
 
     }
 
-    //Delete: localhost:8080/event/delete/name={name}
+    //Delete:
 
     @DeleteMapping("/delete/name={name}")
     public ResponseEntity event(

@@ -668,6 +668,26 @@ public class DatabaseManager{
         return attendance;
     }
 
+    public synchronized List<String> getAllAttendances() {
+        List<String> allAttendances = new ArrayList<>();
+        try {
+            String sql = "SELECT users.name, users.username_email " +
+                    "FROM users_events " +
+                    "INNER JOIN users ON users_events.fk_user = users.id";
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("username_email");
+                allAttendances.add(name + "\t" + email);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return allAttendances;
+    }
 
 
     public synchronized boolean insertAttendance(Event event) {

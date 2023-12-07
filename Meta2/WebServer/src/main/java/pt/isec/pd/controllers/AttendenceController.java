@@ -4,12 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.isec.pd.models.Event;
 import pt.isec.pd.models.database.DatabaseManager;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("code")
@@ -62,6 +61,54 @@ public class AttendenceController {
             return ResponseEntity.ok("Code ("+evt.getAttend_code()+")generated to "+name+" event");
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed generating code!");
+        }
+    }
+
+    // Get: localhost:8080/search/?
+
+    @GetMapping("/search")
+    public ResponseEntity search(Authentication authentication,
+                                 @RequestParam(value="name", required=false) String name,
+                                 @RequestParam(value="start", required=false) String start_time,
+                                 @RequestParam(value="end", required=false) String end_time,
+                                 @RequestParam(value="date", required=false) String date) {
+
+        Jwt acc_details = (Jwt) authentication.getPrincipal();
+
+        if(acc_details.getClaim("scope").toString().equals("ADMIN"))
+            return ResponseEntity.ok("You must be a Normal User to call this action!");
+
+        Event evt = new Event(Event.type_event.CODE_EVENT, 0);
+
+        if(date != null)
+            evt.setEvent_date(date);
+        if(name != null)
+            evt.setEvent_name(name);
+
+        if(start_time != null)
+            if(end_time != null){
+                evt.setEvent_start_time(start_time);
+                evt.setEvent_end_time(end_time);
+            }else{
+                return  ResponseEntity.badRequest().body("You must enter end_time too!");
+            }
+        if(end_time != null)
+            if(start_time != null){
+                evt.setEvent_start_time(start_time);
+                evt.setEvent_end_time(end_time);
+            }else{
+                return  ResponseEntity.badRequest().body("You must enter start_time too!");
+            }
+
+        List<String> db_result = DatabaseManager.getInstance().getAttendance(evt);
+
+        if(name == null)
+            db_result = DatabaseManager.getInstance().getAllAttendances();
+
+        if((long) db_result.size() < 1){
+            return  ResponseEntity.badRequest().body("Any attendance to list!");
+        }else{
+            return  ResponseEntity.ok(db_result);
         }
     }
 
