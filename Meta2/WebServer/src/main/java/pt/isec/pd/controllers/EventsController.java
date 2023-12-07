@@ -11,6 +11,52 @@ import pt.isec.pd.models.database.DatabaseManager;
 @RestController
 @RequestMapping("event")
 public class EventsController {
+    //GET: localhost:8080/list
+    @GetMapping("/list")
+    public ResponseEntity list(
+            Authentication authentication,
+            @RequestParam(value="start_time", required=false) String startTime,
+            @RequestParam(value = "end_time", required = false) String endTime,
+            @RequestParam(value = "date",required = false)String date,
+            @RequestParam(value = "name",required = false) String name,
+            @RequestParam(value = "location", required = false) String location
+    ){
+        Jwt acc_details = (Jwt) authentication.getPrincipal();
+
+        if(!acc_details.getClaim("scope").toString().equals("ADMIN"))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You must be a Admin User to call this action!");
+        if(startTime==null&&endTime==null&&date==null&&name==null&&location==null){
+            return ResponseEntity.ok(DatabaseManager.getInstance().getAllEvents());
+        }
+        Event evt = new Event(Event.type_event.LIST_CREATED_EVENTS, 0);
+        if (startTime != null && !startTime.isEmpty()) {
+            if (endTime == null || endTime.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Need end_time=HH:mm parameter");
+            }
+            evt.setEvent_end_time(endTime);
+            evt.setEvent_start_time(startTime);
+        } else if (endTime != null && !endTime.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Need start_time=HH:mm parameter");
+        }
+        if(date!=null){
+            if(!date.isBlank()||!date.isEmpty()){
+                evt.setEvent_date(date);
+            }
+        }
+        if(name!=null){
+            if(!name.isBlank()||!name.isEmpty()){
+                evt.setEvent_name(name);
+            }
+        }
+        if(location!=null){
+            if(!location.isBlank()||!location.isEmpty()){
+                evt.setEvent_location(location);
+            }
+        }
+        return ResponseEntity.ok(DatabaseManager.getInstance().getCreatedEvents(evt));
+    }
+
+
 
     //POST: localhost:8080/event/create/name={name}/location={location}/date={date}/start_time={start_time}/end_time={end_time}
     //Example:  localhost:8080/event/create/name=Aula PD/location=Lab1.1/date=06-15-2023/start_time=16:00/end_time=19:00

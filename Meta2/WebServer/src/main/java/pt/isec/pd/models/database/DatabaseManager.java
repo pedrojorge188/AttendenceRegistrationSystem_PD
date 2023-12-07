@@ -589,6 +589,23 @@ public class DatabaseManager{
     public synchronized Connection getConnection() {
         return connection;
     }
+    public synchronized List<String> getAllEvents(){
+        List<String> eventNames = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM events";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    eventNames.add(resultSet.getString(1) + "\t" + resultSet.getString(2) + "\t" + resultSet.getString(3)
+                            + "\t" + resultSet.getString(4) + "\t" + resultSet.getString(5));
+                }
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return eventNames;
+
+    }
 
     public synchronized List<String> getCreatedEvents(Event event) {
         List<String> eventNames = new ArrayList<>();
