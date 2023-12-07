@@ -112,4 +112,31 @@ public class AttendenceController {
         }
     }
 
+    // GET : localhost:8080:list/event_name_to_list_attendances
+
+    @GetMapping("/list/{name}")
+    public ResponseEntity list(Authentication authentication,
+                                 @PathVariable("name") String name
+                                ) {
+
+        Jwt acc_details = (Jwt) authentication.getPrincipal();
+
+        if(!acc_details.getClaim("scope").toString().equals("ADMIN"))
+            return ResponseEntity.ok("You must be a Admin User to call this action!");
+
+        Event evt = new Event(Event.type_event.CODE_EVENT, 0);
+
+        if(name == null)
+            return  ResponseEntity.badRequest().body("Any name entered into endpoint");
+
+        evt.setEvent_name(name);
+        List<String> db_result = DatabaseManager.getInstance().getAttendance(evt);
+
+        if((long) db_result.size() < 1){
+            return  ResponseEntity.badRequest().body("Any attendance to list!");
+        }else{
+            return  ResponseEntity.ok(db_result);
+        }
+    }
+
 }
