@@ -1,0 +1,29 @@
+#box{
+    -fx-pref-width: 600.0;
+    -fx-pref-height: 400.0;
+    -fx-spacing: 15;
+}
+#infoLabel{
+    -fx-font-size: 18px;
+}
+#title{
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+.inputTitles{
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+.textFields{
+    -fx-padding: 15px;
+}
+.buttons{
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+}
+#btnAlterar{
+    -fx-background-color: #10388c;
+}
+#backBtn{
+    -fx-background-color: #6b0e0e;
+}
