@@ -4,10 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.isec.pd.models.Event;
 import pt.isec.pd.models.database.DatabaseManager;
 
@@ -51,9 +48,9 @@ public class EventsController {
 
     }
 
-    //POST: localhost:8080/event/delete/name={name}
+    //Delete: localhost:8080/event/delete/name={name}
 
-    @PostMapping("/delete/name={name}")
+    @DeleteMapping("/delete/name={name}")
     public ResponseEntity event(
             Authentication authentication,
             @PathVariable("name") String name){
