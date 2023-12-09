@@ -34,6 +34,7 @@ public class SendAndReceive {
         return instance;
     }
 
+
     public int login(String username, String password) throws IOException {
         String responseBody = null;
         URL url = new URL(server_Domain+"/login");
@@ -81,6 +82,33 @@ public class SendAndReceive {
             pcs.firePropertyChange(InfoStatus.types_status.LOGIN_MADE_USER.toString(),null,null);
 
         connection.disconnect();
+        return connection.getResponseCode();
+    }
+
+    public int register(int studentId, String username, String email, String psw) throws IOException {
+
+        String responseBody = null;
+        URL url = new URL(server_Domain+"/register/id="+studentId+"&username="+username+"&email="+email+"&password="+psw);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+
+        Scanner s;
+
+        if(connection.getErrorStream()!=null) {
+            s = new Scanner(connection.getErrorStream()).useDelimiter("\\A");
+            responseBody = s.hasNext() ? s.next() : null;
+        }
+
+        try {
+            s = new Scanner(connection.getInputStream()).useDelimiter("\\A");
+            responseBody = s.hasNext() ? s.next() : null;
+        } catch (IOException e){}
+
+        connection.disconnect();
+
+        if(connection.getResponseCode() == HttpURLConnection.HTTP_OK)
+            pcs.firePropertyChange(InfoStatus.types_status.LOGIN_MADE_USER.toString(),null,null);
+
         return connection.getResponseCode();
     }
 

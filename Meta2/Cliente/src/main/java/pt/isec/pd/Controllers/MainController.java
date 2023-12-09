@@ -122,7 +122,15 @@ public class MainController {
         }
 
         //POST: localhost:8080/register/id={studentId}&username={username}&email={email}&password={password}
-
+        try{
+            int response_code = client.register(Integer.parseInt(studentNumber),name,username,password);
+            if(response_code != 200){
+                errorLabelReg.setText("Occorreu um Erro ["+response_code+"]");
+            }
+        }catch (IOException e) {
+            errorLabelReg.setText("Ocorreu um erro com o Servidor ");
+            System.out.println("[SERVER ERROR] " + e);
+        }
     }
 
     private void loadView(String fxmlPath)  {
