@@ -147,7 +147,16 @@ public class NormalClientController {
     @FXML
     public void sendCode() throws IOException {
         String code = codeField.getText();
-
+        // POST: localhost:8080/code/send/your_code
+        try{
+            int response_code =    client.sendCode(Integer.parseInt(code));
+            if(response_code != 200){
+                infoLabelCode.setText("Occorreu um Erro ["+response_code+"]");
+            }
+        }catch (IOException e) {
+            infoLabelCode.setText("Ocorreu um erro com o Servidor ");
+            System.out.println("[SERVER ERROR] " + e);
+        }
     }
 
     private void loadView(String fxmlPath) {

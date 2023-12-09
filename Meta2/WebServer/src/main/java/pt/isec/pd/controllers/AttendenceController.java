@@ -27,7 +27,7 @@ public class AttendenceController {
 
         String auth_username = acc_details.getSubject().toString();
 
-        System.out.println("[*] Code received (code) by " + auth_username);
+        System.out.println("[*] Code received ("+code+") by " + auth_username);
 
         Event evt = new Event(Event.type_event.CODE_EVENT, code);
         evt.setUser_email(auth_username);

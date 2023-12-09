@@ -92,23 +92,26 @@ public class SendAndReceive {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
 
-        Scanner s;
-
-        if(connection.getErrorStream()!=null) {
-            s = new Scanner(connection.getErrorStream()).useDelimiter("\\A");
-            responseBody = s.hasNext() ? s.next() : null;
-        }
-
-        try {
-            s = new Scanner(connection.getInputStream()).useDelimiter("\\A");
-            responseBody = s.hasNext() ? s.next() : null;
-        } catch (IOException e){}
-
-        connection.disconnect();
-
         if(connection.getResponseCode() == HttpURLConnection.HTTP_OK)
             pcs.firePropertyChange(InfoStatus.types_status.LOGIN_MADE_USER.toString(),null,null);
 
+        connection.disconnect();
+        return connection.getResponseCode();
+    }
+
+    public int sendCode(int code) throws IOException {
+
+        URL url = new URL(server_Domain+"/code/send/"+code);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Authorization", "Bearer " + acc_token);
+
+        if(connection.getResponseCode() == HttpURLConnection.HTTP_OK)
+            pcs.firePropertyChange(InfoStatus.types_status.CODE_SEND_MADE.toString(),null,null);
+        else
+            pcs.firePropertyChange(InfoStatus.types_status.CODE_SEND_FAIL.toString(),null,null);
+
+        connection.disconnect();
         return connection.getResponseCode();
     }
 
