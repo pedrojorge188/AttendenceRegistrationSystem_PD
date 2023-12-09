@@ -64,7 +64,7 @@ public class AttendenceController {
         }
     }
 
-    // Get: localhost:8080/search/?
+    // Get: localhost:8080/code/search/?
 
     @GetMapping("/search")
     public ResponseEntity search(Authentication authentication,

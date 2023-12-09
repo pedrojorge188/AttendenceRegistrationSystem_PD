@@ -28,9 +28,12 @@ public class AuthController {
     //POST: localhost:8080/permission -> devolve true ou false conforme a role JWT da conta indicada
 
     @PostMapping("/permission")
-    public Boolean permission(Authentication authentication) {
+    public ResponseEntity permission(Authentication authentication) {
         Jwt acc_details = (Jwt) authentication.getPrincipal();
-        return acc_details.getClaim("scope").toString().equals("ADMIN");
+       if(acc_details.getClaim("scope").toString().equals("ADMIN"))
+           return ResponseEntity.ok().body("Admin");
+       else
+           return ResponseEntity.badRequest().body("Util");
     }
 
     //POST: localhost:8080/register/id={studentId}&username={username}&email={email}&password={password}

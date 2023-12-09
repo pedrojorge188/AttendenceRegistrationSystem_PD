@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import pt.isec.pd.data.Event;
 import pt.isec.pd.data.User;
-import pt.isec.pd.data.requestsAPI;
+import pt.isec.pd.data.SendAndReceive;
 import pt.isec.pd.ClientApplication;
 
 import javax.swing.*;
@@ -24,14 +24,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static pt.isec.pd.data.Event.type_event.GET_ATTENDANCE_HISTORY;
-import static pt.isec.pd.data.Event.type_event.LIST_CREATED_EVENTS;
 import static pt.isec.pd.data.InfoStatus.types_status.*;
 
 public class NormalClientController {
 
     private Event eventToSend;
 
-    private static requestsAPI client = requestsAPI.getInstance();
+    private static SendAndReceive client = SendAndReceive.getInstance();
     @FXML
     public TextField usernameField;
     @FXML
@@ -58,18 +57,7 @@ public class NormalClientController {
 
     public void initialize(){
 
-        requestsAPI.getInstance().addPropertyChangeListener("SERVER_CLOSE",evt->{
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    System.err.println("[SERVER] SERVER ERROR");
-                    client.disconnect();
-                    System.exit(1);
-                }
-            });
-
-        });
-        requestsAPI.getInstance().addPropertyChangeListener(CODE_SEND_MADE.toString(),evt->{
+        SendAndReceive.getInstance().addPropertyChangeListener(CODE_SEND_MADE.toString(), evt->{
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -82,7 +70,7 @@ public class NormalClientController {
 
         });
 
-        requestsAPI.getInstance().addPropertyChangeListener(REQUEST_CSV_EVENT.toString(),evt->{
+        SendAndReceive.getInstance().addPropertyChangeListener(REQUEST_CSV_EVENT.toString(), evt->{
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -96,7 +84,7 @@ public class NormalClientController {
         });
 
 
-        requestsAPI.getInstance().addPropertyChangeListener(CODE_SEND_FAIL.toString(),evt->{
+        SendAndReceive.getInstance().addPropertyChangeListener(CODE_SEND_FAIL.toString(), evt->{
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -108,7 +96,7 @@ public class NormalClientController {
             });
 
         });
-        requestsAPI.getInstance().addPropertyChangeListener(CHANGES_MADE.toString(),evt -> {
+        SendAndReceive.getInstance().addPropertyChangeListener(CHANGES_MADE.toString(), evt -> {
             Platform.runLater(new Runnable() {
                                   @Override
                                   public void run() {
@@ -120,7 +108,7 @@ public class NormalClientController {
                               }
             );
         });
-        requestsAPI.getInstance().addPropertyChangeListener(CHANGES_FAIL.toString(),evt -> {
+        SendAndReceive.getInstance().addPropertyChangeListener(CHANGES_FAIL.toString(), evt -> {
             Platform.runLater(new Runnable() {
                                   @Override
                                   public void run() {
@@ -159,10 +147,7 @@ public class NormalClientController {
     @FXML
     public void sendCode() throws IOException {
         String code = codeField.getText();
-        if(!client.send(Event.type_event.CODE_EVENT, Integer.parseInt(code))){
-            infoLabel.setText("Campos obrigatórios em branco!");
-            infoLabel.setTextFill(Color.RED);
-        }
+
     }
 
     private void loadView(String fxmlPath) {
@@ -183,27 +168,7 @@ public class NormalClientController {
 
         Optional<ButtonType> result = confirmationDialog.showAndWait();
         if (result.get() == ButtonType.OK) {
-            client.disconnect();
             Platform.exit();
-        }
-    }
-
-    public void confirmChangeDataAction(ActionEvent actionEvent) throws IOException {
-        // verificações
-        if(!Objects.equals(passwordField.getText(), passwordFieldConfirm.getText())
-                || passwordField.getText().isEmpty() || passwordFieldConfirm.getText().isEmpty()) {
-            infoLabel.setText("Passwords não correspondem");
-            infoLabel.setTextFill(Color.RED);
-            return;
-        }else if(!usernameField.getText().isEmpty() && !usernameField.getText().matches("^[A-Za-z0-9+_.-]+@(.+)$")){
-            infoLabel.setText("Email inválido!");
-            infoLabel.setTextFill(Color.RED);
-            return;
-        }
-
-        if(!client.send(User.types_msg.CHANGES, 0, "", usernameField.getText(), passwordField.getText())){
-            infoLabel.setText("Erro ao realizar a operação. Por favor, verifique os dados.");
-            infoLabel.setTextFill(Color.RED);
         }
     }
 
@@ -215,69 +180,10 @@ public class NormalClientController {
     }
 
     public void listAttendances(ActionEvent actionEvent) {
-
-            eventToSend.setAttend_code(-1);
-            eventToSend.setType(GET_ATTENDANCE_HISTORY);
-            eventToSend.setEvent_date(null);
-            eventToSend.setEvent_location(null);
-            eventToSend.setEvent_name(null);
-            eventToSend.setEvent_start_time(null);
-            eventToSend.setEvent_end_time(null);
-            eventToSend.setUser_email(requestsAPI.getInstance().getMyUser());
-
-            if(!client.send(eventToSend)) {
-                infoLabel.setText("Aconteceu algo de errado");
-                infoLabel.setTextFill(Color.RED);
-            }
-
+            // Get: localhost:8080/code/search/?
             initUserAttendanceTable();
-
     }
 
-    public void csvReceive(ActionEvent actionEvent) {
-
-        JFileChooser directoryChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-        directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int directoryReturnValue = directoryChooser.showOpenDialog(null);
-
-        if (directoryReturnValue == JFileChooser.APPROVE_OPTION) {
-            File selectedDirectory = directoryChooser.getSelectedFile();
-
-            String fileName = JOptionPane.showInputDialog("Digite o nome do arquivo (sem extensão):");
-            if (fileName == null || fileName.trim().isEmpty()) {
-                infoLabel.setText("Nome do arquivo inválido.");
-                infoLabel.setTextFill(Color.RED);
-                return;
-            }
-
-            String selectedDirectoryPath = selectedDirectory.getAbsolutePath();
-            String filePath = selectedDirectoryPath + File.separator + fileName + ".csv";
-
-            requestsAPI.getInstance().setFileName(filePath);
-
-            String userEmail = client.getMyUser();
-
-            if (userEmail.isEmpty()) {
-                infoLabel.setText("Por favor, preencha todos os campos");
-                infoLabel.setTextFill(Color.RED);
-            } else {
-                eventToSend.setEvent_name("");
-                eventToSend.setEvent_start_time(null);
-                eventToSend.setEvent_end_time(null);
-                eventToSend.setType(Event.type_event.REQUEST_CSV_EVENT);
-                eventToSend.setCsv_msg("UserEvents");
-                eventToSend.setCsv_dir(selectedDirectoryPath);
-                eventToSend.setUser_email(userEmail);
-                eventToSend.setAttend_code(-1);
-                if (!client.send(eventToSend)) {
-                    infoLabel.setText("Ocorreu um erro.");
-                    infoLabel.setTextFill(Color.RED);
-                }
-            }
-
-        }
-
-    }
 
     public void initUserAttendanceTable(){
         TableView<ObservableList<String>> tableView = new TableView<>();
@@ -286,7 +192,8 @@ public class NormalClientController {
         Label label = new Label("Listagem de Presenças");
         label.setStyle("-fx-font-size: 35px;");
 
-        for (String attendanceString : requestsAPI.getInstance().getUserAttendanceRecords()) {
+        /*
+        for (String attendanceString : SendAndReceive.getInstance().getUserAttendanceRecords()) {
             String[] parts = attendanceString.split("\t");
             if (parts.length == 4) {
                 ObservableList<String> row = FXCollections.observableArrayList(parts);
@@ -314,6 +221,8 @@ public class NormalClientController {
         vbox.getChildren().addAll(label, tableView);
         box.getChildren().clear();
         box.getChildren().add(vbox);
+
+        */
     }
 
     private String getColumnNameUserAttendance(int i) {

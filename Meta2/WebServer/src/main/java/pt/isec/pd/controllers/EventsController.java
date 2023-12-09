@@ -11,6 +11,7 @@ import pt.isec.pd.models.database.DatabaseManager;
 @RestController
 @RequestMapping("event")
 public class EventsController {
+
     //GET: localhost:8080/list
     @GetMapping("/list")
     public ResponseEntity list(
@@ -94,7 +95,7 @@ public class EventsController {
 
     }
 
-    //Delete:
+    //Delete: localhost:8080/event/delete/name={name}
 
     @DeleteMapping("/delete/name={name}")
     public ResponseEntity event(

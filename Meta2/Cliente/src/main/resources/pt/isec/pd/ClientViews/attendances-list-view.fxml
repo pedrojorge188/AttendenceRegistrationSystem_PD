@@ -21,7 +21,6 @@
 
     <HBox spacing="10">
         <Button text="Listar" onAction="#listAttendances" fx:id="sendBtn"/>
-        <Button text="Receber ficheiro CSV" onAction="#csvReceive" fx:id="csvButton"/>
     </HBox>
 
 

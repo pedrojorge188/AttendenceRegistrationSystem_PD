@@ -9,7 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 import pt.isec.pd.data.User;
-import pt.isec.pd.data.requestsAPI;
+import pt.isec.pd.data.SendAndReceive;
 import pt.isec.pd.ClientApplication;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ import static pt.isec.pd.data.InfoStatus.types_status.*;
 public class MainController {
 
     //Singleton que serve para comunicar com o servidor
-    private static requestsAPI client = requestsAPI.getInstance();
+    private static SendAndReceive client = SendAndReceive.getInstance();
 
     private static String mode_path = null;
     @FXML
@@ -45,29 +45,18 @@ public class MainController {
     private TextField passwordField;
 
     public void initialize(){
-        requestsAPI.getInstance().addPropertyChangeListener("SERVER_CLOSE",evt->{
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    System.err.println("[SERVER] SERVER ERROR");
-                    client.disconnect();
-                    System.exit(1);
-                }
-            });
-        });
-        requestsAPI.getInstance().addPropertyChangeListener(LOGIN_MADE_USER.toString(), evt->{
+        SendAndReceive.getInstance().addPropertyChangeListener(LOGIN_MADE_USER.toString(), evt->{
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
                     loadView("ClientViews/normal-client-view.fxml");
-                    System.out.println("[SERVER] Welcome - "+client.getInstance().getMyUser());
                 }
             });
 
         });
 
 
-        requestsAPI.getInstance().addPropertyChangeListener(LOGIN_MADE_ADMIN.toString(),evt->{
+        SendAndReceive.getInstance().addPropertyChangeListener(LOGIN_MADE_ADMIN.toString(), evt->{
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -77,7 +66,7 @@ public class MainController {
 
         });
 
-        requestsAPI.getInstance().addPropertyChangeListener(REGISTER_MADE.toString(),evt->{
+        SendAndReceive.getInstance().addPropertyChangeListener(REGISTER_MADE.toString(), evt->{
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -94,18 +83,21 @@ public class MainController {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        // verificações
         if(username.isEmpty() || password.isEmpty() || !username.matches("^[A-Za-z0-9+_.-]+@(.+)$")){
             errorLabel.setText("Dados introduzidos inválidos");
             return;
         }
 
-        if(client.send(User.types_msg.LOGIN,0,"",username,password)){
-
-        }else{
-            errorLabelReg.setText("Ocorreu um erro!");
+        //POST: localhost:8080/login
+        try{
+            int response_code = client.login(username,password);
+            if(response_code != 200){
+                errorLabel.setText("Occorreu um Erro ["+response_code+"]");
+            }
+        }catch (IOException e) {
+            errorLabel.setText("Ocorreu um erro com o Servidor ");
+            System.out.println("[SERVER ERROR] " + e);
         }
-
     }
 
     @FXML
@@ -129,11 +121,8 @@ public class MainController {
             return;
         }
 
-        if(client.send(User.types_msg.REGISTER,Integer.parseInt(studentNumber),name,username,password)){
+        //POST: localhost:8080/register/id={studentId}&username={username}&email={email}&password={password}
 
-        }else{
-            errorLabelReg.setText("Dados introduzidos inválidos");
-        }
     }
 
     private void loadView(String fxmlPath)  {

@@ -26,17 +26,12 @@
         <MenuBar id="menuBar" >
             <Menu text="Eventos">
                 <MenuItem text="Criar" onAction="#createEventAction"/>
-                <MenuItem text="Editar" onAction="#editEventsAction"/>
                 <MenuItem text="Eliminar" onAction="#deleteEventsAction"/>
-                <MenuItem text="Associar utilizador a evento" onAction="#assocUserEventAction"/>
                 <MenuItem text="Consultar Eventos Criados" onAction="#showEventsAction"/>
             </Menu>
             <Menu text="Presenças">
                 <MenuItem text="Consultar Presenças por Evento" onAction="#showAttendenceAdminAction" />
-                <MenuItem text="Consultar Presenças por Utilizador" onAction="#showUserEventsAction"/>
                 <MenuItem text="Gerar código de presenças" onAction="#generateCodeAction"/>
-                <MenuItem text="Eliminar presenças" onAction="#deleteAttendenceAction"/>
-                <MenuItem text="Inserir presenças" onAction="#insertAttendenceAction"/>
             </Menu>
             <Menu text="Opções">
                 <MenuItem text="Sair" onAction="#accountLogout"/>

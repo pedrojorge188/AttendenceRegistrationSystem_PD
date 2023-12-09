@@ -589,6 +589,7 @@ public class DatabaseManager{
     public synchronized Connection getConnection() {
         return connection;
     }
+
     public synchronized List<String> getAllEvents(){
         List<String> eventNames = new ArrayList<>();
         try {
