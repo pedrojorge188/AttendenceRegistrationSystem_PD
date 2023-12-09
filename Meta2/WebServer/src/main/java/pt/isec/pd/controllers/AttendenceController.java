@@ -113,7 +113,6 @@ public class AttendenceController {
     }
 
     // GET : localhost:8080:list/event_name_to_list_attendances
-
     @GetMapping("/list/{name}")
     public ResponseEntity list(Authentication authentication,
                                  @PathVariable("name") String name

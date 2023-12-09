@@ -147,9 +147,17 @@ public class AdminController {
             infoLabel.setTextFill(Color.RED);
         }else{
             //POST: localhost:8080/event/create/name={name}/location={location}/date={date}/start_time={start_time}/end_time={end_time}
+            try{
+                int response_code = client.createEvent(eventName,eventLocal,eventDate,eventStartHour,eventEndHour);
+                if(response_code != 200){
+                    infoLabel.setText("Occorreu um Erro ["+response_code+"]");
+                }
+            }catch (IOException e) {
+                infoLabel.setText("Ocorreu um erro com o Servidor ");
+                System.out.println("[SERVER ERROR] " + e);
+            }
         }
     }
-
 
     public void deleteEvent(ActionEvent actionEvent) {
         String eventName = this.eventName.getText();
