@@ -16,6 +16,7 @@ import pt.isec.pd.data.User;
 import pt.isec.pd.data.SendAndReceive;
 import pt.isec.pd.ClientApplication;
 
+import javax.json.JsonArray;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
@@ -27,6 +28,12 @@ import static pt.isec.pd.data.Event.type_event.GET_ATTENDANCE_HISTORY;
 import static pt.isec.pd.data.InfoStatus.types_status.*;
 
 public class NormalClientController {
+    @FXML
+    public TextField eventName;
+    @FXML
+    public TextField eventStartHour;
+    @FXML
+    public TextField eventEndHour;
 
     private Event eventToSend;
 
@@ -126,7 +133,7 @@ public class NormalClientController {
 
     @FXML
     public void showAttendenceAction() {
-        loadView("ClientViews/attendances-list-view.fxml");
+        loadView("ClientViews/search-event-view.fxml");
     }
 
     @FXML
@@ -190,36 +197,65 @@ public class NormalClientController {
 
     public void listAttendances(ActionEvent actionEvent) {
             // Get: localhost:8080/code/search/?
-            initUserAttendanceTable();
+        String eventName = this.eventName.getText();
+        String eventStartHour = this.eventStartHour.getText();
+        String eventEndHour = this.eventEndHour.getText();
+
+        if(eventName == null)
+            eventName = "";
+
+        if (!eventStartHour.isEmpty()){
+            if(eventEndHour.isEmpty()){
+                infoLabel.setText("Preencha a hora de fim ");
+                infoLabel.setTextFill(Color.RED);
+                return;
+            }
+        }else if(!eventEndHour.isEmpty()){
+            if(eventStartHour.isEmpty()){
+                infoLabel.setText("Preencha a hora de Inicio ");
+                infoLabel.setTextFill(Color.RED);
+                return;
+            }
+        }
+
+        try{
+            JsonArray response =  client.searchEventAttendances(eventName,eventStartHour,eventEndHour);
+            if(response != null)
+                initEventsTable(response);
+            else
+                infoLabel.setText("Nenhuma informação encontrada");
+
+
+        }catch (IOException e) {
+            infoLabel.setText("Ocorreu um erro com o Servidor ");
+            System.out.println("[SERVER ERROR] " + e);
+        }
     }
 
 
-    public void initUserAttendanceTable(){
+
+    public void initEventsTable(JsonArray jsonArray) {
         TableView<ObservableList<String>> tableView = new TableView<>();
         VBox vbox = new VBox();
         vbox.setSpacing(16);
-        Label label = new Label("Listagem de Presenças");
-        label.setStyle("-fx-font-size: 35px;");
 
-        /*
-        for (String attendanceString : SendAndReceive.getInstance().getUserAttendanceRecords()) {
-            String[] parts = attendanceString.split("\t");
+        for (int i = 0; i < jsonArray.size(); i++) {
+            String[] parts = jsonArray.getString(i).split("\t");
             if (parts.length == 4) {
                 ObservableList<String> row = FXCollections.observableArrayList(parts);
                 tableView.getItems().add(row);
             }
         }
+
         for (int i = 0; i < 4; i++) {
             TableColumn<ObservableList<String>, String> column = new TableColumn<>();
             final int columnIndex = i;
             column.setCellValueFactory(param -> {
-                return new SimpleStringProperty(param.getValue().get(columnIndex));
+                return new javafx.beans.property.SimpleStringProperty(param.getValue().get(columnIndex));
             });
-            column.setText(getColumnNameUserAttendance(i));
             column.setStyle("-fx-background-color: #fff; -fx-text-fill: #000; -fx-font-weight: bold; -fx-border-color: #444; -fx-border-width: 0.5px; -fx-text-decoration: none; -fx-alignment: center;");
-
             column.getStyleClass().add("custom-header");
-
+            column.setText(getColumnName(i));
             tableView.getColumns().add(column);
         }
 
@@ -227,21 +263,19 @@ public class NormalClientController {
         tableView.setStyle("-fx-background-color: #ffffff;");
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        vbox.getChildren().addAll(label, tableView);
         box.getChildren().clear();
-        box.getChildren().add(vbox);
-
-        */
+        box.getChildren().add(tableView);
     }
 
-    private String getColumnNameUserAttendance(int i) {
+
+    private String getColumnName(int i) {
         switch (i) {
             case 0:
                 return "Nome Evento";
             case 1:
-                return "Hora inicio";
+                return "Hora Inicio";
             case 2:
-                return "Hora fim";
+                return "Hora Fim";
             case 3:
                 return "Data";
             default:

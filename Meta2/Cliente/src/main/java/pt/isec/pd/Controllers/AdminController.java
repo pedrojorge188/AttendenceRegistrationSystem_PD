@@ -228,6 +228,8 @@ public class AdminController {
             JsonArray response =  client.searchEvent(eventName,eventStartHour,eventEndHour);
             if(response != null)
                 initEventsTable(response);
+            else
+                infoLabel.setText("Nenhuma informação encontrada");
 
         }catch (IOException e) {
             infoLabel.setText("Ocorreu um erro com o Servidor ");
@@ -248,6 +250,8 @@ public class AdminController {
 
                 if(response != null)
                     initAttendancesTable(response);
+                else
+                    infoLabel.setText("Nenhuma informação encontrada");
 
             }catch (IOException e) {
                 infoLabel.setText("Ocorreu um erro com o Servidor ");

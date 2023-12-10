@@ -216,6 +216,31 @@ public class SendAndReceive {
         return null;
     }
 
+
+    public JsonArray searchEventAttendances(String eventName, String eventStartHour, String eventEndHour) throws IOException {
+        String spec = server_Domain + "/code/search";
+        String encodedEventName = URLEncoder.encode(eventName, StandardCharsets.UTF_8.toString());
+
+        if (!eventName.isBlank())
+            spec += "?name=" + encodedEventName;
+
+        if (!eventStartHour.isBlank() && eventName.isBlank()) {
+            spec += "?start_time=" + eventStartHour + "&end_time=" + eventEndHour;
+        } else if(!eventStartHour.isBlank() ) {
+            spec += "&start_time=" + eventStartHour + "&end_time=" + eventEndHour;
+        }
+
+        System.out.println("(search event) SPEC: " + spec);
+        URL url = new URL(spec);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", "Bearer " + acc_token);
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
+            return processJSONResponse(connection);
+
+        return null;
+    }
+
     public JsonArray processJSONResponse(HttpURLConnection connection) throws IOException {
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {

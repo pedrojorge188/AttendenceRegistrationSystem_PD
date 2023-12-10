@@ -75,7 +75,7 @@ public class AttendenceController {
                                  @RequestParam(value="name", required=false) String name,
                                  @RequestParam(value="start", required=false) String start_time,
                                  @RequestParam(value="end", required=false) String end_time,
-                                 @RequestParam(value="date", required=false) String date) {
+                                 @RequestParam(value="date", required=false) String date) throws UnsupportedEncodingException {
 
         Jwt acc_details = (Jwt) authentication.getPrincipal();
 
@@ -83,11 +83,13 @@ public class AttendenceController {
             return ResponseEntity.ok("You must be a Normal User to call this action!");
 
         Event evt = new Event(Event.type_event.CODE_EVENT, 0);
-
+        evt.setUser_email(acc_details.getSubject());
         if(date != null)
             evt.setEvent_date(date);
-        if(name != null)
-            evt.setEvent_name(name);
+        if(name != null){
+            String event_name = URLDecoder.decode(name, StandardCharsets.UTF_8.toString());
+            evt.setEvent_name(event_name);
+        }
 
         if(start_time != null)
             if(end_time != null){
@@ -104,10 +106,7 @@ public class AttendenceController {
                 return  ResponseEntity.badRequest().body("You must enter start_time too!");
             }
 
-        List<String> db_result = DatabaseManager.getInstance().getAttendance(evt);
-
-        if(name == null)
-            db_result = DatabaseManager.getInstance().getAllAttendances();
+        List<String> db_result = DatabaseManager.getInstance().getUserAttendance(evt);
 
         if((long) db_result.size() < 1){
             return  ResponseEntity.badRequest().body("Any attendance to list!");
