@@ -4,6 +4,10 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +23,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static pt.isec.pd.data.Event.type_event.*;
@@ -81,14 +87,6 @@ public class AdminController {
                 public void run() {
                     infoLabel.setText("Ocorreu um erro a eliminar o evento");
                     infoLabel.setTextFill(Color.RED);
-                }
-            });
-        });
-        SendAndReceive.getInstance().addPropertyChangeListener(LIST_REGISTERED_ATTENDANCE.toString(), evt->{
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    initAttendanceTable();
                 }
             });
         });
@@ -225,7 +223,64 @@ public class AdminController {
                 return;
             }
         }
-        //GET: localhost:8080/list?
+
+        try{
+            JsonArray response =  client.searchEvent(eventName,eventStartHour,eventEndHour);
+            if(response != null)
+                initAttendanceTable(response);
+
+        }catch (IOException e) {
+            infoLabel.setText("Ocorreu um erro com o Servidor ");
+            System.out.println("[SERVER ERROR] " + e);
+        }
+
+    }
+    public void initAttendanceTable(JsonArray jsonArray) {
+        TableView<ObservableList<String>> tableView = new TableView<>();
+        VBox vbox = new VBox();
+        vbox.setSpacing(16);
+
+        for (int i = 0; i < jsonArray.size(); i++) {
+            String[] parts = jsonArray.getString(i).split("\t");
+            if (parts.length == 5) {
+                ObservableList<String> row = FXCollections.observableArrayList(parts);
+                tableView.getItems().add(row);
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
+            TableColumn<ObservableList<String>, String> column = new TableColumn<>();
+            final int columnIndex = i;
+            column.setCellValueFactory(param -> {
+                return new javafx.beans.property.SimpleStringProperty(param.getValue().get(columnIndex));
+            });
+            column.setStyle("-fx-background-color: #fff; -fx-text-fill: #000; -fx-font-weight: bold; -fx-border-color: #444; -fx-border-width: 0.5px; -fx-text-decoration: none; -fx-alignment: center;");
+            column.getStyleClass().add("custom-header");
+            column.setText(getColumnName(i));
+            tableView.getColumns().add(column);
+        }
+
+        tableView.setMaxHeight(200);
+        tableView.setStyle("-fx-background-color: #ffffff;");
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        box.getChildren().clear();
+        box.getChildren().add(tableView);
+    }
+
+    private String getColumnName(int i) {
+        switch (i) {
+            case 0:
+                return "Nome Evento";
+            case 1:
+                return "Local";
+            case 2:
+                return "Data";
+            case 3:
+                return "Hora Inicio";
+            default:
+                return "-";
+        }
     }
 
     // search attendence in an event
@@ -237,74 +292,6 @@ public class AdminController {
             infoLabel.setTextFill(Color.RED);
         }else{
             // Get: localhost:8080/code/search/?
-        }
-    }
-
-
-    private String getColumnName(int columnIndex) {
-        switch (columnIndex) {
-            case 0:
-                return "Nome";
-            case 1:
-                return "Email";
-            default:
-                return "-";
-        }
-    }
-
-    public void initAttendanceTable(){
-        TableView<ObservableList<String>> tableView = new TableView<>();
-        VBox vbox = new VBox();
-        vbox.setSpacing(16);
-        Label label = new Label("Listagem de Presenças");
-        label.setStyle("-fx-font-size: 35px;");
-
-        /*
-        for (String attendanceString : SendAndReceive.getInstance().getAttendanceRecords()) {
-            String[] parts = attendanceString.split("\t");
-            if (parts.length == 2) {
-                ObservableList<String> row = FXCollections.observableArrayList(parts);
-                tableView.getItems().add(row);
-            }
-        }
-        for (int i = 0; i < 2; i++) {
-            TableColumn<ObservableList<String>, String> column = new TableColumn<>();
-            final int columnIndex = i;
-            column.setCellValueFactory(param -> {
-                return new SimpleStringProperty(param.getValue().get(columnIndex));
-            });
-            column.setText(getColumnName(i));
-            column.setStyle("-fx-background-color: #fff; -fx-text-fill: #000; -fx-font-weight: bold; -fx-border-color: #444; -fx-border-width: 0.5px; -fx-text-decoration: none; -fx-alignment: center;");
-
-            column.getStyleClass().add("custom-header");
-
-            tableView.getColumns().add(column);
-        }
-
-        tableView.setMaxHeight(200);
-        tableView.setStyle("-fx-background-color: #ffffff;");
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        vbox.getChildren().addAll(label, tableView);
-        box.getChildren().clear();
-        box.getChildren().add(vbox);
-        */
-    }
-
-
-
-    private String getColumnNameUserAttendance(int i) {
-        switch (i) {
-            case 0:
-                return "Nome Evento";
-            case 1:
-                return "Hora inicio";
-            case 2:
-                return "Hora fim";
-            case 3:
-                return "Data";
-            default:
-                return "-";
         }
     }
 

@@ -2,6 +2,8 @@ module pt.isec.pd.attendence_registration_system {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
+    requires java.json;
+    requires com.google.gson;
 
 
     exports pt.isec.pd.Controllers;

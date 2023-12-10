@@ -15,8 +15,7 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @RequestMapping("event")
 public class EventsController {
-
-    //GET: localhost:8080/list
+    //GET: localhost:8080/event/list
     @GetMapping("/list")
     public ResponseEntity list(
             Authentication authentication,
@@ -25,7 +24,7 @@ public class EventsController {
             @RequestParam(value = "date",required = false)String date,
             @RequestParam(value = "name",required = false) String name,
             @RequestParam(value = "location", required = false) String location
-    ){
+    ) throws UnsupportedEncodingException {
         Jwt acc_details = (Jwt) authentication.getPrincipal();
 
         if(!acc_details.getClaim("scope").toString().equals("ADMIN"))
@@ -49,8 +48,9 @@ public class EventsController {
             }
         }
         if(name!=null){
+            String event_name = URLDecoder.decode(name, StandardCharsets.UTF_8.toString());
             if(!name.isBlank()||!name.isEmpty()){
-                evt.setEvent_name(name);
+                evt.setEvent_name(event_name);
             }
         }
         if(location!=null){

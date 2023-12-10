@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Scanner;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonReader;
 
 public class SendAndReceive {
 
@@ -169,6 +172,42 @@ public class SendAndReceive {
 
         connection.disconnect();
         return connection.getResponseCode();
+    }
+
+    public JsonArray searchEvent(String eventName, String eventStartHour, String eventEndHour) throws IOException {
+        String spec = server_Domain + "/event/list";
+        String encodedEventName = URLEncoder.encode(eventName, StandardCharsets.UTF_8.toString());
+
+        if (!eventName.isBlank())
+            spec += "?name=" + encodedEventName;
+
+        if (!eventStartHour.isBlank() && eventName.isBlank()) {
+            spec += "?start_time=" + eventStartHour + "&end_time=" + eventEndHour;
+        } else if(!eventStartHour.isBlank() ) {
+            spec += "&start_time=" + eventStartHour + "&end_time=" + eventEndHour;
+        }
+
+        System.out.println("(search event) SPEC: " + spec);
+        URL url = new URL(spec);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", "Bearer " + acc_token);
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
+            return processJSONResponse(connection);
+
+        return null;
+    }
+
+
+    public JsonArray processJSONResponse(HttpURLConnection connection) throws IOException {
+
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            JsonReader jsonReader = Json.createReader(connection.getInputStream());
+            JsonArray jsonArray = jsonReader.readArray();
+            return jsonArray;
+        }else{
+            return null;
+        }
     }
 
     public boolean connect(String addr,int port){
