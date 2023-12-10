@@ -198,6 +198,23 @@ public class SendAndReceive {
         return null;
     }
 
+    public JsonArray searchEventByAttendances(String eventName) throws IOException {
+        String spec = server_Domain + "/code/list";
+        String encodedEventName = URLEncoder.encode(eventName, StandardCharsets.UTF_8.toString());
+
+        if (!eventName.isBlank())
+            spec += "/" + encodedEventName;
+
+        System.out.println("(search event by attendances) SPEC: " + spec);
+        URL url = new URL(spec);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", "Bearer " + acc_token);
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
+            return processJSONResponse(connection);
+
+        return null;
+    }
 
     public JsonArray processJSONResponse(HttpURLConnection connection) throws IOException {
 

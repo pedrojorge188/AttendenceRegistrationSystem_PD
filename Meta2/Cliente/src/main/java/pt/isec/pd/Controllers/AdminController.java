@@ -227,7 +227,7 @@ public class AdminController {
         try{
             JsonArray response =  client.searchEvent(eventName,eventStartHour,eventEndHour);
             if(response != null)
-                initAttendanceTable(response);
+                initEventsTable(response);
 
         }catch (IOException e) {
             infoLabel.setText("Ocorreu um erro com o Servidor ");
@@ -235,7 +235,77 @@ public class AdminController {
         }
 
     }
-    public void initAttendanceTable(JsonArray jsonArray) {
+    // search attendence in an event
+    public void searchAttendence(ActionEvent actionEvent) {
+        String eventName = this.eventName.getText();
+
+        if(eventName.isEmpty()){
+            infoLabel.setText("Por favor preencha todos os campos");
+            infoLabel.setTextFill(Color.RED);
+        }else{
+            try{
+                JsonArray response =  client.searchEventByAttendances(eventName);
+
+                if(response != null)
+                    initAttendancesTable(response);
+
+            }catch (IOException e) {
+                infoLabel.setText("Ocorreu um erro com o Servidor ");
+                System.out.println("[SERVER ERROR] " + e);
+            }
+
+        }
+    }
+    public void initAttendancesTable(JsonArray jsonArray) {
+        TableView<ObservableList<String>> tableView = new TableView<>();
+        VBox vbox = new VBox();
+        vbox.setSpacing(16);
+
+        for (int i = 0; i < jsonArray.size(); i++) {
+            String[] parts = jsonArray.getString(i).split("\t");
+            if (parts.length == 2) {
+                ObservableList<String> row = FXCollections.observableArrayList(parts);
+                tableView.getItems().add(row);
+            }
+        }
+
+
+        for (int i = 0; i < 2; i++) {
+            TableColumn<ObservableList<String>, String> column = new TableColumn<>();
+            final int columnIndex = i;
+            column.setCellValueFactory(param -> {
+                return new javafx.beans.property.SimpleStringProperty(param.getValue().get(columnIndex));
+            });
+            column.setStyle("-fx-background-color: #fff; -fx-text-fill: #000; -fx-font-weight: bold; -fx-border-color: #444; -fx-border-width: 0.5px; -fx-text-decoration: none; -fx-alignment: center;");
+            column.getStyleClass().add("custom-header");
+            column.setText(getColumnName2(i));
+            tableView.getColumns().add(column);
+        }
+
+        tableView.setMaxHeight(200);
+        tableView.setStyle("-fx-background-color: #ffffff;");
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        box.getChildren().clear();
+        box.getChildren().add(tableView);
+    }
+
+    private String getColumnName(int i) {
+        switch (i) {
+            case 0:
+                return "Nome Evento";
+            case 1:
+                return "Local";
+            case 2:
+                return "Data";
+            case 3:
+                return "Hora Inicio";
+            default:
+                return "-";
+        }
+    }
+
+    public void initEventsTable(JsonArray jsonArray) {
         TableView<ObservableList<String>> tableView = new TableView<>();
         VBox vbox = new VBox();
         vbox.setSpacing(16);
@@ -268,32 +338,15 @@ public class AdminController {
         box.getChildren().add(tableView);
     }
 
-    private String getColumnName(int i) {
+    private String getColumnName2(int i) {
         switch (i) {
             case 0:
-                return "Nome Evento";
+                return "Nome do utilizador";
             case 1:
-                return "Local";
-            case 2:
-                return "Data";
-            case 3:
-                return "Hora Inicio";
+                return "Email do utilizador";
             default:
                 return "-";
         }
     }
-
-    // search attendence in an event
-    public void searchAttendence(ActionEvent actionEvent) {
-        String eventName = this.eventName.getText();
-
-        if(eventName.isEmpty()){
-            infoLabel.setText("Por favor preencha todos os campos");
-            infoLabel.setTextFill(Color.RED);
-        }else{
-            // Get: localhost:8080/code/search/?
-        }
-    }
-
 
 }

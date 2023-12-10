@@ -116,23 +116,24 @@ public class AttendenceController {
         }
     }
 
-    // GET : localhost:8080:list/event_name_to_list_attendances
+    // GET : localhost:8080:code/list/event_name_to_list_attendances
     @GetMapping("/list/{name}")
     public ResponseEntity list(Authentication authentication,
                                  @PathVariable("name") String name
-                                ) {
+                                ) throws UnsupportedEncodingException {
 
         Jwt acc_details = (Jwt) authentication.getPrincipal();
+        String event_name = URLDecoder.decode(name, StandardCharsets.UTF_8.toString());
 
         if(!acc_details.getClaim("scope").toString().equals("ADMIN"))
             return ResponseEntity.ok("You must be a Admin User to call this action!");
 
         Event evt = new Event(Event.type_event.CODE_EVENT, 0);
 
-        if(name == null)
+        if(event_name == null)
             return  ResponseEntity.badRequest().body("Any name entered into endpoint");
 
-        evt.setEvent_name(name);
+        evt.setEvent_name(event_name);
         List<String> db_result = DatabaseManager.getInstance().getAttendance(evt);
 
         if((long) db_result.size() < 1){
