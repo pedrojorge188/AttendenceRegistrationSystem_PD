@@ -159,7 +159,6 @@ public class AdminController {
                 System.out.println("[SERVER ERROR] " + e);
             }
         }
-
     }
 
     public void deleteEvent(ActionEvent actionEvent) {
@@ -184,8 +183,6 @@ public class AdminController {
         }
     }
 
-
-
     public void generateEventCode(ActionEvent actionEvent) {
         String eventName = this.eventName.getText();
         String codeTime = this.codeTime.getText();
@@ -195,6 +192,17 @@ public class AdminController {
             infoLabel.setTextFill(Color.RED);
         }else{
             // POST: localhost:8080/code/generate/name=eventName/time=time
+            try{
+                int response_code = client.generateEventCode(eventName, codeTime);
+                if(response_code != 200){
+                    infoLabel.setText("Occorreu um Erro ["+response_code+"]");
+                }else{
+                    infoLabel.setText("Código gerado com sucesso! " + client.getEventCode());
+                }
+            }catch (IOException e) {
+                infoLabel.setText("Ocorreu um erro com o Servidor ");
+                System.out.println("[SERVER ERROR] " + e);
+            }
         }
     }
 

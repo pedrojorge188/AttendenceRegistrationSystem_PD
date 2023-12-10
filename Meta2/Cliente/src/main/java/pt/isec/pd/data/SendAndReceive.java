@@ -3,10 +3,7 @@ package pt.isec.pd.data;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -148,6 +145,32 @@ public class SendAndReceive {
         connection.disconnect();
         return connection.getResponseCode();
     }
+
+    public int generateEventCode(String eventName, String codeTime) throws IOException {
+        // Use URLEncoder para lidar com espaços e outros caracteres especiais
+        String encodedEventName = URLEncoder.encode(eventName, StandardCharsets.UTF_8.toString());
+
+        URL url = new URL(server_Domain+"/code/generate/name="+encodedEventName+"/time="+codeTime);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Authorization", "Bearer " + acc_token);
+
+        if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+            try (InputStream inputStream = connection.getInputStream();
+                 Scanner scanner = new Scanner(inputStream)) {
+                if (scanner.hasNextInt()) {
+                    event_code = scanner.nextInt();
+                    // Agora 'eventCode' contém o valor retornado pelo server
+                    pcs.firePropertyChange(InfoStatus.types_status.CODE_SEND_MADE.toString(), null, null);
+                }
+            }
+        } else
+            pcs.firePropertyChange(InfoStatus.types_status.CODE_SEND_FAIL.toString(),null,null);
+
+        connection.disconnect();
+        return connection.getResponseCode();
+    }
+
     public boolean connect(String addr,int port){
         if(addr == null || port <= 0)
             return false;
@@ -170,4 +193,5 @@ public class SendAndReceive {
     public void addPropertyChangeListener(String property,PropertyChangeListener listener){
         pcs.addPropertyChangeListener(property,listener);
     }
+
 }
