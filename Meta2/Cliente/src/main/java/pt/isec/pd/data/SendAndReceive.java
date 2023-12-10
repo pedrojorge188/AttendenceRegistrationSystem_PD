@@ -7,10 +7,8 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -117,8 +115,9 @@ public class SendAndReceive {
     }
 
     public int createEvent(String eventName, String eventLocal, String eventDate, String eventStartHour, String eventEndHour) throws IOException {
-
-        URL url = new URL(server_Domain+"/event/create/name="+ eventName +"/location="+ eventLocal +"/date="+eventDate+"/start_time="+ eventStartHour+"/end_time="+eventEndHour);
+        // Use URLEncoder para lidar com espaços e outros caracteres especiais
+        String encodedEventName = URLEncoder.encode(eventName, StandardCharsets.UTF_8.toString());
+        URL url = new URL(server_Domain+"/event/create/name="+ encodedEventName +"/location="+ eventLocal +"/date="+eventDate+"/start_time="+ eventStartHour+"/end_time="+eventEndHour);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Authorization", "Bearer " + acc_token);
@@ -132,6 +131,23 @@ public class SendAndReceive {
         return connection.getResponseCode();
     }
 
+    public int deleteEvent(String eventName) throws IOException {
+        // Use URLEncoder para lidar com espaços e outros caracteres especiais
+        String encodedEventName = URLEncoder.encode(eventName, StandardCharsets.UTF_8.toString());
+
+        URL url = new URL(server_Domain+"/event/delete/name="+encodedEventName);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("DELETE");
+        connection.setRequestProperty("Authorization", "Bearer " + acc_token);
+
+        if(connection.getResponseCode() == HttpURLConnection.HTTP_OK)
+            pcs.firePropertyChange(InfoStatus.types_status.CODE_SEND_MADE.toString(),null,null);
+        else
+            pcs.firePropertyChange(InfoStatus.types_status.CODE_SEND_FAIL.toString(),null,null);
+
+        connection.disconnect();
+        return connection.getResponseCode();
+    }
     public boolean connect(String addr,int port){
         if(addr == null || port <= 0)
             return false;
@@ -154,5 +170,4 @@ public class SendAndReceive {
     public void addPropertyChangeListener(String property,PropertyChangeListener listener){
         pcs.addPropertyChangeListener(property,listener);
     }
-
 }

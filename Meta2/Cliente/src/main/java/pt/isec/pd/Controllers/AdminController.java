@@ -151,12 +151,15 @@ public class AdminController {
                 int response_code = client.createEvent(eventName,eventLocal,eventDate,eventStartHour,eventEndHour);
                 if(response_code != 200){
                     infoLabel.setText("Occorreu um Erro ["+response_code+"]");
+                }else{
+                    infoLabel.setText("Evento Criado com sucesso!");
                 }
             }catch (IOException e) {
                 infoLabel.setText("Ocorreu um erro com o Servidor ");
                 System.out.println("[SERVER ERROR] " + e);
             }
         }
+
     }
 
     public void deleteEvent(ActionEvent actionEvent) {
@@ -167,6 +170,17 @@ public class AdminController {
             infoLabel.setTextFill(Color.RED);
         }else{
             //Delete: localhost:8080/event/delete/name={name}
+            try{
+                int response_code = client.deleteEvent(eventName);
+                if(response_code != 200){
+                    infoLabel.setText("Occorreu um Erro ["+response_code+"]");
+                }else{
+                    infoLabel.setText("Evento eliminado com sucesso!");
+                }
+            }catch (IOException e) {
+                infoLabel.setText("Ocorreu um erro com o Servidor ");
+                System.out.println("[SERVER ERROR] " + e);
+            }
         }
     }
 

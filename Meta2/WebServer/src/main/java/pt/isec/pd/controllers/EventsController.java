@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import pt.isec.pd.models.Event;
 import pt.isec.pd.models.database.DatabaseManager;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 @RestController
 @RequestMapping("event")
 public class EventsController {
@@ -69,7 +73,7 @@ public class EventsController {
             @PathVariable("location") String location,
             @PathVariable("date") String date,
             @PathVariable("start_time") String startTime,
-            @PathVariable("end_time") String endTime){
+            @PathVariable("end_time") String endTime) throws UnsupportedEncodingException {
 
         Jwt acc_details = (Jwt) authentication.getPrincipal();
 
@@ -80,8 +84,10 @@ public class EventsController {
 
         System.out.println("[*] Event Created by " + auth_username);
 
+        // Decodificar o nome do evento
+        String event_name = URLDecoder.decode(name, StandardCharsets.UTF_8.toString());
         Event evt = new Event(Event.type_event.CODE_EVENT, 0);
-        evt.setEvent_name(name);
+        evt.setEvent_name(event_name);
         evt.setEvent_location(location);
         evt.setEvent_date(date);
         evt.setEvent_start_time(startTime);
@@ -100,25 +106,28 @@ public class EventsController {
     @DeleteMapping("/delete/name={name}")
     public ResponseEntity event(
             Authentication authentication,
-            @PathVariable("name") String name){
+            @PathVariable("name") String name) throws UnsupportedEncodingException {
 
         Jwt acc_details = (Jwt) authentication.getPrincipal();
 
-        if(!acc_details.getClaim("scope").toString().equals("ADMIN"))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You must be a Admin User to call this action!");
+        if (!acc_details.getClaim("scope").toString().equals("ADMIN")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You must be an Admin User to call this action!");
+        }
 
         String auth_username = acc_details.getSubject().toString();
 
         System.out.println("[*] Event Deleted by " + auth_username);
+        // Decodificar o nome do evento
+        String event_name = URLDecoder.decode(name, StandardCharsets.UTF_8.toString());
 
         Event evt = new Event(Event.type_event.CODE_EVENT, 0);
-        evt.setEvent_name(name);
+        evt.setEvent_name(event_name);
 
         if (DatabaseManager.getInstance().deleteEvent(evt)) {
             return ResponseEntity.ok("Event Deleted");
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete event ");
         }
-
     }
+
 }
