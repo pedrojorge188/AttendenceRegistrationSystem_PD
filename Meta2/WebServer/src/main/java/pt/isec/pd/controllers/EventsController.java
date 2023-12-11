@@ -15,7 +15,8 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @RequestMapping("event")
 public class EventsController {
-    //GET: localhost:8080/event/list
+
+    //GET: localhost:8080/event/list?
     @GetMapping("/list")
     public ResponseEntity list(
             Authentication authentication,
@@ -102,7 +103,6 @@ public class EventsController {
     }
 
     //Delete: localhost:8080/event/delete/name={name}
-
     @DeleteMapping("/delete/name={name}")
     public ResponseEntity event(
             Authentication authentication,

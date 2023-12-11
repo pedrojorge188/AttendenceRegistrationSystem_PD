@@ -63,8 +63,7 @@ public class SendAndReceive {
         url = new URL(server_Domain+"/permission");
 
         connection = (HttpURLConnection) url.openConnection();
-        authString = username + ":" + password;
-        connection.setRequestMethod("POST");
+        connection.setRequestMethod("GET");
         connection.setRequestProperty("Authorization", "Bearer " + acc_token);
 
         connection.setDoOutput(true);
