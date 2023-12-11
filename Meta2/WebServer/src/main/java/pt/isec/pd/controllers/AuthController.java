@@ -25,9 +25,9 @@ public class AuthController {
         return tokenService.generateToken(authentication);
     }
 
-    //POST: localhost:8080/permission -> devolve true ou false conforme a role JWT da conta indicada
+    //Get: localhost:8080/permission -> devolve true ou false conforme a role JWT da conta indicada
 
-    @GetMapping("/permission")
+    @PostMapping("/permission")
     public ResponseEntity permission(Authentication authentication) {
         Jwt acc_details = (Jwt) authentication.getPrincipal();
        if(acc_details.getClaim("scope").toString().equals("ADMIN"))

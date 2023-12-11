@@ -61,9 +61,8 @@ public class SendAndReceive {
             return connection.getResponseCode();
 
         url = new URL(server_Domain+"/permission");
-
+        System.out.println(url);
         connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
         connection.setRequestProperty("Authorization", "Bearer " + acc_token);
 
         connection.setDoOutput(true);
@@ -74,6 +73,8 @@ public class SendAndReceive {
         int responseCode = connection.getResponseCode();
 
         boolean permissionGranted = (responseCode == HttpURLConnection.HTTP_OK);
+        System.out.println(responseCode);
+
         if(permissionGranted)
             pcs.firePropertyChange(InfoStatus.types_status.LOGIN_MADE_ADMIN.toString(),null,null);
         else
